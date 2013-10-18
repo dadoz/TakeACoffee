@@ -1,0 +1,3 @@
+[submodule "ZBarScanner"]
+	path = ZBarScanner
+	url = git://github.com/DushyanthMaguluru/ZBarScanner
