@@ -61,6 +61,13 @@
                       android:text="add more machine" android:layout_marginLeft="10dip"
                       android:gravity="center_vertical"/>
         </LinearLayout>
+
+        <Button
+            android:id="@+id/QRCodeScanButtonId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
     </LinearLayout>
 
 </LinearLayout>
