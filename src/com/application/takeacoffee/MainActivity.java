@@ -5,12 +5,15 @@ import com.dm.zbar.android.scanner.ZBarScannerActivity;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -21,8 +24,9 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.coffe_machine_layout);
 		
-		CoffeMachine[] coffeMachineArray = RetrieveDataFromServer.getCoffeMachineData();
 
+		
+		//STATIC BUTTON to try out scanCodeReader
 		Button QRCodeScanButton = (Button)findViewById(R.id.QRCodeScanButtonId);
 		QRCodeScanButton.setOnClickListener(new OnClickListener() {
 			
@@ -34,9 +38,30 @@ public class MainActivity extends Activity {
 			}
 		});
 		
-		Log.e(TAG,"coffeMachineData - " + coffeMachineArray);
+		Context context = this.getApplicationContext();
+		
+		initView(context);
 	}
 
+	
+	
+	public void initView(Context context){
+		//get data from JSON
+		CoffeMachine[] coffeMachineArray = RetrieveDataFromServer.getCoffeMachineData();
+
+		if(coffeMachineArray.length != 0) {
+			for(CoffeMachine coffeMachineObj : coffeMachineArray){
+				Log.e(TAG,"coffeMachineData - " + coffeMachineObj.address + coffeMachineObj.name);
+				
+				LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				LinearLayout layoutContainer = (LinearLayout)findViewById(R.id.layoutContainerId);
+				layoutContainer.addView(inflater.inflate(R.layout.coffe_machine_template, null));  		
+				
+			}
+		}
+	}
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

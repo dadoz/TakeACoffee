@@ -14,7 +14,7 @@ public class RetrieveDataFromServer {
 	}
 	
 	private static String getData(){
-		String JSONData = "{'coffe_machine_data' : [{'coffe_machine_name':'Fin Machine','coffe_machine_address':'Main Street - London'}]}";
+		String JSONData = "{'coffe_machine_data' : [{'coffe_machine_name':'Fin Machine','coffe_machine_address':'Main Street - London'},{'coffe_machine_name':'Hey Machine','coffe_machine_address':'Even village - Mexico'}]}";
 		
 		return JSONData;
 	}
