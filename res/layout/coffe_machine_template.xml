@@ -3,9 +3,8 @@
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="20dip"
+    android:layout_marginBottom="0dip"
     android:layout_marginTop="0dp"
-    android:background="#fff"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -43,8 +42,10 @@
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#f7c781"
+        android:layout_height="@dimen/button_height"
+        android:background="@color/coffee_yellow"
+        android:color="#000"
+        android:layout_marginBottom="20dip"
         android:text="Reviews" />
 
 </LinearLayout>

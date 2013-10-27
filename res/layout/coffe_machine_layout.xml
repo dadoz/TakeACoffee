@@ -16,7 +16,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/button_height"
             android:layout_marginBottom="20dip"
             android:layout_marginTop="20dip"
             android:background="#fff"
@@ -25,13 +25,15 @@
             <TextView
                 android:id="@+id/TextView02"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
                 android:text="Politecnico di Torino" />
 
             <TextView
                 android:id="@+id/TextView01"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
                 android:layout_marginLeft="10dip"
                 android:text="01/10/13 - 18:00" />
         </LinearLayout>
@@ -86,9 +88,9 @@
         </LinearLayout> -->
 
         <LinearLayout
-            android:id="@+id/linearLayout1"
+            android:id="@+id/findCoffeeMachineLayoutId"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/button_height"
             android:layout_marginBottom="20dip"
             android:background="#fff"
             android:orientation="horizontal" >
@@ -105,14 +107,23 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dip"
                 android:gravity="center_vertical"
-                android:text="add more machine" />
+                android:text="find the coffee machine " />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/QRCodeScanButtonId"
+        <LinearLayout
+            android:id="@+id/coffeeMachineContainerLayoutId"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Button" />
+            android:layout_height="wrap_content" 
+            android:orientation="vertical"/>
+        
+        <Button
+            android:id="@+id/myReviewsButtonId"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:background="@color/coffee_yellow"
+            android:text="my reviews" />
+
     </LinearLayout>
+
 
 </LinearLayout>

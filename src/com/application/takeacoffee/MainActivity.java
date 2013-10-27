@@ -3,6 +3,7 @@ package com.application.takeacoffee;
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -27,7 +28,7 @@ public class MainActivity extends Activity {
 
 		
 		//STATIC BUTTON to try out scanCodeReader
-		Button QRCodeScanButton = (Button)findViewById(R.id.QRCodeScanButtonId);
+		LinearLayout QRCodeScanButton = (LinearLayout)findViewById(R.id.findCoffeeMachineLayoutId);
 		QRCodeScanButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -54,11 +55,23 @@ public class MainActivity extends Activity {
 				Log.e(TAG,"coffeMachineData - " + coffeMachineObj.address + coffeMachineObj.name);
 				
 				LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				LinearLayout layoutContainer = (LinearLayout)findViewById(R.id.layoutContainerId);
+				LinearLayout layoutContainer = (LinearLayout)findViewById(R.id.coffeeMachineContainerLayoutId);
 				layoutContainer.addView(inflater.inflate(R.layout.coffe_machine_template, null));  		
 				
 			}
 		}
+
+		Button  myReviewsButton= (Button)findViewById(R.id.myReviewsButtonId);
+		myReviewsButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(MainActivity.this, MyReviewsActivity.class);
+				startActivity(intent);
+			}
+		});
+
 	}
 	
 	
