@@ -1,5 +1,6 @@
 package com.application.takeacoffee;
 
+import android.widget.TextView;
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 
@@ -44,7 +45,7 @@ public class MainActivity extends Activity {
 		initView(context);
 	}
 
-	
+
 	
 	public void initView(Context context){
 		//get data from JSON
@@ -56,10 +57,15 @@ public class MainActivity extends Activity {
 				
 				LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				LinearLayout layoutContainer = (LinearLayout)findViewById(R.id.coffeeMachineContainerLayoutId);
-				layoutContainer.addView(inflater.inflate(R.layout.coffe_machine_template, null));  		
-				
-			}
-		}
+
+
+                View coffeMachineTemplate = inflater.inflate(R.layout.coffe_machine_template, null);
+                layoutContainer.addView(coffeMachineTemplate);
+                //set data to template
+                ((TextView)coffeMachineTemplate.findViewById(R.id.coffeMachineAddressTextId)).setText(coffeMachineObj.address);
+                ((TextView)coffeMachineTemplate.findViewById(R.id.coffeMachineNameTextId)).setText(coffeMachineObj.name);
+            }
+        }
 
 		Button  myReviewsButton= (Button)findViewById(R.id.myReviewsButtonId);
 		myReviewsButton.setOnClickListener(new OnClickListener() {
