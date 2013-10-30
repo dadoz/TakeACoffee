@@ -27,25 +27,24 @@
             android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/coffeMachineNameTextId"
+                android:id="@+id/reviewUsernameTextId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="coffe machine name" />
+                android:text="reviewer username" />
 
-            <TextView
+    <!--        <TextView
                 android:id="@+id/coffeMachineAddressTextId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="coffe machine address" />
+                android:text="coffe machine address" />  -->
         </LinearLayout>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/reviewsButtonId"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/button_height"
-        android:background="@drawable/button_shape"
-        android:textColor="@android:color/black"
-        android:text="Reviews" />
+
+    <TextView
+            android:id="@+id/reviewContentTextId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="review content" />
 
 </LinearLayout>

@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends Activity {
 	public static final String TAG ="MainActivity";
 	protected static final int ZBAR_SCANNER_REQUEST = 0;
@@ -30,7 +32,7 @@ public class MainActivity extends Activity {
 		
 		//STATIC BUTTON to try out scanCodeReader
 		LinearLayout QRCodeScanButton = (LinearLayout)findViewById(R.id.findCoffeeMachineLayoutId);
-		QRCodeScanButton.setOnClickListener(new OnClickListener() {
+/*		QRCodeScanButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -39,7 +41,7 @@ public class MainActivity extends Activity {
 				startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
 			}
 		});
-		
+*/
 		Context context = this.getApplicationContext();
 		
 		initView(context);
@@ -51,7 +53,7 @@ public class MainActivity extends Activity {
 		//get data from JSON
 		CoffeMachine[] coffeMachineArray = RetrieveDataFromServer.getCoffeMachineData();
 
-		if(coffeMachineArray.length != 0) {
+		if(coffeMachineArray != null &&  coffeMachineArray.length != 0) {
 			for(CoffeMachine coffeMachineObj : coffeMachineArray){
 				Log.e(TAG,"coffeMachineData - " + coffeMachineObj.address + coffeMachineObj.name);
 				
@@ -64,6 +66,17 @@ public class MainActivity extends Activity {
                 //set data to template
                 ((TextView)coffeMachineTemplate.findViewById(R.id.coffeMachineAddressTextId)).setText(coffeMachineObj.address);
                 ((TextView)coffeMachineTemplate.findViewById(R.id.coffeMachineNameTextId)).setText(coffeMachineObj.name);
+
+                final String coffeMachineId = coffeMachineObj.getId();
+                final ArrayList<Review> reviewsList= coffeMachineObj.getReviews();
+                ((Button)coffeMachineTemplate.findViewById(R.id.reviewsButtonId)).setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainActivity.this, CoffeMachineReviewsActivity.class);
+                        intent.putExtra("EXTRA_COFFE_MACHINE_ID", coffeMachineId);
+                        intent.putExtra("EXTRA_REVIEW_DATA", reviewsList);
+                        startActivity(intent);
+                    }
+                });
             }
         }
 
