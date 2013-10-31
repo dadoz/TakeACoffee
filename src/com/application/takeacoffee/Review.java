@@ -3,10 +3,10 @@ package com.application.takeacoffee;
 import java.util.ArrayList;
 
 public class Review {
-    public String id;
-	public String username;
-    public boolean feedback;
-    public String comment;
+    private String id;
+	private String username;
+    private boolean feedback;
+    private String comment;
 
 	public Review(String id, final String username, String comment, boolean feedback){
 

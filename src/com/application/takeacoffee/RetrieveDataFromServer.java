@@ -9,9 +9,9 @@ import java.util.ArrayList;
 public class RetrieveDataFromServer {
 	private final static String TAG ="retrieveDataFromServer";
 	
-	static CoffeMachine[] getCoffeMachineData(){
+	static ArrayList<CoffeMachine> getCoffeMachineData(){
 		String JSONData = getData();	
-		CoffeMachine[] dataArray = parseData(JSONData);
+		ArrayList<CoffeMachine> dataArray = parseData(JSONData);
 		return dataArray;
 	}
 	
@@ -21,13 +21,13 @@ public class RetrieveDataFromServer {
 		return JSONData;
 	}
 	
-	private static CoffeMachine[] parseData(String data) {
+	private static ArrayList<CoffeMachine> parseData(String data) {
 	    try {
 
 	    	JSONObject jsonObj = (JSONObject) new JSONObject(data);   	
 	    	JSONArray jsonArray = jsonObj.getJSONArray("coffe_machine_data");
 
-	    	CoffeMachine[] dataArray = new CoffeMachine[jsonArray.length()];
+	    	ArrayList<CoffeMachine> dataArray = new ArrayList<CoffeMachine>();
 	    	
 	    	for(int i=0; i<jsonArray.length(); i++) {
 	    		JSONObject coffeMachineObj = jsonArray.getJSONObject(i);
@@ -49,7 +49,7 @@ public class RetrieveDataFromServer {
                     reviewsList.add(new Review(reviewId, reviewUsername, reviewComment, reviewFeedback));
                 }
 
-                dataArray[i] = new CoffeMachine(coffeMachineId, name, address, reviewsList);
+                dataArray.add(new CoffeMachine(coffeMachineId, name, address, reviewsList));
 	    	}
 	        return dataArray;
 	    } catch (JSONException e) {

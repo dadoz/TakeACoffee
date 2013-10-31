@@ -3,9 +3,9 @@ package com.application.takeacoffee;
 import java.util.ArrayList;
 
 public class CoffeMachine {
-    public String id;
-	public String name;
-	public String address;
+    private String id;
+	private String name;
+	private String address;
     public ArrayList<Review> reviewsList;
 
 	public CoffeMachine(String id, final String name, String address , ArrayList<Review> reviewsList){
@@ -29,7 +29,7 @@ public class CoffeMachine {
         return this.id;
     }
 
-    public void addReview(Review reviewObj) {
+    public void addReviewList(Review reviewObj) {
         if(reviewsList == null) {
             reviewsList = new ArrayList<Review>();
         }
@@ -41,7 +41,7 @@ public class CoffeMachine {
         this.reviewsList = list;
     }
 
-    public ArrayList<Review> getReviews(){
+    public ArrayList<Review> getReviewList(){
         return this.reviewsList;
     }
     private String getUniqueID(){

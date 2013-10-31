@@ -51,11 +51,16 @@ public class MainActivity extends Activity {
 	
 	public void initView(Context context){
 		//get data from JSON
-		CoffeMachine[] coffeMachineArray = RetrieveDataFromServer.getCoffeMachineData();
+		//CoffeMachine[] coffeMachineList = RetrieveDataFromServer.getCoffeMachineData();
+        Log.e(TAG, "HEY ----this is my pid");
+        //get data from application
+        CoffeMachineDataStorageApplication coffeMachineApplication = ((CoffeMachineDataStorageApplication)this.getApplication());
+        ArrayList<CoffeMachine> coffeMachineList = coffeMachineApplication.coffeMachineData.getCoffeMachineList();
 
-		if(coffeMachineArray != null &&  coffeMachineArray.length != 0) {
-			for(CoffeMachine coffeMachineObj : coffeMachineArray){
-				Log.e(TAG,"coffeMachineData - " + coffeMachineObj.address + coffeMachineObj.name);
+
+		if(coffeMachineList != null &&  coffeMachineList.size() != 0) {
+			for(CoffeMachine coffeMachineObj : coffeMachineList) {
+				Log.e(TAG,"coffeMachineData - " + coffeMachineObj.getAddress() + coffeMachineObj.getName());
 				
 				LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				LinearLayout layoutContainer = (LinearLayout)findViewById(R.id.coffeeMachineContainerLayoutId);
@@ -64,16 +69,14 @@ public class MainActivity extends Activity {
                 View coffeMachineTemplate = inflater.inflate(R.layout.coffe_machine_template, null);
                 layoutContainer.addView(coffeMachineTemplate);
                 //set data to template
-                ((TextView)coffeMachineTemplate.findViewById(R.id.coffeMachineAddressTextId)).setText(coffeMachineObj.address);
-                ((TextView)coffeMachineTemplate.findViewById(R.id.coffeMachineNameTextId)).setText(coffeMachineObj.name);
+                ((TextView)coffeMachineTemplate.findViewById(R.id.coffeMachineAddressTextId)).setText(coffeMachineObj.getAddress());
+                ((TextView)coffeMachineTemplate.findViewById(R.id.coffeMachineNameTextId)).setText(coffeMachineObj.getName());
 
                 final String coffeMachineId = coffeMachineObj.getId();
-                final ArrayList<Review> reviewsList= coffeMachineObj.getReviews();
                 ((Button)coffeMachineTemplate.findViewById(R.id.reviewsButtonId)).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         Intent intent = new Intent(MainActivity.this, CoffeMachineReviewsActivity.class);
                         intent.putExtra("EXTRA_COFFE_MACHINE_ID", coffeMachineId);
-                        intent.putExtra("EXTRA_REVIEW_DATA", reviewsList);
                         startActivity(intent);
                     }
                 });
