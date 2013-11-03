@@ -1,6 +1,5 @@
 package com.application.takeacoffee;
 
-import java.util.ArrayList;
 
 public class Review {
     private String id;

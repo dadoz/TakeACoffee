@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#eee"
@@ -9,8 +9,6 @@
         android:id="@+id/layoutContainerId"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginLeft="5dip"
-        android:layout_marginRight="5dip"
         android:orientation="vertical" 
         >
 
@@ -34,7 +32,7 @@
                 android:layout_height="fill_parent"
                 android:gravity="center_vertical"
                 android:layout_marginLeft="10dip"
-                android:text="01/10/13 - 18:00" />
+                android:text="01/10/13 - 18:00" />            
         </LinearLayout>
 <!-- 
         <LinearLayout
@@ -91,15 +89,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:layout_marginBottom="20dip"
-            android:background="@color/coffee_yellow"
+            android:background="@color/coffe_dark"
             android:orientation="horizontal" >
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:src="@android:drawable/ic_menu_add" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -107,7 +98,15 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dip"
                 android:gravity="center_vertical"
-                android:text="find the coffee machine " />
+                android:textColor="@color/light_grey"
+                android:text="find the COFFEE MACHINE" />
+            <ImageView
+               android:id="@+id/imageView"
+               android:layout_width="60dp"
+               android:layout_height="60dp"
+               android:layout_marginLeft="40dp"
+               android:src="@drawable/qrcode" />
+            
         </LinearLayout>
 
         <LinearLayout
@@ -120,8 +119,8 @@
             android:id="@+id/myReviewsButtonId"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
-            android:background="@color/coffee_yellow"
-
+            android:background="@color/coffe_dark"
+			android:textColor="@color/light_grey"
 			android:layout_marginTop="20dp"
 	
             android:text="my reviews" />
@@ -129,4 +128,4 @@
     </LinearLayout>
 
 
-</LinearLayout>
+</ScrollView>

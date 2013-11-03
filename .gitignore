@@ -35,6 +35,7 @@ local.properties
 
 # Locally stored "Eclipse launch configurations"
 *.launch
+.amateras
 
 # CDT-specific
 .cproject

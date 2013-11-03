@@ -44,9 +44,9 @@ public class CoffeMachine {
     public ArrayList<Review> getReviewList(){
         return this.reviewsList;
     }
-    private String getUniqueID(){
-        java.util.Date date= new java.util.Date();
-        long timestamp = date.getTime();
-        return "cfID_" + timestamp;
-    }
+//    private String getUniqueID(){
+//        java.util.Date date= new java.util.Date();
+//        long timestamp = date.getTime();
+//        return "cfID_" + timestamp;
+//    }
 }

@@ -1,3 +1,6 @@
 [submodule "ZBarScanner"]
 	path = ZBarScanner
 	url = git://github.com/DushyanthMaguluru/ZBarScanner
+[submodule "ActionBarSherlock"]
+	path = ActionBarSherlock
+	url = git://github.com/JakeWharton/ActionBarSherlock

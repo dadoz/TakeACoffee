@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class RetrieveDataFromServer {
-	private final static String TAG ="retrieveDataFromServer";
+//	private final static String TAG ="retrieveDataFromServer";
 	
 	static ArrayList<CoffeMachine> getCoffeMachineData(){
 		String JSONData = getData();	
@@ -16,7 +16,7 @@ public class RetrieveDataFromServer {
 	}
 	
 	private static String getData(){
-		String JSONData = "{'coffe_machine_data' : [{'coffe_machine_id':'STATIC_COFFEMACHINEID_1', 'coffe_machine_name':'Fin Machine','coffe_machine_address':'Main Street - London', 'coffe_machine_reviews' : [] }, {'coffe_machine_id':'STATIC_COFFEMACHINEID_2','coffe_machine_name':'Hey Machine','coffe_machine_address':'Even village - Mexico', 'coffe_machine_reviews' : [{'review_id':'STATIC_REVIEWID_1', 'review_username':'Mike pp', 'review_comment':'this is the comment on machine', 'review_feedback':true}, {'review_id':'STATIC_REVIEWID_2', 'review_username':'Henry d', 'review_comment':'this is the comment on machine', 'review_feedback':false}] }] }";
+		String JSONData = "{'coffe_machine_data' : [{'coffe_machine_id':'STATIC_COFFEMACHINEID_1', 'coffe_machine_name':'Fin Machine','coffe_machine_address':'Main Street - London', 'coffe_machine_reviews' : [] }, {'coffe_machine_id':'STATIC_COFFEMACHINEID_2','coffe_machine_name':'Hey Machine','coffe_machine_address':'Even village - Mexico', 'coffe_machine_reviews' : [{'review_id':'STATIC_REVIEWID_1', 'review_username':'Mike pp', 'review_comment':'this is the comment on machine', 'review_feedback':true}, {'review_id':'STATIC_REVIEWID_2', 'review_username':'Henry d', 'review_comment':'this is the comment on machine cos I want to say thats nothing in front of your problems didnt u agree with me?', 'review_feedback':false}] }] }";
 		
 		return JSONData;
 	}
