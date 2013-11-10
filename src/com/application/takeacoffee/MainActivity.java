@@ -8,7 +8,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 
-
 import android.os.Bundle;
 //import android.app.Activity;
 import android.content.Context;
@@ -106,7 +105,7 @@ public class MainActivity extends SherlockActivity {
                 ((TextView)coffeMachineTemplate.findViewById(R.id.coffeMachineNameTextId)).setText(coffeMachineObj.getName());
 
                 final String coffeMachineId = coffeMachineObj.getId();
-                ((Button)coffeMachineTemplate.findViewById(R.id.reviewsButtonId)).setOnClickListener(new View.OnClickListener() {
+                ((LinearLayout)coffeMachineTemplate.findViewById(R.id.reviewsButtonId)).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                     	getCoffeMachineReviewById(coffeMachineId, true);
                     }

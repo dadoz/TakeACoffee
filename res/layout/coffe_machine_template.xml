@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linearLayout"
+	android:id="@+id/reviewsButtonId"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="0dip"
@@ -43,14 +43,31 @@
 				android:textColor="@android:color/darker_gray"
                 android:text="coffe machine address" />
         </LinearLayout>
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            
+            android:layout_marginLeft="50dip"
+            
+            android:src="@drawable/left_arrow" />
+        
     </LinearLayout>
-
-    <Button
+	<TextView
+        android:layout_width="fill_parent"
+        android:layout_height="30dip"
+        android:gravity="center_vertical"
+		android:textColor="@android:color/white"
+		android:background="@color/coffe_dark"
+        android:text="tap on to get its reviews" />
+    
+<!--     <Button
         android:id="@+id/reviewsButtonId"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"
         android:background="@color/light_grey"
         android:text="Reviews"
         android:textColor="@color/coffe_dark" />
-
+ -->
 </LinearLayout>
