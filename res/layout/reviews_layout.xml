@@ -11,8 +11,7 @@
         android:layout_marginBottom="20dp"
         android:background="@android:color/white"
         android:orientation="vertical"
-        android:padding="10dp"
-        android:paddingBottom="20dp" >
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,47 +28,58 @@
                 android:textColor="@color/light_grey"
                 android:textSize="16dp" />
 
-            <ImageButton
+<!--             <ImageButton
                 android:id="@+id/imageButton1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_add" />
+                android:src="@android:drawable/ic_menu_add" /> -->
         </LinearLayout>
-
-        <EditText
-            android:id="@+id/editText1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:ems="10"
-            android:hint="insert your review"
-            android:lines="3" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="vertical" 
+			android:padding="10dp">
 
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/button_height"
-                android:layout_marginRight="1dp"
-                android:layout_weight="1"
-                android:background="@color/light_grey"
-                android:text="post"
-                android:textColor="@android:color/black" />
+            <EditText
+                android:id="@+id/editText1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:ems="10"
+                android:hint="insert your review"
+                android:lines="3" >
 
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/button_height"
-                android:layout_marginLeft="1dp"
-                android:layout_weight="1"
-                android:background="@color/light_grey"
-                android:text="clear"
-                android:textColor="@android:color/black" />
+                <requestFocus />
+            </EditText>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/light_grey"
+                    android:text="post"
+                    android:textColor="@android:color/black" />
+
+                <Button
+                    android:id="@+id/button1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_marginLeft="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/light_grey"
+                    android:text="clear"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout

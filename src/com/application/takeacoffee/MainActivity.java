@@ -17,7 +17,7 @@ import android.view.LayoutInflater;
 //import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+//import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -39,7 +39,7 @@ public class MainActivity extends SherlockActivity {
 
 		
 		//STATIC BUTTON to try out scanCodeReader
-		LinearLayout QRCodeScanButton = (LinearLayout)findViewById(R.id.findCoffeeMachineLayoutId);
+/*		LinearLayout QRCodeScanButton = (LinearLayout)findViewById(R.id.findCoffeeMachineLayoutId);
 		QRCodeScanButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -48,7 +48,7 @@ public class MainActivity extends SherlockActivity {
 				Intent intent = new Intent(MainActivity.this, ZBarScannerActivity.class);
 				startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
 			}
-		});
+		});*/
 		Context context = this.getApplicationContext();
 		
 		initView(context);
@@ -113,7 +113,7 @@ public class MainActivity extends SherlockActivity {
             }
         }
 
-		Button  myReviewsButton= (Button)findViewById(R.id.myReviewsButtonId);
+/*		Button  myReviewsButton= (Button)findViewById(R.id.myReviewsButtonId);
 		myReviewsButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -123,7 +123,7 @@ public class MainActivity extends SherlockActivity {
 				startActivity(intent);
 			}
 		});
-
+*/
 	}
 	
 	public boolean getCoffeMachineReviewById(String coffeMachineId, boolean QRCOdeAcquisitionFlag){

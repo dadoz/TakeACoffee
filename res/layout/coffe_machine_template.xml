@@ -7,12 +7,13 @@
     android:layout_marginTop="0dip"
     android:background="@drawable/review_shape"
     android:orientation="vertical"
-    android:padding="10dp" >
+>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/tag_height"
-        android:orientation="horizontal" >
+        android:orientation="horizontal" 
+        android:padding="10dp" >
 
         <ImageView
             android:id="@+id/imageView"
@@ -56,10 +57,11 @@
     </LinearLayout>
 	<TextView
         android:layout_width="fill_parent"
-        android:layout_height="30dip"
+        android:layout_height="40dip"
+        android:layout_marginBottom="6dip"
         android:gravity="center_vertical"
-		android:textColor="@android:color/white"
-		android:background="@color/coffe_dark"
+		android:textColor="@color/dark_grey"
+		android:background="@color/light_grey"
         android:text="tap on to get its reviews" />
     
 <!--     <Button
