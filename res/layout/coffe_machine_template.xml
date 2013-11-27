@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-				android:textColor="@android:color/darker_gray"
+				android:textColor="@color/coffe_ligth"
                 android:text="coffe machine address" />
         </LinearLayout>
         <ImageView
@@ -55,15 +55,15 @@
             android:src="@drawable/left_arrow" />
         
     </LinearLayout>
-	<TextView
+<!-- 	<TextView
         android:layout_width="fill_parent"
         android:layout_height="40dip"
-        android:layout_marginBottom="6dip"
+        android:layout_marginBottom="1dip"
         android:gravity="center_vertical"
-		android:textColor="@color/dark_grey"
-		android:background="@color/light_grey"
+		android:textColor="@android:color/white"
+		android:background="@color/coffe_ligth"
         android:text="tap on to get its reviews" />
-    
+     -->
 <!--     <Button
         android:id="@+id/reviewsButtonId"
         android:layout_width="match_parent"

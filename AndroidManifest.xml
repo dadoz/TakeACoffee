@@ -29,6 +29,10 @@
 	        android:screenOrientation="landscape"
 	        android:label="@string/app_name" />
 
+        <activity android:name="com.application.takeacoffee.AddReviewActivity"
+	        android:icon="@drawable/ic_launcher"
+	        android:label="@string/app_name"
+	        android:theme="@style/AppTheme" />
         <activity android:name="com.application.takeacoffee.MyReviewsActivity"
 	        android:icon="@drawable/ic_launcher"
 	        android:label="@string/app_name"

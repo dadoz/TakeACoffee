@@ -11,7 +11,9 @@ import java.util.ArrayList;
  */
 public class CoffeMachineDataStorage {
     private ArrayList<CoffeMachine> coffeMachineList;
-
+    private boolean registeredUserStatus = false;
+    private User registeredUser;    
+    
     public CoffeMachineDataStorage() {
         //get data from JSON
         coffeMachineList = RetrieveDataFromServer.getCoffeMachineData();
@@ -29,4 +31,24 @@ public class CoffeMachineDataStorage {
         }
         return null;
     }
+
+    public void initRegisteredUser(String username){
+    	String id="fakeId";
+    	this.registeredUser = new User(id, username);
+        registeredUserStatus = true;
+
+    }
+
+    public boolean getRegisteredUserStatus(){
+    	return this.registeredUserStatus;
+    }
+
+    public User getRegisteredUser(){
+    	return this.registeredUser;
+    }
+
+    public void setRegisteredUser(String username){
+    	this.registeredUser.setUsername(username);
+    }
+
 }

@@ -11,6 +11,7 @@ public class RetrieveDataFromServer {
 	
 	static ArrayList<CoffeMachine> getCoffeMachineData(){
 		String JSONData = getData();	
+		
 		ArrayList<CoffeMachine> dataArray = parseData(JSONData);
 		return dataArray;
 	}

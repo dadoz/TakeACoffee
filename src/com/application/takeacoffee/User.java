@@ -33,5 +33,8 @@ public class User {
 	public void setReviewList(ArrayList<Review> reviewsList){
 		this.reviewsList = reviewsList;
 	}
+	public void setUsername(String username){
+		this.username = username;
+	}
 
 }
