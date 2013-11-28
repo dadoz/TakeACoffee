@@ -12,7 +12,8 @@ import java.util.ArrayList;
 public class CoffeMachineDataStorage {
     private ArrayList<CoffeMachine> coffeMachineList;
     private boolean registeredUserStatus = false;
-    private User registeredUser;    
+    private User registeredUser;
+    private String currentCoffeMachineSelectedId;
     
     public CoffeMachineDataStorage() {
         //get data from JSON
@@ -21,6 +22,13 @@ public class CoffeMachineDataStorage {
 
     public ArrayList<CoffeMachine> getCoffeMachineList(){
         return coffeMachineList;
+    }
+
+    public CoffeMachine getCoffeMachineById(String id){
+    	if(coffeMachineList != null && coffeMachineList.contains(id)){
+    		return coffeMachineList.get(coffeMachineList.indexOf(id));
+    	}
+        return null;
     }
 
     public ArrayList<Review> getReviewListByCoffeMachineId(String coffeMachineId){
@@ -50,5 +58,12 @@ public class CoffeMachineDataStorage {
     public void setRegisteredUser(String username){
     	this.registeredUser.setUsername(username);
     }
+    
+    public void setCurrentCoffeMachineSelectedId(String id){
+    	currentCoffeMachineSelectedId = id;
+    }
 
+    public String getCurrentCoffeMachineSelectedId(){
+    	return this.currentCoffeMachineSelectedId;
+    }
 }

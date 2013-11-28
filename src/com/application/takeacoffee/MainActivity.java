@@ -10,8 +10,6 @@ import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 
 import android.os.Bundle;
-import android.preference.SwitchPreference;
-import android.app.Application;
 //import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

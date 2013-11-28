@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +21,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.application.commons.Common;
@@ -47,10 +47,13 @@ public class CoffeMachineReviewsActivity extends SherlockActivity {
     
 	private void initView(){
         try{
-            String coffeMachineId = this.getIntent().getExtras().getString("EXTRA_COFFE_MACHINE_ID");
-
+            
+        	//store coffeMachineId
+        	String coffeMachineId = this.getIntent().getExtras().getString("EXTRA_COFFE_MACHINE_ID");
 
             coffeMachineApplication = ((CoffeMachineDataStorageApplication)this.getApplication());
+            coffeMachineApplication.coffeMachineData.setCurrentCoffeMachineSelectedId(coffeMachineId);
+
             ArrayList<Review> reviewList = coffeMachineApplication.coffeMachineData.getReviewListByCoffeMachineId(coffeMachineId);
 
             if(reviewList != null && reviewList.size() != 0) {
@@ -92,29 +95,42 @@ public class CoffeMachineReviewsActivity extends SherlockActivity {
 					Log.e(TAG, ">>> please insert username at least");
 					
 					//TEST
-					String username ="dadoz";
+					
+//					String username ="dadoz";
+					EditText usernameEditText = (EditText)findViewById(R.id.usernameEditTextId);
+					String username = usernameEditText.getText().toString();
+					
 					SharedPreferences sharedPref = getPreferences(0);
 					sharedPref.edit().putString(Common.REGISTERED_USERNAME, username);
 					coffeMachineApplication.coffeMachineData.initRegisteredUser(username);
 					
-	//				SherlockDialogFragment dialog = new RegisterUserDialogFragment();
-//					dialog.show(manager, TAG);
+					DialogFragment dialog = new RegisterUserDialogFragment();
+					dialog.show(getFragmentManager(), TAG);
+				} else {
+					Intent intent = new Intent(CoffeMachineReviewsActivity.this,AddReviewActivity.class);
+					startActivity(intent);
 				}
-				Intent intent = new Intent(CoffeMachineReviewsActivity.this,AddReviewActivity.class);
-				startActivity(intent);
 			}
 		});
 	}
     
-	public class RegisterUserDialogFragment extends SherlockDialogFragment {
+	public class RegisterUserDialogFragment extends DialogFragment {
 	    @Override
 	    public Dialog onCreateDialog(Bundle savedInstanceState) {
 	        // Use the Builder class for convenient dialog construction
-	        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-	        builder.setMessage("hey message")
+	        AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+	        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+	        // Inflate and set the layout for the dialog
+	        // Pass null as the parent view because its going in the dialog layout
+//	        builder.setMessage("hey message")
+	        builder.setView(inflater.inflate(R.layout.dialog_add_username, null))
 	               .setPositiveButton("ok", new DialogInterface.OnClickListener() {
 	                   public void onClick(DialogInterface dialog, int id) {
 	                       // FIRE ZE MISSILES!
+	       				Intent intent = new Intent(CoffeMachineReviewsActivity.this,AddReviewActivity.class);
+	       				startActivity(intent);
+
 	                   }
 	               })
 	               .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -136,14 +152,14 @@ public class CoffeMachineReviewsActivity extends SherlockActivity {
             .setIcon(android.R.drawable.ic_menu_save)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
 
-        menu.add("Search")
+/*        menu.add("Search")
             .setIcon(android.R.drawable.ic_menu_search)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
         menu.add("Refresh")
             .setIcon(android.R.drawable.ic_menu_rotate)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
+*/
         return true;
     }
 

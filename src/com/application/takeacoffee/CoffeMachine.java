@@ -29,7 +29,7 @@ public class CoffeMachine {
         return this.id;
     }
 
-    public void addReviewList(Review reviewObj) {
+    public void addReviewObj(Review reviewObj) {
         if(reviewsList == null) {
             reviewsList = new ArrayList<Review>();
         }
