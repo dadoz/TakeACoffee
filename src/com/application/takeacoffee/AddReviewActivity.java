@@ -1,18 +1,26 @@
 package com.application.takeacoffee;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.application.commons.Common;
+import com.application.commons.Common.ReviewStatusEnum;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class AddReviewActivity extends SherlockActivity{
 	
+	protected static final String TAG = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
         setTheme(R.style.Theme_Sherlock_Light_DarkActionBar); //Used for theme switching in samples
@@ -28,26 +36,88 @@ public class AddReviewActivity extends SherlockActivity{
 		final String username = storedData.coffeMachineData.getRegisteredUser().getUsername();
 		
 		((TextView)findViewById(R.id.registeredUsernameTextViewId)).setText(username);
-
 		String currentCoffeMachineSelectedId = storedData.coffeMachineData.getCurrentCoffeMachineSelectedId();
 		final CoffeMachine currentCoffeMachineObj = storedData.coffeMachineData.getCoffeMachineById(currentCoffeMachineSelectedId);
 
+		final ReviewStatusEnum reviewStatusChoiced = ReviewStatusEnum.NOT_SET;
+		
+		//static def on RadioButton listener
+		final CheckBox awefulRadioButton = (CheckBox)findViewById(R.id.awefulCheckBoxId);
+		final CheckBox notBadRadioButton  = (CheckBox)findViewById(R.id.notBadCheckBoxId);
+		final CheckBox goodRadioButton  = (CheckBox)findViewById(R.id.goodCheckBoxId);
+
+		awefulRadioButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				awefulRadioButton.setChecked(true);
+				notBadRadioButton.setChecked(false);
+				goodRadioButton.setChecked(false);
+			}
+		});
+		
+		notBadRadioButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				notBadRadioButton.setChecked(true);
+				awefulRadioButton.setChecked(false);
+				goodRadioButton.setChecked(false);
+				
+			}
+		});
+		
+		goodRadioButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				goodRadioButton.setChecked(true);
+				notBadRadioButton.setChecked(false);
+				awefulRadioButton.setChecked(false);
+			}
+		});
+
+
+		
 		Button postButton = (Button)findViewById(R.id.postButtonId);
 		postButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				String reviewMessage = ((EditText)findViewById(R.id.reviewMessageEditTextId)).getText().toString();
+				
+				
+				ReviewStatusEnum reviewStatus = ReviewStatusEnum.NOT_SET;
+				if(awefulRadioButton.isChecked()){
+					reviewStatus = ReviewStatusEnum.AWEFUL;
+				} else if(notBadRadioButton.isChecked()){
+					reviewStatus = ReviewStatusEnum.NOT_BAD;					
+				} else if(goodRadioButton.isChecked()){
+					reviewStatus = ReviewStatusEnum.GOOD;
+				}
+				
 				//create new review Obj by data 
-				Review reviewObj = new Review("fake_id", username, reviewMessage, true);
-				currentCoffeMachineObj.addReviewObj(reviewObj);
+				Review reviewObj = new Review("fake_id", username, reviewMessage, reviewStatus);
+	
+				if(currentCoffeMachineObj != null){
+					currentCoffeMachineObj.addReviewObj(reviewObj);
+					setResult(RESULT_OK);
+					finish();
+				} else {
+					Log.e(TAG,"coffeMachine not found - trace error");
+				}
 				//encodeToJSONData();
 				//create JSON obj for this message
 				
 
 			}
 		});
+		
 	}
+	
+	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {

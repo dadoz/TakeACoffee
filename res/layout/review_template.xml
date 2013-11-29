@@ -6,51 +6,65 @@
     android:layout_marginBottom="0dip"
     android:layout_marginTop="0dip"
     android:background="@drawable/review_shape"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="10dp" >
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/tag_height"
-        android:orientation="horizontal" >
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/user_icon" />
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#fff"
-            android:orientation="vertical" >
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tag_height"
+            android:orientation="horizontal" >
 
-            <TextView
-                android:id="@+id/reviewUsernameTextId"
+            <ImageView
+                android:id="@+id/imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:src="@drawable/user_icon" />
 
-                android:textColor="@color/coffe_dark"
-                android:textSize="20sp"
-                android:layout_marginLeft="5dp"
-                android:text="reviewer username" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#fff"
+                android:orientation="vertical" >
 
-    <!--        <TextView
+                <TextView
+                    android:id="@+id/reviewUsernameTextId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="reviewer username"
+                    android:textColor="@color/coffe_dark"
+                    android:textSize="20sp" />
+
+                <!--
+                <TextView
                 android:id="@+id/coffeMachineAddressTextId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="coffe machine address" />  -->
+                android:text="coffe machine address" />
+                -->
+            </LinearLayout>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/reviewCommentTextId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="review content"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
     </LinearLayout>
 
-
-    <TextView
-		android:id="@+id/reviewCommentTextId"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:textColor="@android:color/black"
-		android:textSize="16sp"
-		android:text="review content" />
+    <LinearLayout
+        android:id="@+id/reviewStatusLabelLayoutId"
+        android:layout_width="20dip"
+        android:layout_height="match_parent"
+        android:background="@color/light_black"
+        android:orientation="vertical" />
 
 </LinearLayout>

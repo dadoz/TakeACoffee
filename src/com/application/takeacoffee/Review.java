@@ -1,18 +1,23 @@
 package com.application.takeacoffee;
 
+import com.application.commons.Common.ReviewStatusEnum;
+
+
 
 public class Review {
+	
     private String id;
 	private String username;
-    private boolean feedback;
+//    private boolean feedback;
+	private ReviewStatusEnum status;
     private String comment;
 
-	public Review(String id, final String username, String comment, boolean feedback){
+	public Review(String id, final String username, String comment, ReviewStatusEnum notBad){
 
         //this.id = getUniqueID();
         this.id = id;
 		this.username = username;
-        this.feedback = feedback;
+        this.status = notBad;
         this.comment = comment;
     }
 
@@ -31,13 +36,12 @@ public class Review {
     public void setComment(String value) {
         this.comment = value;
     }
-
-    public void setFeedback(boolean value) {
-        this.feedback = value;
+    public void setFeedback(ReviewStatusEnum value) {
+        this.status = value;
     }
 
-    public boolean getFeedback() {
-        return this.feedback;
+    public ReviewStatusEnum getFeedback() {
+        return this.status;
     }
 
 }

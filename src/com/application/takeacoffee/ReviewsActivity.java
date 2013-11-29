@@ -13,6 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,8 +35,9 @@ import com.application.commons.Common;
  * Time: 12:57 PM
  * To change this template use File | Settings | File Templates.
  */
-public class CoffeMachineReviewsActivity extends SherlockActivity {
-    public static String TAG = "CoffeMachineReviewsTAG";
+public class ReviewsActivity extends SherlockActivity {
+    protected static final int ADD_REVIEW_RESULT = 99;
+	public static String TAG = "CoffeMachineReviewsTAG";
     private CoffeMachineDataStorageApplication coffeMachineApplication;
     
     public void onCreate(Bundle savedInstanceState) {
@@ -93,25 +97,17 @@ public class CoffeMachineReviewsActivity extends SherlockActivity {
 				// TODO Auto-generated method stub
 				if(!coffeMachineApplication.coffeMachineData.getRegisteredUserStatus()){
 					Log.e(TAG, ">>> please insert username at least");
-					
 					//TEST
-					
-//					String username ="dadoz";
-					EditText usernameEditText = (EditText)findViewById(R.id.usernameEditTextId);
-					String username = usernameEditText.getText().toString();
-					
-					SharedPreferences sharedPref = getPreferences(0);
-					sharedPref.edit().putString(Common.REGISTERED_USERNAME, username);
-					coffeMachineApplication.coffeMachineData.initRegisteredUser(username);
-					
+//   					String username ="dadoz";
 					DialogFragment dialog = new RegisterUserDialogFragment();
-					dialog.show(getFragmentManager(), TAG);
+					dialog.show(getFragmentManager(), TAG);					
 				} else {
-					Intent intent = new Intent(CoffeMachineReviewsActivity.this,AddReviewActivity.class);
-					startActivity(intent);
+					Intent intent = new Intent(ReviewsActivity.this,AddReviewActivity.class);
+					startActivityForResult(intent, ADD_REVIEW_RESULT);
 				}
 			}
 		});
+		
 	}
     
 	public class RegisterUserDialogFragment extends DialogFragment {
@@ -127,9 +123,16 @@ public class CoffeMachineReviewsActivity extends SherlockActivity {
 	        builder.setView(inflater.inflate(R.layout.dialog_add_username, null))
 	               .setPositiveButton("ok", new DialogInterface.OnClickListener() {
 	                   public void onClick(DialogInterface dialog, int id) {
-	                       // FIRE ZE MISSILES!
-	       				Intent intent = new Intent(CoffeMachineReviewsActivity.this,AddReviewActivity.class);
-	       				startActivity(intent);
+	                	   
+	                	   EditText usernameEditText = (EditText)((AlertDialog)dialog).findViewById(R.id.usernameEditTextId);          	   
+	                	   String username = usernameEditText.getText().toString();
+	
+	                	   SharedPreferences sharedPref = getPreferences(0);
+	                	   sharedPref.edit().putString(Common.REGISTERED_USERNAME, username);
+	                	   coffeMachineApplication.coffeMachineData.initRegisteredUser(username);
+	                	   
+	                	   Intent intent = new Intent(ReviewsActivity.this,AddReviewActivity.class);	                	   
+	                	   ReviewsActivity.this.startActivityForResult(intent, ADD_REVIEW_RESULT);
 
 	                   }
 	               })
@@ -142,7 +145,19 @@ public class CoffeMachineReviewsActivity extends SherlockActivity {
 	        return builder.create();
 	    }
 	}
-	
+	 @Override
+     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		 super.onActivityResult(requestCode, resultCode, data);
+		 
+		 if(resultCode == RESULT_OK){
+			 //get view list
+			 if(requestCode == ADD_REVIEW_RESULT){
+	             LinearLayout layoutContainer = (LinearLayout)ReviewsActivity.this.findViewById(R.id.reviewsContainerLayoutId);
+	             layoutContainer.removeAllViews();
+	             initView();
+			 }
+		 }
+	}
 	
     @Override
     public final boolean onCreateOptionsMenu(Menu menu) {

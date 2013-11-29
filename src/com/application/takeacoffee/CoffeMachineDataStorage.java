@@ -25,8 +25,12 @@ public class CoffeMachineDataStorage {
     }
 
     public CoffeMachine getCoffeMachineById(String id){
-    	if(coffeMachineList != null && coffeMachineList.contains(id)){
-    		return coffeMachineList.get(coffeMachineList.indexOf(id));
+    	if(coffeMachineList != null){
+    		for(CoffeMachine coffeMachineObj: coffeMachineList) {
+    			if((coffeMachineObj.getId()).equals(id)){
+            		return coffeMachineObj;    				
+    			}
+    		}
     	}
         return null;
     }

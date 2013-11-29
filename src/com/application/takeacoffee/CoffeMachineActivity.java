@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends SherlockActivity {
+public class CoffeMachineActivity extends SherlockActivity {
 	public static final String TAG ="MainActivity";
 	protected static final int ZBAR_SCANNER_REQUEST = 0;
 	private static final String EMPTY_VALUE = "EMPTY_VALUE";
@@ -69,7 +69,7 @@ public class MainActivity extends SherlockActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(MainActivity.this, ZBarScannerActivity.class);
+				Intent intent = new Intent(CoffeMachineActivity.this, ZBarScannerActivity.class);
 				startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
 			}
 		});
@@ -129,7 +129,7 @@ public class MainActivity extends SherlockActivity {
 			}
 		}
 		
-	    Intent intent = new Intent(MainActivity.this, CoffeMachineReviewsActivity.class);
+	    Intent intent = new Intent(CoffeMachineActivity.this, ReviewsActivity.class);
 	    intent.putExtra("EXTRA_COFFE_MACHINE_ID", coffeMachineId);
 	    startActivity(intent);
 	    return true;
