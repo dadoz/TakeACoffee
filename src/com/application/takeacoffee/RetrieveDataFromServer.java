@@ -53,13 +53,13 @@ public class RetrieveDataFromServer {
 							.getString("review_username");
 					String reviewComment = reviewObj
 							.getString("review_comment");
-					int reviewStatus = reviewObj
-							.getInt("review_status");
+//					int reviewStatus = reviewObj
+	//						.getInt("review_status");
 
 					
 					
 					reviewsList.add(new Review(reviewId, reviewUsername,
-							reviewComment, reviewStatus));
+							reviewComment, ReviewStatusEnum.NOT_BAD));
 				}
 
 				dataArray.add(new CoffeMachine(coffeMachineId, name, address,
