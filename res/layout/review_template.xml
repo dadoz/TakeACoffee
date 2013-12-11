@@ -64,7 +64,6 @@
         android:id="@+id/reviewStatusLabelLayoutId"
         android:layout_width="20dip"
         android:layout_height="match_parent"
-        android:background="@color/light_black"
         android:orientation="vertical" />
 
 </LinearLayout>

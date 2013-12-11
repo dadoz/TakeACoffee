@@ -40,7 +40,7 @@ public class Review {
         this.status = value;
     }
 
-    public ReviewStatusEnum getFeedback() {
+    public ReviewStatusEnum getStatus() {
         return this.status;
     }
 

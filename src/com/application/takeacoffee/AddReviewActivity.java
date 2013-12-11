@@ -4,9 +4,16 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.application.commons.Common;
 import com.application.commons.Common.ReviewStatusEnum;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
@@ -101,12 +108,18 @@ public class AddReviewActivity extends SherlockActivity{
 				//create new review Obj by data 
 				Review reviewObj = new Review("fake_id", username, reviewMessage, reviewStatus);
 	
-				if(currentCoffeMachineObj != null){
+				Log.e(TAG,"<<<<<<<<<" + reviewMessage + "--");
+				if(reviewMessage.compareTo(" ") == 0){
+					Log.e(TAG,"hey");					
+				}
+				if(currentCoffeMachineObj != null && reviewStatus != ReviewStatusEnum.NOT_SET){
 					currentCoffeMachineObj.addReviewObj(reviewObj);
 					setResult(RESULT_OK);
 					finish();
 				} else {
 					Log.e(TAG,"coffeMachine not found - trace error");
+					NoValidReviewDialogFragment noValidReviewDialog = new NoValidReviewDialogFragment();	
+					noValidReviewDialog.show(getFragmentManager(), TAG);
 				}
 				//encodeToJSONData();
 				//create JSON obj for this message
@@ -116,7 +129,24 @@ public class AddReviewActivity extends SherlockActivity{
 		});
 		
 	}
-	
+	public class NoValidReviewDialogFragment extends DialogFragment {
+	    @Override
+	    public Dialog onCreateDialog(Bundle savedInstanceState) {
+	        // Use the Builder class for convenient dialog construction
+	        AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+
+	        // Inflate and set the layout for the dialog
+	        // Pass null as the parent view because its going in the dialog layout
+	        builder.setMessage("please insert at least one messge or feedback")
+	               .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+	                   public void onClick(DialogInterface dialog, int id) {
+	                	   
+	                   }
+	               });
+	        // Create the AlertDialog object and return it
+	        return builder.create();
+	    }
+	}
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,

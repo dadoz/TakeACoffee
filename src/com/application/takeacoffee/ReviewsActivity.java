@@ -13,9 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +24,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.application.commons.Common;
+import com.application.commons.Common.ReviewStatusEnum;
 
 /**
  * Created with IntelliJ IDEA.
@@ -72,6 +70,13 @@ public class ReviewsActivity extends SherlockActivity {
                     //set data to template
                     ((TextView)reviewTemplate.findViewById(R.id.reviewUsernameTextId)).setText(reviewObj.getUsername());
                     ((TextView)reviewTemplate.findViewById(R.id.reviewCommentTextId)).setText(reviewObj.getComment());
+                    if(reviewObj.getStatus() == ReviewStatusEnum.AWEFUL){
+                        ((LinearLayout)reviewTemplate.findViewById(R.id.reviewStatusLabelLayoutId)).setBackgroundColor(getResources().getColor(R.color.light_black));                    	
+                    } else if(reviewObj.getStatus() == ReviewStatusEnum.NOT_BAD){
+                    	((LinearLayout)reviewTemplate.findViewById(R.id.reviewStatusLabelLayoutId)).setBackgroundColor(getResources().getColor(R.color.light_red));
+                    } else if(reviewObj.getStatus() == ReviewStatusEnum.GOOD) {
+                    	((LinearLayout)reviewTemplate.findViewById(R.id.reviewStatusLabelLayoutId)).setBackgroundColor(getResources().getColor(R.color.light_green));
+                    }
                 }
 
             } else {
