@@ -1,4 +1,4 @@
-package com.application.takeacoffee;
+package com.application.datastorage;
 
 import android.app.Application;
 
@@ -10,5 +10,5 @@ import android.app.Application;
  * To change this template use File | Settings | File Templates.
  */
 public class CoffeMachineDataStorageApplication extends Application {
-    CoffeMachineDataStorage coffeMachineData = new CoffeMachineDataStorage();
+    public CoffeMachineDataStorage coffeMachineData = new CoffeMachineDataStorage();
 }

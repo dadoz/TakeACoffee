@@ -25,6 +25,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.application.commons.Common;
 import com.application.commons.Common.ReviewStatusEnum;
+import com.application.datastorage.CoffeMachineDataStorageApplication;
+import com.application.models.Review;
 
 /**
  * Created with IntelliJ IDEA.

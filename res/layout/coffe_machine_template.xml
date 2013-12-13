@@ -9,14 +9,14 @@
     android:orientation="vertical"
 >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/tag_height"
         android:orientation="horizontal" 
         android:padding="10dp" >
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/coffeeIconId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/coffee_cup" />
@@ -24,8 +24,10 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#fff"
-            android:orientation="vertical" >
+			android:layout_centerVertical="true"
+			android:layout_toRightOf="@id/coffeeIconId"
+            android:layout_marginLeft="10dp"
+			android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/coffeMachineNameTextId"
@@ -33,15 +35,13 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/coffe_dark"
                 android:textSize="20sp"
-                android:layout_marginLeft="5dp"
                 android:text="coffe machine name" />
 
             <TextView
                 android:id="@+id/coffeMachineAddressTextId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-				android:textColor="@color/coffe_ligth"
+    			android:textColor="@color/coffe_ligth"
                 android:text="coffe machine address" />
         </LinearLayout>
         <ImageView
@@ -50,11 +50,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             
-            android:layout_marginLeft="50dip"
-            
+            android:layout_marginRight="10dip"
+			android:layout_alignParentRight="true"            
+			android:layout_centerVertical="true"
             android:src="@drawable/left_arrow" />
         
-    </LinearLayout>
+    </RelativeLayout>
 <!-- 	<TextView
         android:layout_width="fill_parent"
         android:layout_height="40dip"

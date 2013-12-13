@@ -1,6 +1,10 @@
-package com.application.takeacoffee;
+package com.application.datastorage;
 
 import java.util.ArrayList;
+
+import com.application.models.CoffeMachine;
+import com.application.models.Review;
+import com.application.models.User;
 
 /**
  * Created with IntelliJ IDEA.

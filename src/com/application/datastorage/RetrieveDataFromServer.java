@@ -1,10 +1,12 @@
-package com.application.takeacoffee;
+package com.application.datastorage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.application.commons.Common.ReviewStatusEnum;
+import com.application.models.CoffeMachine;
+import com.application.models.Review;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -59,7 +61,7 @@ public class RetrieveDataFromServer {
 					
 					
 					reviewsList.add(new Review(reviewId, reviewUsername,
-							reviewComment, ReviewStatusEnum.NOT_BAD));
+							reviewComment, ReviewStatusEnum.NOT_SET));
 				}
 
 				dataArray.add(new CoffeMachine(coffeMachineId, name, address,

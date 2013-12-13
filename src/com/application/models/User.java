@@ -1,4 +1,4 @@
-package com.application.takeacoffee;
+package com.application.models;
 
 import java.util.ArrayList;
 

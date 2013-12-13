@@ -3,6 +3,9 @@ package com.application.takeacoffee;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.application.commons.Common;
 import com.application.commons.Common.ReviewStatusEnum;
+import com.application.datastorage.CoffeMachineDataStorageApplication;
+import com.application.models.CoffeMachine;
+import com.application.models.Review;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -19,11 +22,8 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.RadioButton;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class AddReviewActivity extends SherlockActivity{
 	

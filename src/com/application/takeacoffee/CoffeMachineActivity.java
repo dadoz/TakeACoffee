@@ -6,6 +6,9 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.application.commons.Common;
+import com.application.datastorage.CoffeMachineDataStorageApplication;
+import com.application.models.CoffeMachine;
+import com.application.models.Review;
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 
