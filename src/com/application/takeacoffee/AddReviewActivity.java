@@ -1,7 +1,6 @@
 package com.application.takeacoffee;
 
 import com.actionbarsherlock.app.SherlockActivity;
-import com.application.commons.Common;
 import com.application.commons.Common.ReviewStatusEnum;
 import com.application.datastorage.CoffeMachineDataStorageApplication;
 import com.application.models.CoffeMachine;
@@ -11,12 +10,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
@@ -46,7 +42,7 @@ public class AddReviewActivity extends SherlockActivity{
 		String currentCoffeMachineSelectedId = storedData.coffeMachineData.getCurrentCoffeMachineSelectedId();
 		final CoffeMachine currentCoffeMachineObj = storedData.coffeMachineData.getCoffeMachineById(currentCoffeMachineSelectedId);
 
-		final ReviewStatusEnum reviewStatusChoiced = ReviewStatusEnum.NOT_SET;
+//		final ReviewStatusEnum reviewStatusChoiced = ReviewStatusEnum.NOT_SET;
 		
 		//static def on RadioButton listener
 		final CheckBox awefulRadioButton = (CheckBox)findViewById(R.id.awefulCheckBoxId);

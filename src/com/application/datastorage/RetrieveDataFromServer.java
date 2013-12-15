@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import com.application.commons.Common.ReviewStatusEnum;
 import com.application.models.CoffeMachine;
 import com.application.models.Review;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -74,7 +73,7 @@ public class RetrieveDataFromServer {
 		return null;
 	}
 
-	private static String encodeToJSONData(
+/*	private static String encodeToJSONData(
 			ArrayList<CoffeMachine> coffeMachineList) {
 		try {
 			Gson g = new Gson();
@@ -91,12 +90,12 @@ public class RetrieveDataFromServer {
 						}
 					}
 				}
-			}*/
+			} --close here
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-
+*/
 }

@@ -104,10 +104,22 @@ public class ReviewsActivity extends SherlockActivity {
 				// TODO Auto-generated method stub
 				if(!coffeMachineApplication.coffeMachineData.getRegisteredUserStatus()){
 					Log.e(TAG, ">>> please insert username at least");
+					
 					//TEST
-//   					String username ="dadoz";
-					DialogFragment dialog = new RegisterUserDialogFragment();
-					dialog.show(getFragmentManager(), TAG);					
+/*   					String username ="dadoz";
+   					SharedPreferences sharedPref = getPreferences(0);
+   					sharedPref.edit().putString(Common.REGISTERED_USERNAME, username);
+   					coffeMachineApplication.coffeMachineData.initRegisteredUser(username);
+             	   
+   					Intent intent = new Intent(ReviewsActivity.this,AddReviewActivity.class);	                	   
+   					ReviewsActivity.this.startActivityForResult(intent, ADD_REVIEW_RESULT);
+*/
+   					// ------ end of test
+   					
+   					
+   					
+//					DialogFragment dialog = new RegisterUserDialogFragment();
+//					dialog.show(getFragmentManager(), TAG);					
 				} else {
 					Intent intent = new Intent(ReviewsActivity.this,AddReviewActivity.class);
 					startActivityForResult(intent, ADD_REVIEW_RESULT);

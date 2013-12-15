@@ -10,7 +10,7 @@ public class LoggedUserSettingsActivity extends SherlockActivity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.loggedUserSettingsLayout)
+		setContentView(R.layout.logged_user_settings_layout);
 	}
 	
 	@Override
