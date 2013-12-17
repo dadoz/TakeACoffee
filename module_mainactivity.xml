@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_mainactivity" default="compile.module.mainactivity">
+  <dirname property="module.mainactivity.basedir" file="${ant.file.module_mainactivity}"/>
+  
+  <property name="module.jdk.home.mainactivity" value="${jdk.home.android_api_17_platform}"/>
+  <property name="module.jdk.bin.mainactivity" value="${jdk.bin.android_api_17_platform}"/>
+  <property name="module.jdk.classpath.mainactivity" value="jdk.classpath.android_api_17_platform"/>
+  
+  <property name="compiler.args.mainactivity" value="${compiler.args}"/>
+  
+  <property name="mainactivity.output.dir" value="${module.mainactivity.basedir}/bin/classes"/>
+  <property name="mainactivity.testoutput.dir" value="${module.mainactivity.basedir}/bin/classes"/>
+  
+  <path id="mainactivity.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="mainactivity.module.production.classpath">
+    <path refid="${module.jdk.classpath.mainactivity}"/>
+    <pathelement location="${zbarscannerlibrary.output.dir}"/>
+    <path refid="library.zbar.classpath"/>
+    <pathelement location="${actionbarsherlock.output.dir}"/>
+    <path refid="library.android-support-v42.classpath"/>
+    <path refid="library.actionbarsherlock2.classpath"/>
+  </path>
+  
+  <path id="mainactivity.runtime.production.module.classpath">
+    <pathelement location="${mainactivity.output.dir}"/>
+    <path refid="zbarscannerlibrary.runtime.production.module.classpath"/>
+    <path refid="actionbarsherlock.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="mainactivity.module.classpath">
+    <path refid="${module.jdk.classpath.mainactivity}"/>
+    <pathelement location="${mainactivity.output.dir}"/>
+    <pathelement location="${zbarscannerlibrary.testoutput.dir}"/>
+    <pathelement location="${zbarscannerlibrary.output.dir}"/>
+    <path refid="library.zbar.classpath"/>
+    <pathelement location="${actionbarsherlock.testoutput.dir}"/>
+    <pathelement location="${actionbarsherlock.output.dir}"/>
+    <path refid="library.android-support-v42.classpath"/>
+    <path refid="library.actionbarsherlock2.classpath"/>
+  </path>
+  
+  <path id="mainactivity.runtime.module.classpath">
+    <pathelement location="${mainactivity.output.dir}"/>
+    <path refid="zbarscannerlibrary.runtime.module.classpath"/>
+    <path refid="actionbarsherlock.runtime.module.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.mainactivity">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.mainactivity">
+    <patternset refid="excluded.from.module.mainactivity"/>
+  </patternset>
+  
+  <path id="mainactivity.module.sourcepath">
+    <dirset dir="${module.mainactivity.basedir}">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.mainactivity" depends="compile.module.mainactivity.production,compile.module.mainactivity.tests" description="Compile module MainActivity"/>
+  
+  <target name="compile.module.mainactivity.production" depends="register.custom.compilers,compile.module.zbarscannerlibrary,compile.module.actionbarsherlock" description="Compile module MainActivity; production classes">
+    <mkdir dir="${mainactivity.output.dir}"/>
+    <javac2 destdir="${mainactivity.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.mainactivity}/javac">
+      <compilerarg line="${compiler.args.mainactivity}"/>
+      <bootclasspath refid="mainactivity.module.bootclasspath"/>
+      <classpath refid="mainactivity.module.production.classpath"/>
+      <src refid="mainactivity.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.mainactivity"/>
+    </javac2>
+    
+    <copy todir="${mainactivity.output.dir}">
+      <fileset dir="${module.mainactivity.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.mainactivity.basedir}/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.mainactivity.tests" depends="register.custom.compilers,compile.module.mainactivity.production" description="compile module MainActivity; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.mainactivity" description="cleanup module">
+    <delete dir="${mainactivity.output.dir}"/>
+    <delete dir="${mainactivity.testoutput.dir}"/>
+  </target>
+</project>

@@ -1,5 +1,7 @@
 package com.application.takeacoffee;
 
+import android.content.Intent;
+import android.widget.*;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.application.commons.Common.ReviewStatusEnum;
 import com.application.datastorage.CoffeMachineDataStorageApplication;
@@ -16,10 +18,6 @@ import android.view.ContextMenu;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.TextView;
 
 public class AddReviewActivity extends SherlockActivity{
 	
@@ -35,6 +33,19 @@ public class AddReviewActivity extends SherlockActivity{
 	} 
 
 	private void initView(){
+
+
+        //static attachment on button click
+        RelativeLayout loggedUserSettingsLayout = (RelativeLayout)findViewById(R.id.loggedUsernameLayoutId);
+        loggedUserSettingsLayout.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AddReviewActivity.this, LoggedUserSettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 		CoffeMachineDataStorageApplication storedData = (CoffeMachineDataStorageApplication)getApplication();
 		final String username = storedData.coffeMachineData.getRegisteredUser().getUsername();
 		

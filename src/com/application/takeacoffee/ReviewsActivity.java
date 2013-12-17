@@ -118,8 +118,8 @@ public class ReviewsActivity extends SherlockActivity {
    					
    					
    					
-//					DialogFragment dialog = new RegisterUserDialogFragment();
-//					dialog.show(getFragmentManager(), TAG);					
+					DialogFragment dialog = new RegisterUserDialogFragment();
+					dialog.show(getFragmentManager(), TAG);
 				} else {
 					Intent intent = new Intent(ReviewsActivity.this,AddReviewActivity.class);
 					startActivityForResult(intent, ADD_REVIEW_RESULT);
