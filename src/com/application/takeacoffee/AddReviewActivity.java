@@ -1,6 +1,10 @@
 package com.application.takeacoffee;
 
+import android.content.Context;
 import android.content.Intent;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.application.commons.Common.ReviewStatusEnum;
@@ -18,6 +22,8 @@ import android.view.ContextMenu;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
+
+import java.util.Date;
 
 public class AddReviewActivity extends SherlockActivity{
 	
@@ -94,6 +100,26 @@ public class AddReviewActivity extends SherlockActivity{
 		});
 
 
+/*        EditText reviewEditText = (EditText)findViewById(R.id.reviewMessageEditTextId);
+        reviewEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                boolean handled = false;
+                if(actionId == EditorInfo.IME_ACTION_DONE){
+                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    // NOTE: In the author's example, he uses an identifier
+                    // called searchBar. If setting this code on your EditText
+                    // then use v.getWindowToken() as a reference to your
+                    // EditText is passed into this callback as a TextView
+
+                    in.hideSoftInputFromWindow(textView
+                            .getApplicationWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                return handled;
+            }
+        });*/
 		
 		Button postButton = (Button)findViewById(R.id.postButtonId);
 		postButton.setOnClickListener(new OnClickListener() {
@@ -112,8 +138,8 @@ public class AddReviewActivity extends SherlockActivity{
 					reviewStatus = ReviewStatusEnum.GOOD;
 				}
 				
-				//create new review Obj by data 
-				Review reviewObj = new Review("fake_id", username, reviewMessage, reviewStatus);
+				//create new review Obj by data
+				Review reviewObj = new Review("fake_id", username, reviewMessage, reviewStatus, new Date());
 	
 				Log.e(TAG,"<<<<<<<<<" + reviewMessage + "--");
 				if(reviewMessage.compareTo(" ") == 0){

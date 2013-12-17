@@ -41,13 +41,12 @@
                     android:textColor="@color/coffe_dark"
                     android:textSize="20sp" />
 
-                <!--
                 <TextView
-                android:id="@+id/coffeMachineAddressTextId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="coffe machine address" />
-                -->
+                    android:id="@+id/reviewDateTextId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text=" - " />
             </LinearLayout>
         </LinearLayout>
 

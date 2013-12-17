@@ -124,7 +124,9 @@
         android:ems="10"
         android:hint="insert your review"
         android:lines="10"
-        android:padding="10dip" >
+        android:padding="10dip">
+<!--        android:inputType="text"
+        android:imeOptions="actionSend">-->
 
         <requestFocus android:layout_width="match_parent" />
     </EditText>

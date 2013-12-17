@@ -71,6 +71,7 @@ public class ReviewsActivity extends SherlockActivity {
                     layoutContainer.addView(reviewTemplate);
                     //set data to template
                     ((TextView)reviewTemplate.findViewById(R.id.reviewUsernameTextId)).setText(reviewObj.getUsername());
+                    ((TextView)reviewTemplate.findViewById(R.id.reviewDateTextId)).setText(reviewObj.getFormattedTimestamp());
                     ((TextView)reviewTemplate.findViewById(R.id.reviewCommentTextId)).setText(reviewObj.getComment());
                     if(reviewObj.getStatus() == ReviewStatusEnum.AWEFUL){
                         ((LinearLayout)reviewTemplate.findViewById(R.id.reviewStatusLabelLayoutId)).setBackgroundColor(getResources().getColor(R.color.light_black));                    	

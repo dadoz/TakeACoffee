@@ -9,10 +9,21 @@
         android:id="@+id/coffeeMachineContainerLayoutId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
         android:orientation="vertical" >
 
+        <EditText
+            android:id="@+id/newUsernameEditTextId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:lines="2"
+            android:hint="insert your review"
+            android:padding="10dip"
+            android:background="@android:color/white"/>
         <Button
-            android:id="@+id/findCoffeeMachineButtonId"
+            android:id="@+id/changeUsernameButtonId"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/button_height"
             android:layout_marginBottom="20dip"
