@@ -39,8 +39,6 @@ public class AddReviewActivity extends SherlockActivity{
 	} 
 
 	private void initView(){
-
-
         //static attachment on button click
         RelativeLayout loggedUserSettingsLayout = (RelativeLayout)findViewById(R.id.loggedUsernameLayoutId);
         loggedUserSettingsLayout.setOnClickListener(new OnClickListener() {
@@ -62,40 +60,40 @@ public class AddReviewActivity extends SherlockActivity{
 //		final ReviewStatusEnum reviewStatusChoiced = ReviewStatusEnum.NOT_SET;
 		
 		//static def on RadioButton listener
-		final CheckBox awefulRadioButton = (CheckBox)findViewById(R.id.awefulCheckBoxId);
-		final CheckBox notBadRadioButton  = (CheckBox)findViewById(R.id.notBadCheckBoxId);
-		final CheckBox goodRadioButton  = (CheckBox)findViewById(R.id.goodCheckBoxId);
+		final LinearLayout awefulButton = (LinearLayout)findViewById(R.id.awefulButtonId);
+		final LinearLayout notBadButton  = (LinearLayout)findViewById(R.id.notBadButtonId);
+		final LinearLayout goodButton  = (LinearLayout)findViewById(R.id.goodButtonId);
 
-		awefulRadioButton.setOnClickListener(new OnClickListener() {
+		awefulButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				awefulRadioButton.setChecked(true);
-				notBadRadioButton.setChecked(false);
-				goodRadioButton.setChecked(false);
+                awefulButton.setBackgroundColor(getResources().getColor(R.color.light_grey));
+                notBadButton.setBackgroundColor(getResources().getColor(R.color.white));
+                goodButton.setBackgroundColor(getResources().getColor(R.color.white));
 			}
 		});
 		
-		notBadRadioButton.setOnClickListener(new OnClickListener() {
+		notBadButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				notBadRadioButton.setChecked(true);
-				awefulRadioButton.setChecked(false);
-				goodRadioButton.setChecked(false);
+                awefulButton.setBackgroundColor(getResources().getColor(R.color.white));
+                notBadButton.setBackgroundColor(getResources().getColor(R.color.light_grey));
+                goodButton.setBackgroundColor(getResources().getColor(R.color.white));
 				
 			}
 		});
 		
-		goodRadioButton.setOnClickListener(new OnClickListener() {
+		goodButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				goodRadioButton.setChecked(true);
-				notBadRadioButton.setChecked(false);
-				awefulRadioButton.setChecked(false);
+                awefulButton.setBackgroundColor(getResources().getColor(R.color.white));
+                notBadButton.setBackgroundColor(getResources().getColor(R.color.white));
+                goodButton.setBackgroundColor(getResources().getColor(R.color.light_grey));
 			}
 		});
 
@@ -130,14 +128,14 @@ public class AddReviewActivity extends SherlockActivity{
 				
 				
 				ReviewStatusEnum reviewStatus = ReviewStatusEnum.NOT_SET;
-				if(awefulRadioButton.isChecked()){
+/*				if(awefulButton.isChecked()){
 					reviewStatus = ReviewStatusEnum.AWEFUL;
-				} else if(notBadRadioButton.isChecked()){
+				} else if(notBadButton.isChecked()){
 					reviewStatus = ReviewStatusEnum.NOT_BAD;					
-				} else if(goodRadioButton.isChecked()){
+				} else if(goodButton.isChecked()){
 					reviewStatus = ReviewStatusEnum.GOOD;
 				}
-				
+*/
 				//create new review Obj by data
 				Review reviewObj = new Review("fake_id", username, reviewMessage, reviewStatus, new Date());
 	
@@ -156,8 +154,6 @@ public class AddReviewActivity extends SherlockActivity{
 				}
 				//encodeToJSONData();
 				//create JSON obj for this message
-				
-
 			}
 		});
 		

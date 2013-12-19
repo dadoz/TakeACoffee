@@ -10,28 +10,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dip"
-        android:orientation="vertical" >
+        android:gravity="center"
+        android:orientation="horizontal" >
 
         <EditText
             android:id="@+id/newUsernameEditTextId"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:lines="2"
-            android:hint="insert your review"
+            android:hint="insert your new username"
             android:padding="10dip"
             android:background="@android:color/white"/>
         <Button
             android:id="@+id/changeUsernameButtonId"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="@dimen/button_height"
-            android:layout_marginBottom="20dip"
             android:layout_marginLeft="10dip"
             android:layout_marginRight="10dip"
-            android:layout_marginTop="20dip"
             android:background="@color/coffe_dark"
-            android:text="change username"
+            android:text="update"
+            android:paddingLeft="10dip"
+            android:paddingRight="10dip"
             android:textColor="@color/coffe_ligth" />
     </LinearLayout>
 

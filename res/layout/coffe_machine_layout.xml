@@ -44,97 +44,14 @@
                 android:textColor="@color/coffe_ligth" />
         </LinearLayout>
 
-        <!--
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dip"
-            android:layout_marginTop="0dp"
-            android:background="#fff"
-            android:orientation="vertical" >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#fff"
-                android:orientation="horizontal" >
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_launcher" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="#fff"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/textView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="coffe machine name" />
-
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="coffe machine address" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#f7c781"
-                android:text="Reviews" />
-        </LinearLayout>
-        -->
-        <!--
-        <LinearLayout
-            android:id="@+id/findCoffeeMachineLayoutId"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/button_height"
-            android:layout_marginBottom="20dip"
-            android:background="@color/coffe_dark"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dip"
-                android:gravity="center_vertical"
-                android:text="find the COFFEE MACHINE"
-                android:textColor="@color/light_grey" />
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="40dp"
-                android:src="@drawable/qrcode" />
-        </LinearLayout>
-        -->
-        <!--
-             <Button
-            android:id="@+id/myReviewsButtonId"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/button_height"
-            android:layout_marginTop="20dp"
-            android:background="@color/coffe_dark"
-            android:text="my reviews"
-            android:textColor="@color/light_grey"></Button>
-        -->
-
         <LinearLayout
             android:id="@+id/coffeeMachineContainerLayoutId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:layout_marginTop="20dip"
+
             android:orientation="vertical" />
 
         <Button
