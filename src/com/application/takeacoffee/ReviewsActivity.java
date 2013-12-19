@@ -73,7 +73,7 @@ public class ReviewsActivity extends SherlockActivity {
                     ((TextView)reviewTemplate.findViewById(R.id.reviewUsernameTextId)).setText(reviewObj.getUsername());
                     ((TextView)reviewTemplate.findViewById(R.id.reviewDateTextId)).setText(reviewObj.getFormattedTimestamp());
                     ((TextView)reviewTemplate.findViewById(R.id.reviewCommentTextId)).setText(reviewObj.getComment());
-                    if(reviewObj.getStatus() == ReviewStatusEnum.AWEFUL){
+                    if(reviewObj.getStatus() == ReviewStatusEnum.AWFUL){
                         ((LinearLayout)reviewTemplate.findViewById(R.id.reviewStatusLabelLayoutId)).setBackgroundColor(getResources().getColor(R.color.light_black));                    	
                     } else if(reviewObj.getStatus() == ReviewStatusEnum.NOT_BAD){
                     	((LinearLayout)reviewTemplate.findViewById(R.id.reviewStatusLabelLayoutId)).setBackgroundColor(getResources().getColor(R.color.light_red));

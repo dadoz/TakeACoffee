@@ -60,18 +60,22 @@ public class AddReviewActivity extends SherlockActivity{
 //		final ReviewStatusEnum reviewStatusChoiced = ReviewStatusEnum.NOT_SET;
 		
 		//static def on RadioButton listener
-		final LinearLayout awefulButton = (LinearLayout)findViewById(R.id.awefulButtonId);
-		final LinearLayout notBadButton  = (LinearLayout)findViewById(R.id.notBadButtonId);
-		final LinearLayout goodButton  = (LinearLayout)findViewById(R.id.goodButtonId);
+		final LinearLayout awfulButton = (LinearLayout)findViewById(R.id.awfulLayoutId);
+		final LinearLayout notBadButton  = (LinearLayout)findViewById(R.id.notBadLayoutId);
+		final LinearLayout goodButton  = (LinearLayout)findViewById(R.id.goodLayoutId);
 
-		awefulButton.setOnClickListener(new OnClickListener() {
+
+        awfulButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-                awefulButton.setBackgroundColor(getResources().getColor(R.color.light_grey));
+                awfulButton.setBackgroundColor(getResources().getColor(R.color.light_grey));
                 notBadButton.setBackgroundColor(getResources().getColor(R.color.white));
                 goodButton.setBackgroundColor(getResources().getColor(R.color.white));
+                awfulButton.setFocusable(true);
+                notBadButton.setFocusable(false);
+                goodButton.setFocusable(false);
 			}
 		});
 		
@@ -80,10 +84,13 @@ public class AddReviewActivity extends SherlockActivity{
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-                awefulButton.setBackgroundColor(getResources().getColor(R.color.white));
+                awfulButton.setBackgroundColor(getResources().getColor(R.color.white));
                 notBadButton.setBackgroundColor(getResources().getColor(R.color.light_grey));
                 goodButton.setBackgroundColor(getResources().getColor(R.color.white));
-				
+                awfulButton.setFocusable(false);
+                notBadButton.setFocusable(true);
+                goodButton.setFocusable(false);
+
 			}
 		});
 		
@@ -91,10 +98,14 @@ public class AddReviewActivity extends SherlockActivity{
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-                awefulButton.setBackgroundColor(getResources().getColor(R.color.white));
+                awfulButton.setBackgroundColor(getResources().getColor(R.color.white));
                 notBadButton.setBackgroundColor(getResources().getColor(R.color.white));
                 goodButton.setBackgroundColor(getResources().getColor(R.color.light_grey));
-			}
+                awfulButton.setFocusable(false);
+                notBadButton.setFocusable(false);
+                goodButton.setFocusable(true);
+
+            }
 		});
 
 
@@ -125,17 +136,16 @@ public class AddReviewActivity extends SherlockActivity{
 			@Override
 			public void onClick(View v) {
 				String reviewMessage = ((EditText)findViewById(R.id.reviewMessageEditTextId)).getText().toString();
-				
-				
-				ReviewStatusEnum reviewStatus = ReviewStatusEnum.NOT_SET;
-/*				if(awefulButton.isChecked()){
-					reviewStatus = ReviewStatusEnum.AWEFUL;
-				} else if(notBadButton.isChecked()){
+
+                ReviewStatusEnum reviewStatus = ReviewStatusEnum.NOT_SET;
+
+                if(awfulButton.isFocusable()){
+					reviewStatus = ReviewStatusEnum.AWFUL;
+				} else if(notBadButton.isFocusable()){
 					reviewStatus = ReviewStatusEnum.NOT_BAD;					
-				} else if(goodButton.isChecked()){
+				} else if(goodButton.isFocusable()){
 					reviewStatus = ReviewStatusEnum.GOOD;
 				}
-*/
 				//create new review Obj by data
 				Review reviewObj = new Review("fake_id", username, reviewMessage, reviewStatus, new Date());
 	
