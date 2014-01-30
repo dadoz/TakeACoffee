@@ -76,6 +76,7 @@
                         android:layout_height="fill_parent"
                         android:gravity="center_vertical"
                         android:text="awful"
+                        android:layout_marginTop="5dip"
                         android:textColor="@color/dark_grey" />
         </LinearLayout>
 
@@ -97,7 +98,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:gravity="center_vertical"
-                        android:text="not so bad"
+                        android:layout_marginTop="5dip"
+                        android:text="not bad"
                         android:textColor="@color/dark_grey" />
 
         </LinearLayout>
@@ -120,6 +122,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
+                        android:layout_marginTop="5dip"
                         android:textColor="@color/dark_grey"
                         android:text="good" />
         </LinearLayout>
@@ -138,6 +141,7 @@
                 android:id="@+id/reviewMessageEditTextId"
                 android:ems="10"
                 android:textColor="@color/dark_grey"
+                android:background="@color/white"
                 android:hint="insert your review"
                 android:lines="2"
                 android:padding="10dip">

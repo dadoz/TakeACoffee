@@ -46,7 +46,7 @@ public class LoggedUserSettingsActivity extends SherlockActivity{
                 SharedPreferences sharedPref = getPreferences(0);
                 sharedPref.edit().putString(Common.REGISTERED_USERNAME, newUsername);
                 coffeMachineApplication.coffeMachineData.setRegisteredUser(newUsername);
-
+                setResult(RESULT_OK);
                 finish();
             }
         });

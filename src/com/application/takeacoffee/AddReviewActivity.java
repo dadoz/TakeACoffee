@@ -2,11 +2,13 @@ package com.application.takeacoffee;
 
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.application.commons.Common;
 import com.application.commons.Common.ReviewStatusEnum;
 import com.application.datastorage.CoffeMachineDataStorageApplication;
 import com.application.models.CoffeMachine;
@@ -45,14 +47,15 @@ public class AddReviewActivity extends SherlockActivity{
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(AddReviewActivity.this, LoggedUserSettingsActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, Common.CHANGE_LOGGED_USERNAME);
             }
         });
 
 
 		CoffeMachineDataStorageApplication storedData = (CoffeMachineDataStorageApplication)getApplication();
 		final String username = storedData.coffeMachineData.getRegisteredUser().getUsername();
-		
+
+
 		((TextView)findViewById(R.id.registeredUsernameTextViewId)).setText(username);
 		String currentCoffeMachineSelectedId = storedData.coffeMachineData.getCurrentCoffeMachineSelectedId();
 		final CoffeMachine currentCoffeMachineObj = storedData.coffeMachineData.getCoffeMachineById(currentCoffeMachineSelectedId);
@@ -69,7 +72,6 @@ public class AddReviewActivity extends SherlockActivity{
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
                 awfulButton.setBackgroundColor(getResources().getColor(R.color.light_grey));
                 notBadButton.setBackgroundColor(getResources().getColor(R.color.white));
                 goodButton.setBackgroundColor(getResources().getColor(R.color.white));
@@ -83,7 +85,6 @@ public class AddReviewActivity extends SherlockActivity{
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
                 awfulButton.setBackgroundColor(getResources().getColor(R.color.white));
                 notBadButton.setBackgroundColor(getResources().getColor(R.color.light_grey));
                 goodButton.setBackgroundColor(getResources().getColor(R.color.white));
@@ -97,7 +98,6 @@ public class AddReviewActivity extends SherlockActivity{
 		goodButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
                 awfulButton.setBackgroundColor(getResources().getColor(R.color.white));
                 notBadButton.setBackgroundColor(getResources().getColor(R.color.white));
                 goodButton.setBackgroundColor(getResources().getColor(R.color.light_grey));
@@ -168,6 +168,24 @@ public class AddReviewActivity extends SherlockActivity{
 		});
 		
 	}
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        Log.e(TAG,"hey ------ change logged user" + requestCode + "  " + RESULT_OK);
+        if(requestCode == Common.CHANGE_LOGGED_USERNAME){
+            if(resultCode == RESULT_OK){
+                RelativeLayout loggedUserSettingsLayout = (RelativeLayout)findViewById(R.id.loggedUsernameLayoutId);
+
+                //refresh username on view
+                CoffeMachineDataStorageApplication storedData = (CoffeMachineDataStorageApplication)getApplication();
+                final String username = storedData.coffeMachineData.getRegisteredUser().getUsername();
+                ((TextView)findViewById(R.id.registeredUsernameTextViewId)).setText(username);
+
+            }
+        }
+    }
+
+
 	public class NoValidReviewDialogFragment extends DialogFragment {
 	    @Override
 	    public Dialog onCreateDialog(Bundle savedInstanceState) {
