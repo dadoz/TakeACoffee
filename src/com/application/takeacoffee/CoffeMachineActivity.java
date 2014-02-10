@@ -9,8 +9,8 @@ import com.application.commons.Common;
 import com.application.datastorage.CoffeMachineDataStorageApplication;
 import com.application.models.CoffeMachine;
 import com.application.models.Review;
-import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
+//import com.dm.zbar.android.scanner.ZBarConstants;
+//import com.dm.zbar.android.scanner.ZBarScannerActivity;
 
 import android.os.Bundle;
 //import android.app.Activity;
@@ -72,8 +72,8 @@ public class CoffeMachineActivity extends SherlockActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(CoffeMachineActivity.this, ZBarScannerActivity.class);
-				startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
+//				Intent intent = new Intent(CoffeMachineActivity.this, ZBarScannerActivity.class);
+//				startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
 			}
 		});
 
@@ -152,12 +152,12 @@ public class CoffeMachineActivity extends SherlockActivity {
 	    if (resultCode == RESULT_OK) {
 	        // Scan result is available by making a call to data.getStringExtra(ZBarConstants.SCAN_RESULT)
 	        // Type of the scan result is available by making a call to data.getStringExtra(ZBarConstants.SCAN_RESULT_TYPE)
-	        Toast.makeText(this, "Scan Result = " + data.getStringExtra(ZBarConstants.SCAN_RESULT), Toast.LENGTH_SHORT).show();
-	        Toast.makeText(this, "Scan Result Type = " + data.getStringExtra(ZBarConstants.SCAN_RESULT_TYPE), Toast.LENGTH_SHORT).show();
+//	        Toast.makeText(this, "Scan Result = " + data.getStringExtra(ZBarConstants.SCAN_RESULT), Toast.LENGTH_SHORT).show();
+//	        Toast.makeText(this, "Scan Result Type = " + data.getStringExtra(ZBarConstants.SCAN_RESULT_TYPE), Toast.LENGTH_SHORT).show();
 	        
-	        String coffeMachineId =data.getStringExtra(ZBarConstants.SCAN_RESULT);
-	        Log.d(TAG,"COFFE_MACHINE_ID >>>>>>" + coffeMachineId);
-	        getCoffeMachineReviewById(coffeMachineId,true);
+//	        String coffeMachineId =data.getStringExtra(ZBarConstants.SCAN_RESULT);
+//	        Log.d(TAG,"COFFE_MACHINE_ID >>>>>>" + coffeMachineId);
+//	        getCoffeMachineReviewById(coffeMachineId,true);
 	        // The value of type indicates one of the symbols listed in Advanced Options below.
 	    } else if(resultCode == RESULT_CANCELED) {
 	        Toast.makeText(this, "Camera unavailable", Toast.LENGTH_SHORT).show();
