@@ -25,7 +25,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.application.commons.Common;
 import com.application.commons.Common.ReviewStatusEnum;
-import com.application.datastorage.CoffeMachineDataStorageApplication;
+import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.Review;
 
 /**
@@ -38,7 +38,7 @@ import com.application.models.Review;
 public class ReviewsActivity extends SherlockActivity {
     protected static final int ADD_REVIEW_RESULT = 99;
 	public static String TAG = "CoffeMachineReviewsTAG";
-    private CoffeMachineDataStorageApplication coffeMachineApplication;
+    private CoffeeMachineDataStorageApplication coffeMachineApplication;
     
     public void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Sherlock_Light_DarkActionBar); //Used for theme switching in samples
@@ -55,10 +55,10 @@ public class ReviewsActivity extends SherlockActivity {
         	//store coffeMachineId
         	String coffeMachineId = this.getIntent().getExtras().getString("EXTRA_COFFE_MACHINE_ID");
 
-            coffeMachineApplication = ((CoffeMachineDataStorageApplication)this.getApplication());
-            coffeMachineApplication.coffeMachineData.setCurrentCoffeMachineSelectedId(coffeMachineId);
+            coffeMachineApplication = ((CoffeeMachineDataStorageApplication)this.getApplication());
+            coffeMachineApplication.coffeeMachineData.setCurrentCoffeMachineSelectedId(coffeMachineId);
 
-            ArrayList<Review> reviewList = coffeMachineApplication.coffeMachineData.getReviewListByCoffeMachineId(coffeMachineId);
+            ArrayList<Review> reviewList = coffeMachineApplication.coffeeMachineData.getReviewListByCoffeMachineId(coffeMachineId);
 
             if(reviewList != null && reviewList.size() != 0) {
                 //Log.d(TAG,">>>>>>>data" + reviewList.get(0).getFeedback() + "----" +reviewList.get(0).getUsername());
@@ -98,12 +98,12 @@ public class ReviewsActivity extends SherlockActivity {
             Log.e(TAG, "error - no coffeMachineId retrieved - " + e.getMessage());
         }
 
-		Button addReviewBtn = (Button)findViewById(R.id.addReviewButtonId);
+/*		Button addReviewBtn = (Button)findViewById(R.id.addReviewButtonId);
 		addReviewBtn.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				if(!coffeMachineApplication.coffeMachineData.getRegisteredUserStatus()){
+				if(!coffeMachineApplication.coffeeMachineData.getRegisteredUserStatus()){
 					Log.e(TAG, ">>> please insert username at least");
 					
 					//TEST
@@ -114,7 +114,7 @@ public class ReviewsActivity extends SherlockActivity {
              	   
    					Intent intent = new Intent(ReviewsActivity.this,AddReviewActivity.class);	                	   
    					ReviewsActivity.this.startActivityForResult(intent, ADD_REVIEW_RESULT);
-*/
+
    					// ------ end of test
    					
    					
@@ -126,7 +126,7 @@ public class ReviewsActivity extends SherlockActivity {
 					startActivityForResult(intent, ADD_REVIEW_RESULT);
 				}
 			}
-		});
+		});*/
 		
 	}
     
@@ -149,7 +149,7 @@ public class ReviewsActivity extends SherlockActivity {
 	
 	                	   SharedPreferences sharedPref = getPreferences(0);
 	                	   sharedPref.edit().putString(Common.REGISTERED_USERNAME, username);
-	                	   coffeMachineApplication.coffeMachineData.initRegisteredUser(username);
+	                	   coffeMachineApplication.coffeeMachineData.initRegisteredUser(username);
 	                	   
 	                	   Intent intent = new Intent(ReviewsActivity.this,AddReviewActivity.class);	                	   
 	                	   ReviewsActivity.this.startActivityForResult(intent, ADD_REVIEW_RESULT);

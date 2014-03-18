@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/reviewsButtonId"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="0dip"
     android:layout_marginTop="0dip"
-    android:background="@drawable/review_shape"
+    android:layout_weight="1"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
 >
-
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/coffeeIconId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/coffee_cup" />
+</LinearLayout>
+<!--
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/tag_height"
@@ -55,22 +63,4 @@
 			android:layout_centerVertical="true"
             android:src="@drawable/left_arrow" />
         
-    </RelativeLayout>
-<!-- 	<TextView
-        android:layout_width="fill_parent"
-        android:layout_height="40dip"
-        android:layout_marginBottom="1dip"
-        android:gravity="center_vertical"
-		android:textColor="@android:color/white"
-		android:background="@color/coffe_ligth"
-        android:text="tap on to get its reviews" />
-     -->
-<!--     <Button
-        android:id="@+id/reviewsButtonId"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/button_height"
-        android:background="@color/light_grey"
-        android:text="Reviews"
-        android:textColor="@color/coffe_dark" />
- -->
-</LinearLayout>
+    </RelativeLayout>-->

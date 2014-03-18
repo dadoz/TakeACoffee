@@ -11,7 +11,7 @@ import android.widget.EditText;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.application.commons.Common;
-import com.application.datastorage.CoffeMachineDataStorageApplication;
+import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.Review;
 
 public class LoggedUserSettingsActivity extends SherlockActivity{
@@ -34,7 +34,7 @@ public class LoggedUserSettingsActivity extends SherlockActivity{
     public void initView() {
 
 
-        final CoffeMachineDataStorageApplication coffeMachineApplication = ((CoffeMachineDataStorageApplication)this.getApplication());
+        final CoffeeMachineDataStorageApplication coffeMachineApplication = ((CoffeeMachineDataStorageApplication)this.getApplication());
 
         Button changeUsernameButton = (Button)findViewById(R.id.changeUsernameButtonId);
         changeUsernameButton.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +45,7 @@ public class LoggedUserSettingsActivity extends SherlockActivity{
 
                 SharedPreferences sharedPref = getPreferences(0);
                 sharedPref.edit().putString(Common.REGISTERED_USERNAME, newUsername);
-                coffeMachineApplication.coffeMachineData.setRegisteredUser(newUsername);
+                coffeMachineApplication.coffeeMachineData.setRegisteredUser(newUsername);
                 setResult(RESULT_OK);
                 finish();
             }

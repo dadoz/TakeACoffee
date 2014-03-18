@@ -9,6 +9,6 @@ import android.app.Application;
  * Time: 10:32 AM
  * To change this template use File | Settings | File Templates.
  */
-public class CoffeMachineDataStorageApplication extends Application {
-    public CoffeMachineDataStorage coffeMachineData = new CoffeMachineDataStorage();
+public class CoffeeMachineDataStorageApplication extends Application {
+    public CoffeeMachineDataStorage coffeeMachineData = new CoffeeMachineDataStorage();
 }

@@ -11,6 +11,7 @@
         android:layout_height="fill_parent"
         android:orientation="vertical" >
 
+        <!-- HEADER - need to be modified -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,6 +45,7 @@
                 android:textColor="@color/coffe_ligth" />
         </LinearLayout>
 
+        <!-- FRAGMENT CONTENT -->
         <LinearLayout
             android:id="@+id/coffeeMachineContainerLayoutId"
             android:layout_width="match_parent"
@@ -54,7 +56,9 @@
 
             android:orientation="vertical" />
 
-        <Button
+        <!-- ADD a coffe machine button - to be removed-->
+
+<!--        <Button
             android:id="@+id/findCoffeeMachineButtonId"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/button_height"
@@ -64,7 +68,7 @@
             android:layout_marginRight="10dip"
             android:background="@color/coffe_dark"
             android:text="find a coffee machine"
-            android:textColor="@color/coffe_ligth" />
+            android:textColor="@color/coffe_ligth" />-->
     </LinearLayout>
 
 </ScrollView>

@@ -10,7 +10,7 @@ import android.widget.*;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.application.commons.Common;
 import com.application.commons.Common.ReviewStatusEnum;
-import com.application.datastorage.CoffeMachineDataStorageApplication;
+import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.CoffeMachine;
 import com.application.models.Review;
 
@@ -52,13 +52,13 @@ public class AddReviewActivity extends SherlockActivity{
         });
 
 
-		CoffeMachineDataStorageApplication storedData = (CoffeMachineDataStorageApplication)getApplication();
-		final String username = storedData.coffeMachineData.getRegisteredUser().getUsername();
+		CoffeeMachineDataStorageApplication storedData = (CoffeeMachineDataStorageApplication)getApplication();
+		final String username = storedData.coffeeMachineData.getRegisteredUser().getUsername();
 
 
 		((TextView)findViewById(R.id.registeredUsernameTextViewId)).setText(username);
-		String currentCoffeMachineSelectedId = storedData.coffeMachineData.getCurrentCoffeMachineSelectedId();
-		final CoffeMachine currentCoffeMachineObj = storedData.coffeMachineData.getCoffeMachineById(currentCoffeMachineSelectedId);
+		String currentCoffeMachineSelectedId = storedData.coffeeMachineData.getCurrentCoffeMachineSelectedId();
+		final CoffeMachine currentCoffeMachineObj = storedData.coffeeMachineData.getCoffeMachineById(currentCoffeMachineSelectedId);
 
 //		final ReviewStatusEnum reviewStatusChoiced = ReviewStatusEnum.NOT_SET;
 		
@@ -177,8 +177,8 @@ public class AddReviewActivity extends SherlockActivity{
                 RelativeLayout loggedUserSettingsLayout = (RelativeLayout)findViewById(R.id.loggedUsernameLayoutId);
 
                 //refresh username on view
-                CoffeMachineDataStorageApplication storedData = (CoffeMachineDataStorageApplication)getApplication();
-                final String username = storedData.coffeMachineData.getRegisteredUser().getUsername();
+                CoffeeMachineDataStorageApplication storedData = (CoffeeMachineDataStorageApplication)getApplication();
+                final String username = storedData.coffeeMachineData.getRegisteredUser().getUsername();
                 ((TextView)findViewById(R.id.registeredUsernameTextViewId)).setText(username);
 
             }

@@ -13,13 +13,13 @@ import com.application.models.User;
  * Time: 10:33 AM
  * To change this template use File | Settings | File Templates.
  */
-public class CoffeMachineDataStorage {
+public class CoffeeMachineDataStorage {
     private ArrayList<CoffeMachine> coffeMachineList;
     private boolean registeredUserStatus = false;
     private User registeredUser;
     private String currentCoffeMachineSelectedId;
     
-    public CoffeMachineDataStorage() {
+    public CoffeeMachineDataStorage() {
         //get data from JSON
         coffeMachineList = RetrieveDataFromServer.getCoffeMachineData();
     }
