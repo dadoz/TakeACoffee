@@ -39,8 +39,10 @@ public class CoffeeMachineActivity extends SherlockActivity {
 		setContentView(R.layout.coffe_machine_layout);
 		context = this.getApplicationContext();
 
-		initDataApplication();
-		initView();
+        if(savedInstanceState == null) {
+            initDataApplication();
+            initView();
+        }
 	}
 
 

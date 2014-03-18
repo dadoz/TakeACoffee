@@ -2,27 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/coffeeMachineFragmentLayoutId"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_marginBottom="0dip"
     android:layout_marginTop="0dip"
     android:orientation="vertical">
-
+    <TableLayout
+            android:id="@+id/coffeeMachineTableLayoutId"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+    </TableLayout>
 <!--    <TableLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
         <TableRow
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent">
             <ImageView
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:src="@drawable/user_icon"
                     />
             <ImageView
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:src="@drawable/user_icon"
                     />
         </TableRow>

@@ -8,9 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import com.actionbarsherlock.app.ActionBar;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.CoffeMachine;
 import com.application.models.Review;
@@ -36,38 +38,26 @@ public class CoffeMachineFragment extends Fragment {
         View coffeMachineFragment = inflater.inflate(R.layout.coffe_machine_fragment, container, false);
 
         int itemInTableRowCounter = 0;
-        TableLayout tableLayout = null;
+//        TableLayout tableLayout = null;
         TableRow tableRow = null;
         if(coffeMachineList != null &&  coffeMachineList.size() != 0) {
             for(CoffeMachine coffeMachineObj : coffeMachineList) {
                 Log.e(TAG, "coffeMachineData - " + coffeMachineObj.getAddress() + coffeMachineObj.getName());
-                LinearLayout cmfLayoutContainer = (LinearLayout)coffeMachineFragment.findViewById(R.id.coffeeMachineFragmentLayoutId);
+                TableLayout cmfTableLayoutContainer = (TableLayout)coffeMachineFragment.findViewById(R.id.coffeeMachineTableLayoutId);
 
                 if(itemInTableRowCounter == 0) {
-                    tableLayout = new TableLayout(this.getActivity());
-  //                  tableLayout.setBackgroundColor(getResources().getColor(R.color.coffe_ligth));
-    //                TableLayout.LayoutParams tableLayoutParam = (new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-    //                tableLayoutParam.setMargins(0, 0, 0, 200);
-    //                tableLayout.setLayoutParams(tableLayoutParam);
-
                     //fill my table layout
                     tableRow = new TableRow(this.getActivity());
                 }
 
                 LayoutInflater inflaterLayout = (LayoutInflater)this.getActivity().getSystemService(this.getActivity().LAYOUT_INFLATER_SERVICE);
-                View coffeeMachineTemplate = inflaterLayout.inflate(R.layout.coffe_machine_template, null);
-
+                ImageView coffeeMachineTemplate = (ImageView)inflaterLayout.inflate(R.layout.coffe_machine_template, null);
+                coffeeMachineTemplate.setLayoutParams(new TableRow.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT, 1.0f));
                 tableRow.addView(coffeeMachineTemplate);
-//                tableRow.setBackgroundColor(getResources().getColor(R.color.light_black));
-/*                TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        TableRow.LayoutParams.WRAP_CONTENT,
-                        1.0f);
-                tableRow.setLayoutParams(tableRowParams);
-*/
+
+
                 if(itemInTableRowCounter != 0) {
-                    tableLayout.addView(tableRow);
-                    cmfLayoutContainer.addView(tableLayout);
+                  cmfTableLayoutContainer.addView(tableRow);
                 }
 
                 //reset counter
