@@ -6,7 +6,15 @@
     android:layout_marginBottom="0dip"
     android:layout_marginTop="0dip"
     android:orientation="vertical">
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/header_text_size"
+            android:gravity="center"
+            android:text="Your coffee's machines available!"
+            />
     <TableLayout
+            android:layout_marginTop="10dp"
             android:id="@+id/coffeeMachineTableLayoutId"
             android:layout_width="match_parent"
             android:layout_height="match_parent">

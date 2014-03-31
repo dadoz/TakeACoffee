@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollViewContainerId"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#eee"
+    android:background="@color/light_grey"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -15,34 +16,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/coffe_dark"
+            android:background="@color/light_black"
             android:orientation="vertical"
             android:padding="10dip" >
 
-            <TextView
-                android:id="@+id/TextView02"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="Politecnico di Torino - fake"
-                android:textColor="@android:color/white"
-                android:textSize="20sp" />
+            <include layout="@layout/university_box_template"/>
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/dark_black"/>
 
-            <TextView
-                android:id="@+id/TextView01"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="01/10/13 - 18:00 - fake time"
-                android:textColor="@color/coffe_ligth" />
-
-            <TextView
-                android:id="@+id/TextView01"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="Torino - Fake position"
-                android:textColor="@color/coffe_ligth" />
+            <!-- USER LOGGED -->
+            <include layout="@layout/user_logged_box_template"/>
         </LinearLayout>
 
         <!-- FRAGMENT CONTENT -->
@@ -53,7 +38,6 @@
             android:layout_marginLeft="10dip"
             android:layout_marginRight="10dip"
             android:layout_marginTop="20dip"
-
             android:orientation="vertical" />
 
         <!-- ADD a coffe machine button - to be removed-->

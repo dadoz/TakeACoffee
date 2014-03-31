@@ -19,22 +19,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
             <ImageView
+                    android:id="@+id/goodReviewButtonId"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:src="@drawable/good_circle_icon"
                     />
             <ImageView
+                    android:id="@+id/badReviewButtonId"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:src="@drawable/bad_circle_icon"
                     />
             <ImageView
+                    android:id="@+id/worstReviewButtonId"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/worste_circle_icon"
+                    android:src="@drawable/worst_circle_icon"
                     />
         </TableRow>
     </TableLayout>

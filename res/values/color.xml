@@ -10,6 +10,12 @@
     <color name="coffe_ligth">#d1c6b3</color>
     <color name="white">#fff</color>
     <color name="light_black">#414141</color>
+    <color name="dark_black">#222</color>
     <color name="light_red">#e55252</color>
     <color name="light_green">#52bf8b</color>
+    <color name="blue_cobalt">#2B60DE</color>
+ <!--   <color name="green_marine">#84dfbd</color>-->
+    <color name="green_marine">#a1d0be</color>
+
+
 </resources>

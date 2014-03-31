@@ -2,6 +2,7 @@ package com.application.datastorage;
 
 import java.util.ArrayList;
 
+import android.util.Log;
 import com.application.models.CoffeMachine;
 import com.application.models.Review;
 import com.application.models.User;
@@ -14,6 +15,7 @@ import com.application.models.User;
  * To change this template use File | Settings | File Templates.
  */
 public class CoffeeMachineDataStorage {
+    private static final String TAG = "CoffeMachineDataStorage";
     private ArrayList<CoffeMachine> coffeMachineList;
     private boolean registeredUserStatus = false;
     private User registeredUser;

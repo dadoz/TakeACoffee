@@ -8,14 +8,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import com.actionbarsherlock.app.ActionBar;
+import android.widget.TextView;
+import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.CoffeMachine;
-import com.application.models.Review;
 import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
@@ -51,10 +50,9 @@ public class CoffeMachineFragment extends Fragment {
                 }
 
                 LayoutInflater inflaterLayout = (LayoutInflater)this.getActivity().getSystemService(this.getActivity().LAYOUT_INFLATER_SERVICE);
-                ImageView coffeeMachineTemplate = (ImageView)inflaterLayout.inflate(R.layout.coffe_machine_template, null);
+                LinearLayout coffeeMachineTemplate = (LinearLayout)inflaterLayout.inflate(R.layout.coffe_machine_template, null);
                 coffeeMachineTemplate.setLayoutParams(new TableRow.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT, 1.0f));
                 tableRow.addView(coffeeMachineTemplate);
-
 
                 if(itemInTableRowCounter != 0) {
                   cmfTableLayoutContainer.addView(tableRow);
@@ -69,36 +67,35 @@ public class CoffeMachineFragment extends Fragment {
 
                 //set data to template
 //                ((TextView)coffeMachineTemplate.findViewById(R.id.coffeMachineAddressTextId)).setText(coffeMachineObj.getAddress());
-//                ((TextView)coffeMachineTemplate.findViewById(R.id.coffeMachineNameTextId)).setText(coffeMachineObj.getName());
+                ((TextView)coffeeMachineTemplate.findViewById(R.id.coffeeMachineNameTextId)).setText(coffeMachineObj.getName());
 
                 final String coffeMachineId = coffeMachineObj.getId();
                 (coffeeMachineTemplate.findViewById(R.id.coffeeIconId)).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        Log.e(TAG,"u clicked");
-                        getCoffeMachineReviewById(coffeMachineId, true);
+                        Log.e(TAG, "u clicked");
+                        getCoffeeMachineReviewById(coffeMachineId);
                     }
                 });
             }
         }
+
+        //set custom font
+        Common.setCustomFont(coffeMachineFragment, this.getActivity().getAssets());
         return coffeMachineFragment;
     }
 
-    private boolean getCoffeMachineReviewById(String coffeMachineId, boolean coffeMachineDataAvailable){
-
-        if(coffeMachineDataAvailable) {
-            //check if coffeMachineId exist - I DONT KNOW if tis better to use this fx instead of impl method on list
-            ArrayList<Review> reviewList = coffeMachineApplication.coffeeMachineData.getReviewListByCoffeMachineId(coffeMachineId);
-            if(reviewList == null) {
-                Log.e(TAG,"still not implemented - no one coffeeMachine owned by this ID");
-                return false;
-            }
-        }
+    private boolean getCoffeeMachineReviewById(String coffeMachineId){
         //change fragment
+        Bundle args = new Bundle();
+        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeMachineId);
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.setCustomAnimations(R.anim.card_flip_left_in, R.anim.card_flip_left_out, R.anim.card_flip_right_in, R.anim.card_flip_right_out);
-        ft.replace(R.id.coffeeMachineContainerLayoutId, new ReviewsFragment());
+
+        ReviewsFragment reviewsFrag = new ReviewsFragment();
+        reviewsFrag.setArguments(args);
+        ft.replace(R.id.coffeeMachineContainerLayoutId, reviewsFrag);
         ft.addToBackStack("back");
         ft.commit();
         return true;

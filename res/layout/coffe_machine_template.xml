@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/reviewsButtonId"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="0dip"
-    android:layout_marginTop="0dip"
-    android:layout_marginRight="5dp"
-        android:background="@color/light_green">-->
-    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/reviewsButtonId"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <ImageView
             android:id="@+id/coffeeIconId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/coffee_cup" />
-<!--</LinearLayout>-->
+            android:src="@drawable/worst_circle_icon" />
+    <TextView
+            android:id="@+id/coffeeMachineNameTextId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" - "
+            android:textSize="@dimen/header_button_text" />
+</LinearLayout>
+

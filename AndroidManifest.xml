@@ -3,7 +3,7 @@
     package="com.application.takeacoffee"
     android:versionCode="1"
     android:versionName="1.0" >
-
+    <!-- PREV minSdk 13-->
     <uses-sdk
         android:minSdkVersion="13"
         android:targetSdkVersion="17" />
@@ -26,9 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"
+<!--        <activity android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"
 	        android:screenOrientation="landscape"
-	        android:label="@string/app_name" />
+	        android:label="@string/app_name" />-->
 
         <activity android:name="com.application.takeacoffee.AddReviewActivity"
 	        android:icon="@drawable/ic_launcher"
