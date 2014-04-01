@@ -1,11 +1,10 @@
 package com.application.datastorage;
 
-import java.util.ArrayList;
-
-import android.util.Log;
 import com.application.models.CoffeMachine;
 import com.application.models.Review;
 import com.application.models.User;
+
+import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,7 +19,10 @@ public class CoffeeMachineDataStorage {
     private boolean registeredUserStatus = false;
     private User registeredUser;
     private String currentCoffeMachineSelectedId;
-    
+
+    //PROFILE PIC
+    private static String profilePicturePath;
+
     public CoffeeMachineDataStorage() {
         //get data from JSON
         coffeMachineList = RetrieveDataFromServer.getCoffeMachineData();
@@ -75,5 +77,12 @@ public class CoffeeMachineDataStorage {
 
     public String getCurrentCoffeMachineSelectedId(){
     	return this.currentCoffeMachineSelectedId;
+    }
+
+    public void setProfilePicturePath(String path) {
+        profilePicturePath = path;
+    }
+    public String getProfilePicturePath() {
+        return profilePicturePath;
     }
 }

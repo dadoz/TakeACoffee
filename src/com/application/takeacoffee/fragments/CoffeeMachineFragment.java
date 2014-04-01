@@ -22,7 +22,7 @@ import java.util.ArrayList;
 /**
  * Created by davide on 3/13/14.
  */
-public class CoffeMachineFragment extends Fragment {
+public class CoffeeMachineFragment extends Fragment {
     private static final String TAG = "coffeMachineFragment";
     private CoffeeMachineDataStorageApplication coffeMachineApplication;
     private ArrayList<CoffeMachine> coffeMachineList;
