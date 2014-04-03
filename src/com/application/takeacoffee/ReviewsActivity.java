@@ -11,15 +11,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -27,6 +22,8 @@ import com.application.commons.Common;
 import com.application.commons.Common.ReviewStatusEnum;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.Review;
+
+import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -148,7 +145,7 @@ public class ReviewsActivity extends SherlockActivity {
 	                	   String username = usernameEditText.getText().toString();
 	
 	                	   SharedPreferences sharedPref = getPreferences(0);
-	                	   sharedPref.edit().putString(Common.REGISTERED_USERNAME, username);
+	                	   sharedPref.edit().putString(Common.SHAREDPREF_REGISTERED_USERNAME, username);
 	                	   coffeMachineApplication.coffeeMachineData.initRegisteredUser(username);
 	                	   
 	                	   Intent intent = new Intent(ReviewsActivity.this,AddReviewActivity.class);	                	   

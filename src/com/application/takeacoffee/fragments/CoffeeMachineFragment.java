@@ -1,10 +1,9 @@
 package com.application.takeacoffee.fragments;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,20 +40,29 @@ public class CoffeeMachineFragment extends Fragment {
         TableRow tableRow = null;
         if(coffeMachineList != null &&  coffeMachineList.size() != 0) {
             for(CoffeMachine coffeMachineObj : coffeMachineList) {
-                Log.e(TAG, "coffeMachineData - " + coffeMachineObj.getAddress() + coffeMachineObj.getName());
+                Log.e(TAG, "coffeMachineData - " + coffeMachineObj.getAddress() + " - name - " + coffeMachineObj.getName());
                 TableLayout cmfTableLayoutContainer = (TableLayout)coffeMachineFragment.findViewById(R.id.coffeeMachineTableLayoutId);
 
                 if(itemInTableRowCounter == 0) {
+                    Log.e(TAG, "create new tablerow ");
                     //fill my table layout
                     tableRow = new TableRow(this.getActivity());
+                    tableRow.setLayoutParams(new TableRow.LayoutParams(
+                            TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1.0f));
+                    tableRow.setPadding(0, 40, 0, 40);
                 }
 
-                LayoutInflater inflaterLayout = (LayoutInflater)this.getActivity().getSystemService(this.getActivity().LAYOUT_INFLATER_SERVICE);
-                LinearLayout coffeeMachineTemplate = (LinearLayout)inflaterLayout.inflate(R.layout.coffe_machine_template, null);
-                coffeeMachineTemplate.setLayoutParams(new TableRow.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT, 1.0f));
+                LayoutInflater inflaterLayout = (LayoutInflater)this.getActivity()
+                        .getSystemService(this.getActivity().LAYOUT_INFLATER_SERVICE);
+                LinearLayout coffeeMachineTemplate = (LinearLayout)inflaterLayout
+                        .inflate(R.layout.coffe_machine_template, null);
+                coffeeMachineTemplate.setLayoutParams(new TableRow.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f)); // it make no sense :O
+                coffeeMachineTemplate.setGravity(Gravity.CENTER_HORIZONTAL);
+
                 tableRow.addView(coffeeMachineTemplate);
 
-                if(itemInTableRowCounter != 0) {
+                if(itemInTableRowCounter != 0 || coffeMachineList.indexOf(coffeMachineObj) == (coffeMachineList.size() - 1) ) {
                   cmfTableLayoutContainer.addView(tableRow);
                 }
 
@@ -66,8 +74,8 @@ public class CoffeeMachineFragment extends Fragment {
                 }
 
                 //set data to template
-//                ((TextView)coffeMachineTemplate.findViewById(R.id.coffeMachineAddressTextId)).setText(coffeMachineObj.getAddress());
-                ((TextView)coffeeMachineTemplate.findViewById(R.id.coffeeMachineNameTextId)).setText(coffeMachineObj.getName());
+                ((TextView)coffeeMachineTemplate.findViewById(R.id.coffeeMachineNameTextId))
+                        .setText(coffeMachineObj.getName());
 
                 final String coffeMachineId = coffeMachineObj.getId();
                 (coffeeMachineTemplate.findViewById(R.id.coffeeIconId)).setOnClickListener(new View.OnClickListener() {
@@ -89,15 +97,17 @@ public class CoffeeMachineFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString(Common.COFFE_MACHINE_ID_KEY, coffeMachineId);
 
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.setCustomAnimations(R.anim.card_flip_left_in, R.anim.card_flip_left_out, R.anim.card_flip_right_in, R.anim.card_flip_right_out);
-
         ReviewsFragment reviewsFrag = new ReviewsFragment();
         reviewsFrag.setArguments(args);
-        ft.replace(R.id.coffeeMachineContainerLayoutId, reviewsFrag);
-        ft.addToBackStack("back");
-        ft.commit();
+
+        getFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.card_flip_left_in,
+                    R.anim.card_flip_left_out,
+                    R.anim.card_flip_right_in,
+                    R.anim.card_flip_right_out)
+                .replace(R.id.coffeeMachineContainerLayoutId, reviewsFrag)
+                .addToBackStack("back")
+                .commit();
         return true;
     }
 

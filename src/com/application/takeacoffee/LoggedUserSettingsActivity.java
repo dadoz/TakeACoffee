@@ -1,10 +1,7 @@
 package com.application.takeacoffee;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,7 +9,6 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
-import com.application.models.Review;
 
 public class LoggedUserSettingsActivity extends SherlockActivity{
 
@@ -44,7 +40,7 @@ public class LoggedUserSettingsActivity extends SherlockActivity{
                 String newUsername = ((EditText)findViewById(R.id.newUsernameEditTextId)).getText().toString();
 
                 SharedPreferences sharedPref = getPreferences(0);
-                sharedPref.edit().putString(Common.REGISTERED_USERNAME, newUsername);
+                sharedPref.edit().putString(Common.SHAREDPREF_REGISTERED_USERNAME, newUsername);
                 coffeMachineApplication.coffeeMachineData.setRegisteredUser(newUsername);
                 setResult(RESULT_OK);
                 finish();

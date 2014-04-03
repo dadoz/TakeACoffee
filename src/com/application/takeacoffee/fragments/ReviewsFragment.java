@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.view.Window;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
+import com.application.drawable.TextDrawable;
 import com.application.models.Review;
 import com.application.takeacoffee.R;
 
@@ -26,12 +27,13 @@ public class ReviewsFragment extends Fragment {
     private static final String TAG = "ReviewFragment";
     private CoffeeMachineDataStorageApplication coffeeMachineApplication;
     private ArrayList<Review> reviewList = null;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
 
         //get data from application
-        coffeeMachineApplication = ((CoffeeMachineDataStorageApplication) this.getActivity().
-                getApplication());
+        coffeeMachineApplication = ((CoffeeMachineDataStorageApplication) this.getActivity()
+                .getApplication());
 
         //get args from fragment
         String coffeeMachineId = (String)this.getArguments().get(Common.COFFE_MACHINE_ID_KEY);
@@ -94,6 +96,12 @@ public class ReviewsFragment extends Fragment {
                 createReviewsListDialog();
             }
         });
+
+
+        worstReviewButton.setBackground(new TextDrawable("blalblalalablala", 0xff227700, 50));
+
+
+
 /*        Button addReviewBtn = (Button)findViewById(R.id.addReviewButtonId);
         addReviewBtn.setOnClickListener(new View.OnClickListener() {
             @Override

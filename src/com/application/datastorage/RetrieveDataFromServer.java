@@ -1,16 +1,12 @@
 package com.application.datastorage;
 
-import org.apache.http.impl.cookie.DateUtils;
+import com.application.commons.Common.ReviewStatusEnum;
+import com.application.models.CoffeMachine;
+import com.application.models.Review;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.application.commons.Common.ReviewStatusEnum;
-import com.application.models.CoffeMachine;
-import com.application.models.Review;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -26,7 +22,7 @@ public class RetrieveDataFromServer {
 
 	private static String getData() {
         //TODO add Date field on JSON data
-		String JSONData = "{'coffe_machine_data' : [{'coffe_machine_id':'STATIC_COFFEMACHINEID_1', 'coffe_machine_name':'Fin Machine','coffe_machine_address':'Main Street - London', 'coffe_machine_reviews' : [] }, {'coffe_machine_id':'STATIC_COFFEMACHINEID_2','coffe_machine_name':'Hey Machine','coffe_machine_address':'Even village - Mexico', 'coffe_machine_reviews' : [{'review_id':'STATIC_REVIEWID_1', 'review_username':'Mike pp', 'review_comment':'this is the comment on machine', 'review_status':'NOT_BAD'}, {'review_id':'STATIC_REVIEWID_2', 'review_username':'Henry d', 'review_comment':'this is the comment on machine cos I want to say thats nothing in front of your problems didnt u agree with me?', 'review_status':'GOOD'}] }] }";
+		String JSONData = "{'coffe_machine_data' : [{'coffe_machine_id':'STATIC_COFFEMACHINEID_1', 'coffe_machine_name':'New Kinder','coffe_machine_address':'Main Street - London', 'coffe_machine_reviews' : [] }, {'coffe_machine_id':'STATIC_COFFEMACHINEID_2','coffe_machine_name':'Hey Machine','coffe_machine_address':'Even village - Mexico', 'coffe_machine_reviews' : [{'review_id':'STATIC_REVIEWID_1', 'review_username':'Mike pp', 'review_comment':'this is the comment on machine', 'review_status':'NOT_BAD'}, {'review_id':'STATIC_REVIEWID_2', 'review_username':'Henry d', 'review_comment':'this is the comment on machine cos I want to say thats nothing in front of your problems didnt u agree with me?', 'review_status':'GOOD'}] }, {'coffe_machine_id':'STATIC_COFFEMACHINEID_3', 'coffe_machine_name':'New Palace ','coffe_machine_address':'Main Street - London', 'coffe_machine_reviews' : [] }, {'coffe_machine_id':'STATIC_COFFEMACHINEID_4', 'coffe_machine_name':'Black Cat ','coffe_machine_address':'Main Street - London', 'coffe_machine_reviews' : [] } ]}";
 
 		return JSONData;
 	}

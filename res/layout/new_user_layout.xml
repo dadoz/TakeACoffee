@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_width="200dip"
             android:hint="username" />
-    <Button
+    <!--<Button
             android:id="@+id/saveButtonId"
             android:textSize="@dimen/header_button_text"
             android:textColor="@color/light_grey"
@@ -34,6 +34,6 @@
             android:paddingRight="10.0dip"
             android:layout_width="wrap_content"
             android:layout_height="40.0dip"
-            android:text="save" />
+            android:text="save" />-->
 
 </LinearLayout>

@@ -2,19 +2,21 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/reviewsButtonId"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
     <ImageView
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/coffeeIconId"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/worst_circle_icon" />
+            android:layout_width="100dip"
+            android:layout_height="100dip"
+            android:src="@drawable/coffe_cup_black_white" />
     <TextView
             android:id="@+id/coffeeMachineNameTextId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" - "
+            android:text=" SAMPLE TEXT "
             android:textSize="@dimen/header_button_text" />
 </LinearLayout>
 

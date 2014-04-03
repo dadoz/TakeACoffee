@@ -10,8 +10,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Common {
-	public static final String REGISTERED_USERNAME = "REGISTERED_USERNAME";
-	public enum ReviewStatusEnum {NOT_SET,AWFUL,NOT_BAD,GOOD};
+	public static final String SHAREDPREF_REGISTERED_USERNAME = "SHAREDPREF_REGISTERED_USERNAME";
+    public static final String SHAREDPREF_PROFILE_PIC_FILE_NAME = "SHAREDPREF_PROFILE_PIC_FILE_NAME";
+
+    public enum ReviewStatusEnum {NOT_SET,AWFUL,NOT_BAD,GOOD};
 
     public static String COFFEE_MACHINE_DIR = "coffeeMachineFolder";
     public static String PROFILE_PIC_FILE_NAME = "profilePicture";
@@ -42,6 +44,6 @@ public class Common {
     }
 
     public static void displayError(String error, Context context) {
-        Toast.makeText(context, error, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
     }
 }

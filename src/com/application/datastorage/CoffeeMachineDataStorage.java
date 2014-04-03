@@ -82,6 +82,7 @@ public class CoffeeMachineDataStorage {
     public void setProfilePicturePath(String path) {
         profilePicturePath = path;
     }
+
     public String getProfilePicturePath() {
         return profilePicturePath;
     }

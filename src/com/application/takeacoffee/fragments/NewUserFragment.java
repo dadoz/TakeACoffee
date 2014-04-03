@@ -12,9 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 import java.io.File;
@@ -50,6 +52,10 @@ public class NewUserFragment extends Fragment{
         final View userView = inflater.inflate(R.layout.new_user_layout, container, false);
 
         ImageView profilePic = (ImageView)userView .findViewById(R.id.profilePicImageViewId);
+        if(!CoffeeMachineActivity.setProfilePicFromStorage(profilePic)) {
+            Log.e(TAG, "failed to load profile pic from storage - load the guest one");
+        }
+
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,20 +64,29 @@ public class NewUserFragment extends Fragment{
         });
 
 
-        Button saveButton = (Button)userView.findViewById(R.id.saveButtonId);
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        //get change button and change to save button
+        Button headerchangeUserButton = (Button)mainActivityRef.findViewById(R.id.loggedUserButtonId);
+        headerchangeUserButton.setText("SAVE");
+        headerchangeUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape_yellow)));
+        headerchangeUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //check and save
-                String username = ((EditText)userView.findViewById(R.id.usernameNewUserEditTextId)).getText().toString();
-                Log.e(TAG, "u clicked save - " + username);
-                if(username == null) {
+                EditText usernameEditText = (EditText)userView.findViewById(R.id.usernameNewUserEditTextId);
+                String username = usernameEditText.getText().toString();
+                Log.e(TAG, "u clicked save - " + username + " --");
+                if(username == null || username.matches("")) {
                     Common.displayError("no username set - please insert your one", view.getContext());
                     return;
                 }
 
+                //hide keyboard
+                InputMethodManager imm = (InputMethodManager)mainActivityRef.getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
+
                 updateUserBox(username);
-                sharedPref.edit().putString(Common.REGISTERED_USERNAME, username).commit();
+                sharedPref.edit().putString(Common.SHAREDPREF_REGISTERED_USERNAME, username).commit();
                 coffeeMachineApplication.coffeeMachineData.initRegisteredUser(username);
                 getFragmentManager().popBackStack();
             }
@@ -92,15 +107,22 @@ public class NewUserFragment extends Fragment{
         //set username
         ((TextView)mainActivityRef.findViewById(R.id.loggedUserTextId)).setText(username);
 
+        //reset button on prev status
+        resetChangeButton();
+
+    }
+
+    public void resetChangeButton() {
         //change button to change instead of new (with new bind)
         ((Button)mainActivityRef.findViewById(R.id.loggedUserButtonId)).setText("change");
+        (mainActivityRef.findViewById(R.id.loggedUserButtonId)).setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
         (mainActivityRef.findViewById(R.id.loggedUserButtonId)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Common.displayError("change username", view.getContext());
+                CoffeeMachineActivity.addChangeUserFragment(mainActivityRef.getFragmentManager());
             }
         });
-
     }
 
     public void setProfilePic() {
@@ -133,7 +155,7 @@ public class NewUserFragment extends Fragment{
                             //store url in application
                             Log.d(TAG, "[PROFILE PIC] path file - " + profileImagePath);
                             coffeeMachineApplication.coffeeMachineData.setProfilePicturePath(profileImagePath);
-                            sharedPref.edit().putString(Common.REGISTERED_USERNAME, profileImagePath);
+                            sharedPref.edit().putString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, profileImagePath).commit();
                         }
 
                          profilePic.setImageBitmap(profileImage);

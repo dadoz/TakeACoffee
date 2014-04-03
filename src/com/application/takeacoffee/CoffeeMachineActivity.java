@@ -1,7 +1,7 @@
 package com.application.takeacoffee;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -24,22 +24,32 @@ import com.application.takeacoffee.fragments.NewUserFragment;
 public class CoffeeMachineActivity extends SherlockActivity {
     public static final String TAG ="MainActivity";
     private static final String EMPTY_VALUE = "EMPTY_VALUE";
-//    private ArrayList<CoffeeMachine> coffeeMachineList;
-    private CoffeeMachineDataStorageApplication coffeeMachineApplication;
+    private static final String NEW_USER_FRAGMENT_TAG = "NEW_USER_FRAGMENT_TAG";
+
+    public boolean loggedUser;
+    //    private ArrayList<CoffeeMachine> coffeeMachineList;
+    private static CoffeeMachineDataStorageApplication coffeeMachineApplication;
     public Context context = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Sherlock_Light_DarkActionBar); //Used for theme switching in samples
         super.onCreate(savedInstanceState);
+        context = this.getApplicationContext();
 
         setContentView(R.layout.coffe_machine_layout);
 
-        View mainView = findViewById(R.id.scrollViewContainerId);
-        context = this.getApplicationContext();
-        Common.setCustomFont(mainView, this.getAssets());
+        Common.setCustomFont(findViewById(R.id.scrollViewContainerId), this.getAssets());
+
+        loggedUser = initDataApplication();
+        //change username
+        if(loggedUser) {
+            setLoggedUserView();
+        } else {
+            setNotLoggedUserView();
+        }
+
         if(savedInstanceState == null) {
-            boolean loggedUser = initDataApplication();
-            initView(loggedUser);
+            initView();
         }
     }
 
@@ -47,11 +57,13 @@ public class CoffeeMachineActivity extends SherlockActivity {
     private boolean initDataApplication(){
         SharedPreferences sharedPref = getPreferences(0);
         if(sharedPref!= null) {
-            String username = sharedPref.getString(Common.REGISTERED_USERNAME, EMPTY_VALUE);
+            String username = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USERNAME, EMPTY_VALUE);
             if(username.compareTo(EMPTY_VALUE) != 0) {
                 Log.e(TAG,"this is my username" + username);
                 coffeeMachineApplication = (CoffeeMachineDataStorageApplication)getApplication();
                 coffeeMachineApplication.coffeeMachineData.initRegisteredUser(username);
+                String profilePicPath = sharedPref.getString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, EMPTY_VALUE);
+                coffeeMachineApplication.coffeeMachineData.setProfilePicturePath(profilePicPath);
                 return true;
             } else {
                 Log.e(TAG, "no username set");
@@ -61,62 +73,72 @@ public class CoffeeMachineActivity extends SherlockActivity {
         return false;
     }
 
-    private void initView(final boolean loggedUser) {
-        //change username
-        if(loggedUser) {
-            setLoggedUserView();
-        } else {
-            setNotLoggedUserView();
-        }
-
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        CoffeeMachineFragment cfFrag = new CoffeeMachineFragment();
-        fragmentTransaction.add(R.id.coffeeMachineContainerLayoutId, cfFrag);
-        fragmentTransaction.commit();
+    private void initView() {
+        getFragmentManager().beginTransaction()
+                .add(R.id.coffeeMachineContainerLayoutId, new CoffeeMachineFragment())
+                .commit();
     }
 
     public void setLoggedUserView() {
-        Button loggedUserButton = (Button)findViewById(R.id.loggedUserButtonId);
         ((TextView)findViewById(R.id.loggedUserTextId)).setText(
                 coffeeMachineApplication.coffeeMachineData.getRegisteredUser().getUsername());
+
+        Button loggedUserButton = (Button)findViewById(R.id.loggedUserButtonId);
+        loggedUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
         loggedUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(context, "logged", Toast.LENGTH_LONG).show();
+                addChangeUserFragment(getFragmentManager());
             }
         });
+        setProfilePicFromStorage((ImageView)findViewById(R.id.loggedUserImageViewId));
+    }
 
+    public static boolean setProfilePicFromStorage(ImageView v) {
         try {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             Bitmap bitmap = BitmapFactory.decodeFile(coffeeMachineApplication.coffeeMachineData.getProfilePicturePath(), options);
-            ((ImageView)findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
+            v.setImageBitmap(bitmap);
+            return true;
         } catch(Exception e) {
             e.printStackTrace();
         }
-
+        return false;
     }
-
     public void setNotLoggedUserView() {
-        Button loggedUserButton = (Button)findViewById(R.id.loggedUserButtonId);
-
         ((TextView)findViewById(R.id.loggedUserTextId)).setText("guest");
+
+        Button loggedUserButton = (Button)findViewById(R.id.loggedUserButtonId);
+        loggedUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
         loggedUserButton.setText("new");
         loggedUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(context, "not logged", Toast.LENGTH_LONG).show();
-
-                //add fragment content to add user
-                getFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.card_flip_left_in, R.anim.card_flip_left_out, R.anim.card_flip_right_in, R.anim.card_flip_right_out)
-                    .replace(R.id.coffeeMachineContainerLayoutId, new NewUserFragment())
-                    .addToBackStack("back")
-                    .commit();
+                addChangeUserFragment(getFragmentManager());
             }
         });
+    }
+
+    public static void addChangeUserFragment(FragmentManager fragManager) {
+        Fragment newUserFragment = new NewUserFragment();
+        //add fragment content to add user
+        fragManager.beginTransaction()
+                .setCustomAnimations(R.anim.card_flip_left_in, R.anim.card_flip_left_out, R.anim.card_flip_right_in, R.anim.card_flip_right_out)
+                .replace(R.id.coffeeMachineContainerLayoutId, newUserFragment, NEW_USER_FRAGMENT_TAG)
+                .addToBackStack("back")
+                .commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        final NewUserFragment fragment = (NewUserFragment)getFragmentManager().findFragmentByTag(NEW_USER_FRAGMENT_TAG);
+        if(fragment != null) {
+            fragment.resetChangeButton();
+        }
+        super.onBackPressed();
     }
 
     @Override
