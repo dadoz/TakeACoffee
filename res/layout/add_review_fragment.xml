@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/addReviewViewContainerLayoutId"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            <TextView
+                    android:id="@+id/goodTabTextId"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="@dimen/header_button_text"
+                    android:paddingTop="20dip"
+                    android:paddingBottom="20dip"
+                    android:gravity="center"
+                    android:text="good-tab"/>
+            <TextView
+                    android:id="@+id/notBadTabTextId"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="@dimen/header_button_text"
+                    android:paddingTop="20dip"
+                    android:paddingBottom="20dip"
+                    android:gravity="center"
+                    android:text="not-bad-tab"/>
+            <TextView
+                    android:id="@+id/worstTabTextId"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="@dimen/header_button_text"
+                    android:paddingTop="20dip"
+                    android:paddingBottom="20dip"
+                    android:gravity="center"
+                    android:text="worst-tab"/>
+    </LinearLayout>
+</LinearLayout>

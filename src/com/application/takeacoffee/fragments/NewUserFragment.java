@@ -49,7 +49,7 @@ public class NewUserFragment extends Fragment{
 
         sharedPref = mainActivityRef.getPreferences(0);
 
-        final View userView = inflater.inflate(R.layout.new_user_layout, container, false);
+        final View userView = inflater.inflate(R.layout.new_user_fragment, container, false);
 
         ImageView profilePic = (ImageView)userView .findViewById(R.id.profilePicImageViewId);
         if(!CoffeeMachineActivity.setProfilePicFromStorage(profilePic)) {

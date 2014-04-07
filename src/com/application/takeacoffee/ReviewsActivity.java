@@ -41,7 +41,7 @@ public class ReviewsActivity extends SherlockActivity {
         setTheme(R.style.Theme_Sherlock_Light_DarkActionBar); //Used for theme switching in samples
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.reviews_layout);
+        setContentView(R.layout.reviews_fragment);
 
         initView();
     }

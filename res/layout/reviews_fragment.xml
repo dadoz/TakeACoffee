@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <include layout="@layout/review_header_template" />
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/middle_grey"
+            android:layout_marginTop="10dip"
+            android:paddingBottom="40dip"
+            android:orientation="vertical">
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="@dimen/title_text_size"
+                android:text="Today"/>
+        <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dip">
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <LinearLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+                    <ImageView
+                            android:id="@+id/goodReviewButtonId"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/good_circle_icon_five_more"
+                            />
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="20dip"
+                            android:gravity="center"
+                            android:textColor="@color/dark_grey"
+                            android:textSize="@dimen/text_small"
+                            android:text="Good :P"/>
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+                    <ImageView
+                            android:id="@+id/badReviewButtonId"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/bad_circle_icon_zero"
+                            />
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="20dip"
+                            android:gravity="center"
+                            android:textColor="@color/dark_grey"
+                            android:textSize="@dimen/text_small"
+                            android:text="Not so bad!"/>
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+                    <ImageView
+                            android:id="@+id/worstReviewButtonId"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/worst_circle_icon_ten_more"
+                            />
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="20dip"
+                            android:gravity="center"
+                            android:textColor="@color/dark_grey"
+                            android:textSize="@dimen/text_small"
+                            android:text="Worst damn!"/>
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="40dip"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="@dimen/title_text_size"
+                android:text="Previous review"/>
+            <Button
+                android:id="@+id/prevReviewsButtonId"
+                android:textSize="@dimen/header_button_text"
+                android:textColor="@color/light_grey"
+                android:background="@drawable/button_rounded_shape_black"
+                android:paddingLeft="10.0dip"
+                android:paddingRight="10.0dip"
+                android:layout_width="wrap_content"
+                android:layout_height="40.0dip"
+                android:text="load more"
+
+                android:layout_marginTop="40dip"
+                android:layout_gravity="center"/>
+    </LinearLayout>
+
+</LinearLayout>

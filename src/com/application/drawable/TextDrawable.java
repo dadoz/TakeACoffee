@@ -21,27 +21,31 @@ public class TextDrawable extends Drawable {
 
         this.textPaint = new Paint();
         textPaint .setColor(Color.BLACK);
-        textPaint .setTextSize(22f);
-        textPaint .setAntiAlias(true);
-        textPaint .setFakeBoldText(true);
-        textPaint .setShadowLayer(6f, 0, 0, Color.BLACK);
-        textPaint .setStyle(Paint.Style.FILL);
-        textPaint .setTextAlign(Paint.Align.LEFT);
+        textPaint .setTextSize(50);
 
-        Rect bounds = new Rect();
-        textPaint.getTextBounds(text, 0, text.length(), bounds);
+
+//        Rect bounds = new Rect();
+//        textPaint.getTextBounds(text, 0, text.length(), bounds);
 
 
         this.circleSize = size;
         this.circlePaint = new Paint();
         circlePaint.setAntiAlias(true);
         circlePaint.setColor(color);
+        circlePaint.setStyle(Paint.Style.FILL);
         circlePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 
     }
 
     @Override
     public void draw(Canvas canvas) {
+        Paint.FontMetrics fm = new Paint.FontMetrics();
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.getFontMetrics(fm);
+/*        textPaint .setAntiAlias(true);
+        textPaint .setFakeBoldText(true);
+        textPaint .setShadowLayer(6f, 0, 0, Color.BLACK);*/
+
         canvas.drawARGB(0, 0, 0, 0);
         canvas.drawCircle(circleSize, circleSize, circleSize, circlePaint);
         Log.d(TAG, "text" + text);

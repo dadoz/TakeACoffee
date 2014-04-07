@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="300dip"
+            android:background="@color/light_black">
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="@dimen/header_text_size"
+            android:textColor="@color/light_grey"
+            android:text="Add a worst Review"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/user_icon_white" />
+        <EditText
+                android:textSize="@dimen/header_text_size"
+                android:textColor="@color/light_grey"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:hint="write post" />
+    </LinearLayout>
+</LinearLayout>

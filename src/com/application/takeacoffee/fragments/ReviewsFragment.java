@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.actionbarsherlock.view.Window;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
-import com.application.drawable.TextDrawable;
 import com.application.models.Review;
 import com.application.takeacoffee.R;
 
@@ -47,8 +46,11 @@ public class ReviewsFragment extends Fragment {
         }
 
         //data are stored in reviewList
-        View reviewsLayoutView = inflater.inflate(R.layout.reviews_layout, container, false);
+        View reviewsLayoutView = inflater.inflate(R.layout.reviews_fragment, container, false);
         initView(reviewsLayoutView);
+
+        //set review header (coffee machine name)
+        setHeaderReview(coffeeMachineId, reviewsLayoutView);
 
         //set custom font
         Common.setCustomFont(reviewsLayoutView, this.getActivity().getAssets());
@@ -56,9 +58,38 @@ public class ReviewsFragment extends Fragment {
         return reviewsLayoutView;
     }
 
+    private void setHeaderReview(String coffeeMachineId, View reviewsLayoutView) {
+        String coffeeMachineName = coffeeMachineApplication.coffeeMachineData
+                .getCoffeMachineById(coffeeMachineId).getName();
+        if(coffeeMachineName != null) {
+            ((TextView)reviewsLayoutView.findViewById(R.id.coffeeMachineNameReviewTextId))
+                    .setText(coffeeMachineName);
+        }
+
+        //add review button
+        (reviewsLayoutView.findViewById(R.id.addReviewButtonId))
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        changeFragment();
+                    }
+                });
+    }
+
+    private void changeFragment() {
+        AddReviewFragment addReviewFragment = new AddReviewFragment();
+        //add fragment content to add user
+        getFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.card_flip_left_in, R.anim.card_flip_left_out, R.anim.card_flip_right_in, R.anim.card_flip_right_out)
+                .replace(R.id.coffeeMachineContainerLayoutId, addReviewFragment)
+                .addToBackStack("back")
+                .commit();
+    }
+
     private boolean getReviewData(String coffeeMachineId) {
         if(coffeeMachineId != null) {
-            //check if coffeMachineId exist - I DONT KNOW if its better to use this fx instead of impl method on list
+            //check if coffeMachineId exist -
+            // I DONT KNOW if its better to use this fx instead of impl method on list
             reviewList = coffeeMachineApplication.coffeeMachineData.
                     getReviewListByCoffeMachineId(coffeeMachineId);
             if(reviewList == null || reviewList.size() == 0) {
@@ -96,10 +127,14 @@ public class ReviewsFragment extends Fragment {
                 createReviewsListDialog();
             }
         });
-
-
-        worstReviewButton.setBackground(new TextDrawable("blalblalalablala", 0xff227700, 50));
-
+/*
+        LinearLayout linearLayoutContainer = (LinearLayout)reviewLayoutView.findViewById(R.id.tableRowReviewCheckerContainerId);
+        TextIconCustom customImageView = new TextIconCustom(reviewLayoutView.getContext(), 100, Color.WHITE, "2", 100, getResources().getColor(R.color.green_marine));
+        customImageView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+        linearLayoutContainer.addView(customImageView, 300, 300);
+*/
 
 
 /*        Button addReviewBtn = (Button)findViewById(R.id.addReviewButtonId);

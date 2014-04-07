@@ -1,6 +1,5 @@
 package com.application.takeacoffee;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -51,6 +50,7 @@ public class CoffeeMachineActivity extends SherlockActivity {
         if(savedInstanceState == null) {
             initView();
         }
+
     }
 
 
@@ -123,7 +123,7 @@ public class CoffeeMachineActivity extends SherlockActivity {
     }
 
     public static void addChangeUserFragment(FragmentManager fragManager) {
-        Fragment newUserFragment = new NewUserFragment();
+        NewUserFragment newUserFragment = new NewUserFragment();
         //add fragment content to add user
         fragManager.beginTransaction()
                 .setCustomAnimations(R.anim.card_flip_left_in, R.anim.card_flip_left_out, R.anim.card_flip_right_in, R.anim.card_flip_right_out)

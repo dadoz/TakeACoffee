@@ -13,7 +13,7 @@ import com.application.takeacoffee.R;
 public class UserFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.reviews_layout,container,false);
+        return inflater.inflate(R.layout.reviews_fragment,container,false);
     }
 
 }
