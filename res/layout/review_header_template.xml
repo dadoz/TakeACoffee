@@ -4,25 +4,57 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="10.0dip"
-        android:layout_marginLeft="10.0dip" >
-    <TextView
+        android:layout_height="wrap_content">
+        <TextView
+                android:textSize="@dimen/text_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:paddingTop="@dimen/small_padding"
+                android:paddingLeft="@dimen/small_padding"
+                android:paddingRight="@dimen/small_padding"
+                android:textColor="@color/dark_grey"
+                android:text="coffee machine name:" />
+        <TextView
             android:id="@+id/coffeeMachineNameReviewTextId"
             android:textSize="@dimen/header_text_size"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:text="- Reviews" />
-    <Button
-                android:id="@+id/addReviewButtonId"
-                android:textSize="@dimen/header_button_text"
-                android:textColor="@color/light_black"
-                android:background="@drawable/button_rounded_shape"
-                android:paddingLeft="10.0dip"
-                android:paddingRight="10.0dip"
+            android:layout_centerVertical="true"
+            android:paddingTop="@dimen/text_medium_20"
+            android:paddingLeft="@dimen/small_padding"
+            android:paddingRight="@dimen/small_padding"
+            android:text="name" />
+    <LinearLayout
+            android:id="@+id/addReviewImageViewId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/small_padding"
+            android:background="@drawable/border_left"
+            android:layout_alignParentRight="true">
+<!--        <ImageView
+                android:id="@+id/addReviewImageViewId"
+                android:layout_width="@dimen/button_height"
+                android:layout_height="@dimen/button_height"
+                android:layout_gravity="center"/>-->
+        <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="40.0dip"
-                android:text="ADD review"
-                android:layout_alignParentRight="true" />
+                android:layout_height="@dimen/button_height"
+                android:text="+"
+                android:padding="0dip"
+                android:textSize="@dimen/button_height"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/light_red"/>
+        <TextView
+                android:textSize="@dimen/text_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/light_red"
+                android:text="add review " />
+
+    </LinearLayout>
+
 </RelativeLayout>

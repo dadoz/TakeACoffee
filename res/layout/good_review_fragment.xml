@@ -3,38 +3,121 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="300dip"
-              android:background="@color/light_green">
+              android:layout_height="match_parent">
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:background="@color/light_green">
+            >
         <TextView
+                android:gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textSize="@dimen/header_text_size"
-                android:gravity="center"
+                android:layout_marginLeft="@dimen/small_padding"
                 android:text="Add your review"/>
-        <Button
+        <TextView
+                android:gravity="center"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dip"
-                android:text="add comment"
-                android:background="@drawable/button_rounded_shape"/>
+                android:layout_height="match_parent"
+                android:textSize="@dimen/text_small"
+                android:layout_marginLeft="@dimen/small_padding"
+                android:text="You can add a Good Bad or Worst review for this coffe machine"/>
     </LinearLayout>
+    <!--button choice -->
     <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal">
-        <EditText
+            android:layout_height="wrap_content"
+            android:background="@color/light_green">
+        <LinearLayout
+                android:layout_width="60dip"
+                android:layout_height="match_parent"
+                >
+            <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/left_arrow"/>
+        </LinearLayout>
+        <TextView
+                android:paddingTop="@dimen/medium_padding"
+                android:paddingBottom="@dimen/medium_padding"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:textSize="@dimen/header_text_size"
-                android:textColor="@color/light_black"
-                android:layout_height="wrap_content"
-                android:layout_width="300dip"
-                android:background="@color/light_grey"
-                android:hint="write post" />
+                android:layout_marginLeft="@dimen/small_padding"
+                android:text="good"/>
+        <TextView
+                android:paddingTop="@dimen/medium_padding"
+                android:paddingBottom="@dimen/medium_padding"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/header_button_text"
+                android:textColor="@color/stone_grey"
+                android:layout_marginLeft="@dimen/small_padding"
+                android:text="review"/>
+
     </LinearLayout>
+<!--    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/medium_padding"
+            android:paddingBottom="@dimen/medium_padding"
+            android:background="@color/middle_grey">
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginRight="@dimen/small_padding"
+                android:layout_marginLeft="@dimen/small_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/good_circle_icon"/>
+            <TextView
+                    android:layout_width="60dp"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:text="good"/>
+        </LinearLayout>
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginRight="@dimen/small_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/bad_circle_icon_new"/>
+            <TextView
+                    android:layout_width="60dp"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:text="bad"/>
+        </LinearLayout>
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginRight="@dimen/small_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/worst_circle_icon"/>
+            <TextView
+                    android:layout_width="60dp"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:text="terrible"/>
+        </LinearLayout>
+
+    </LinearLayout>-->
+    <!-- add text bar-->
+    <include layout="@layout/add_textbar_template"></include>
 </LinearLayout>

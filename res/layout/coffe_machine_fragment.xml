@@ -1,42 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+<LinearLayout
 	android:id="@+id/coffeeMachineFragmentLayoutId"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="0dip"
-    android:layout_marginTop="0dip"
+    android:layout_marginTop="@dimen/small_padding"
     android:orientation="vertical">
     <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="280dip"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/header_text_size"
+            android:textSize="@dimen/title_text_size"
+            android:layout_gravity="center"
             android:gravity="center"
-            android:text="Your coffee's machines available!"
+            android:textColor="@color/light_black"
+            android:text="Take a coffee!"
             />
-    <TableLayout
-            android:layout_marginTop="10dp"
-            android:id="@+id/coffeeMachineTableLayoutId"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-    </TableLayout>
-<!--    <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        <TableRow
+    <TextView
+            android:layout_width="320dip"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_medium_20"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/dark_grey"
+            android:text="tap on one coffee machine icon to READ or ADD some review!"
+            />
+        <TableLayout
+                android:id="@+id/coffeeMachineTableLayoutId"
+                android:layout_marginTop="@dimen/small_padding"
+                android:background="@color/light_red"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-            <ImageView
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/user_icon"
-                    />
-            <ImageView
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/user_icon"
-                    />
-        </TableRow>
-    </TableLayout>-->
-</LinearLayout>
+        </TableLayout>
+
+    </LinearLayout>
+</ScrollView>

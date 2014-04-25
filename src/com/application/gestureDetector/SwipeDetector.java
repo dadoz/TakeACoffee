@@ -5,7 +5,6 @@ package com.application.gestureDetector;
  */
 import android.view.MotionEvent;
 import android.view.View;
-import com.application.takeacoffee.fragments.AddReviewFragment;
 
 public class SwipeDetector implements View.OnTouchListener {
 
@@ -61,7 +60,7 @@ public class SwipeDetector implements View.OnTouchListener {
 
                         if(swipeLeftCounter > 0) {
                             this.swipeLeftCounter--;
-                            AddReviewFragment.swipeFragment(Action.LR, this.swipeLeftCounter);
+                            //AddReviewFragment.swipeFragment(Action.LR, this.swipeLeftCounter);
                         }
                         return false;
                     }
@@ -70,7 +69,7 @@ public class SwipeDetector implements View.OnTouchListener {
                         mSwipeDetected = Action.RL;
                         if(swipeLeftCounter < 2) {
                             this.swipeLeftCounter++;
-                            AddReviewFragment.swipeFragment(Action.RL, this.swipeLeftCounter);
+                            //AddReviewFragment.swipeFragment(Action.RL, this.swipeLeftCounter);
                         }
                         return false;
                     }

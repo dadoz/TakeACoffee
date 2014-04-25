@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+    <TextView
+            android:id="@+id/reviewStatusTextViewId"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/button_height"
+            android:paddingLeft="@dimen/small_padding"
+            android:background="@color/light_green"
+            android:text="Good reviews"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/header_text_size"
+            />
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+        <LinearLayout
+                android:id="@+id/reviewsContainerLayoutId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+    </ScrollView>
+</LinearLayout>

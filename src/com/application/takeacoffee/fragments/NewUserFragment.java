@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * Created by davide on 01/04/14.
@@ -87,7 +88,11 @@ public class NewUserFragment extends Fragment{
 
                 updateUserBox(username);
                 sharedPref.edit().putString(Common.SHAREDPREF_REGISTERED_USERNAME, username).commit();
-                coffeeMachineApplication.coffeeMachineData.initRegisteredUser(username);
+                if(coffeeMachineApplication.coffeeMachineData.getRegisteredUserStatus()) {
+                    coffeeMachineApplication.coffeeMachineData.initRegisteredUser(username);
+                } else {
+                    coffeeMachineApplication.coffeeMachineData.setRegisteredUser(username);
+                }
                 getFragmentManager().popBackStack();
             }
         });
@@ -187,23 +192,21 @@ public class NewUserFragment extends Fragment{
 
         return profilePicFile.getAbsolutePath();
     }
-
     public static Bitmap getRoundedRectBitmap(Bitmap bitmap, int size) {
         Bitmap result = null;
         try {
-            result = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
+            result = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(result);
 
             int color = 0xff424242;
             Paint paint = new Paint();
-            Rect rect = new Rect(0, 0, 200, 200);
 
             paint.setAntiAlias(true);
             canvas.drawARGB(0, 0, 0, 0);
             paint.setColor(color);
-            canvas.drawCircle(size, size, size, paint);
+            canvas.drawCircle(size / 2, size / 2, size / 2, paint);
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            canvas.drawBitmap(bitmap, size - bitmap.getWidth()/2, size - bitmap.getHeight()/2, paint);
+            canvas.drawBitmap(bitmap, 0, 0, paint);
 
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -212,4 +215,65 @@ public class NewUserFragment extends Fragment{
         }
         return result;
     }
+
+
+    public static Bitmap getRoundedBitmap(int size, int color) {
+        Bitmap bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        try {
+            Canvas canvas = new Canvas(bmp);
+
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(color);
+            canvas.drawCircle(size/2, size/2, size/2, paint);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(bmp, 0, 0, paint);
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (OutOfMemoryError o) {
+            o.printStackTrace();
+        }
+        return bmp;
+    }
+    public static Bitmap getPieChartBitmap(int size, ArrayList<PieChart> pieChartList) {
+        Bitmap bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        try {
+            Canvas canvas = new Canvas(bmp);
+            RectF rectF = new RectF(0, 0, size, size);
+            canvas.drawARGB(0, 0, 0, 0);
+            Paint paintCustom = new Paint();
+            paintCustom.setAntiAlias(true);
+            paintCustom.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+
+            int startAngle = 0;
+            for(PieChart pieChartObj : pieChartList) {
+                Paint paint = new Paint();
+                paint.setAntiAlias(true);
+//                Integer sweepAngle = pieChartMap.get(color);
+                paint.setColor(pieChartObj.getColor());
+                canvas.drawArc(rectF, startAngle, pieChartObj.getData(), true, paint); //rect starAngle sweepAngle useCenter paint
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+
+                //start angle update
+                startAngle += pieChartObj.getData();
+            }
+
+/*            Paint paint1 = new Paint();
+            paint1.setAntiAlias(true);
+            paint1.setColor(colorArray[1]);
+            canvas.drawArc(rectF, 45, 315, true, paint1); //rect starAngle sweepAngle useCenter paint
+            paint1.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+*/
+            canvas.drawBitmap(bmp, 0, 0, paintCustom);
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (OutOfMemoryError o) {
+            o.printStackTrace();
+        }
+        return bmp;
+    }
+
 }

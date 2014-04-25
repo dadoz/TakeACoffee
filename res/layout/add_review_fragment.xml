@@ -1,43 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/addReviewViewContainerLayoutId"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
     <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/addReviewViewContainerLayoutId"
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/light_grey"
+                android:paddingBottom="@dimen/small_padding">
             <TextView
-                    android:id="@+id/goodTabTextId"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textSize="@dimen/header_button_text"
-                    android:paddingTop="20dip"
-                    android:paddingBottom="20dip"
-                    android:gravity="center"
-                    android:text="good-tab"/>
+                    android:textSize="@dimen/title_text_size"
+                    android:layout_marginLeft="@dimen/small_padding"
+                    android:text="Add a review!"/>
             <TextView
-                    android:id="@+id/notBadTabTextId"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="@dimen/header_button_text"
-                    android:paddingTop="20dip"
-                    android:paddingBottom="20dip"
                     android:gravity="center"
-                    android:text="not-bad-tab"/>
-            <TextView
-                    android:id="@+id/worstTabTextId"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_width="340dip"
                     android:layout_height="match_parent"
-                    android:textSize="@dimen/header_button_text"
-                    android:paddingTop="20dip"
-                    android:paddingBottom="20dip"
-                    android:gravity="center"
-                    android:text="worst-tab"/>
-    </LinearLayout>
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/text_small"
+                    android:text="You can add a GOOD or NOT SO BAD or WORST   review for this coffe machine"/>
+        </LinearLayout>
+        <!--button choice -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/light_grey"
+            android:orientation="vertical">
+
+            <include layout="@layout/choice_review_button_template"></include>
+            <LinearLayout
+                    android:id="@+id/addReviewActionContainerLayoutId"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@color/light_green"
+                    android:orientation="horizontal">
+
+                <LinearLayout
+                        android:layout_weight="1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:padding="@dimen/small_padding"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/addReviewWithoutTextImageViewId"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_small"
+                            android:text="add review"
+                            />
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_weight="1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:padding="@dimen/small_padding"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                    <ImageView
+                            android:id="@+id/addReviewWithMoreTextImageViewId"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_small"
+                            android:text="add text on review"
+                            />
+                </LinearLayout>
+            </LinearLayout>
+                <!-- add text bar-->
+                <!--<include layout="@layout/add_textbar_template"></include>-->
+        </LinearLayout>
 </LinearLayout>

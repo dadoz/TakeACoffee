@@ -1,95 +1,145 @@
 package com.application.takeacoffee.fragments;
 
 import android.app.Fragment;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.*;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
-import com.application.models.CoffeMachine;
+import com.application.models.CoffeeMachine;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
+
+import static com.application.commons.Common.setCustomFontByView;
 
 /**
  * Created by davide on 3/13/14.
  */
 public class CoffeeMachineFragment extends Fragment {
-    private static final String TAG = "coffeMachineFragment";
-    private CoffeeMachineDataStorageApplication coffeMachineApplication;
-    private ArrayList<CoffeMachine> coffeMachineList;
+    private static final String TAG = "coffeeMachineFragment";
+    private ArrayList<CoffeeMachine> coffeeMachineList;
+    private ArrayList<PieChart> pieChartList;
+    private Handler mHandler;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
-        /***get data from JSON****/
-        //CoffeMachine[] coffeMachineList = RetrieveDataFromServer.getCoffeMachineData();
-        //get data from application
-        coffeMachineApplication = ((CoffeeMachineDataStorageApplication) this.getActivity().getApplication());
-        coffeMachineList = coffeMachineApplication.coffeeMachineData.getCoffeMachineList();
-        View coffeMachineFragment = inflater.inflate(R.layout.coffe_machine_fragment, container, false);
-
         int itemInTableRowCounter = 0;
-//        TableLayout tableLayout = null;
-        TableRow tableRow = null;
-        if(coffeMachineList != null &&  coffeMachineList.size() != 0) {
-            for(CoffeMachine coffeMachineObj : coffeMachineList) {
-                Log.e(TAG, "coffeMachineData - " + coffeMachineObj.getAddress() + " - name - " + coffeMachineObj.getName());
-                TableLayout cmfTableLayoutContainer = (TableLayout)coffeMachineFragment.findViewById(R.id.coffeeMachineTableLayoutId);
 
-                if(itemInTableRowCounter == 0) {
-                    Log.e(TAG, "create new tablerow ");
-                    //fill my table layout
-                    tableRow = new TableRow(this.getActivity());
+        mHandler = new Handler();
+
+        //get data from application
+        coffeeMachineList = ((CoffeeMachineDataStorageApplication) getActivity().getApplication())
+                .coffeeMachineData.getCoffeeMachineList();
+        View coffeeMachineFragment = inflater.inflate(R.layout.coffe_machine_fragment, container, false);
+        //set custom font
+        Common.setCustomFont(coffeeMachineFragment, this.getActivity().getAssets());
+
+        boolean firstAnimationStarted = false;
+        TableRow tableRow = null;
+        if (coffeeMachineList != null && coffeeMachineList.size() != 0) {
+            for (final CoffeeMachine coffeeMachineObj : coffeeMachineList) {
+//                Log.e(TAG, "coffeMachineData - " + coffeeMachineObj.getAddress() +
+//                        " - name - " + coffeeMachineObj.getName());
+                TableLayout cmfTableLayoutContainer = (TableLayout) coffeeMachineFragment
+                        .findViewById(R.id.coffeeMachineTableLayoutId);
+
+                if (itemInTableRowCounter == 0) {
+                    tableRow = new TableRow(getActivity());
                     tableRow.setLayoutParams(new TableRow.LayoutParams(
                             TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1.0f));
                     tableRow.setPadding(0, 40, 0, 40);
                 }
 
-                LayoutInflater inflaterLayout = (LayoutInflater)this.getActivity()
-                        .getSystemService(this.getActivity().LAYOUT_INFLATER_SERVICE);
-                LinearLayout coffeeMachineTemplate = (LinearLayout)inflaterLayout
+                LayoutInflater inflaterLayout = (LayoutInflater) getActivity()
+                        .getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+                final LinearLayout coffeeMachineTemplate = (LinearLayout) inflaterLayout
                         .inflate(R.layout.coffe_machine_template, null);
                 coffeeMachineTemplate.setLayoutParams(new TableRow.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f)); // it make no sense :O
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT, 1.0f)); // it make no sense :O
                 coffeeMachineTemplate.setGravity(Gravity.CENTER_HORIZONTAL);
 
+
+                Animation anim = AnimationUtils.loadAnimation(getActivity().getBaseContext(), R.anim.zoom_in);
+                anim.setDuration(Common.ANIMATION_GROW_TIME);
+                coffeeMachineTemplate.startAnimation(anim);
                 tableRow.addView(coffeeMachineTemplate);
 
-                if(itemInTableRowCounter != 0 || coffeMachineList.indexOf(coffeMachineObj) == (coffeMachineList.size() - 1) ) {
-                  cmfTableLayoutContainer.addView(tableRow);
+                if (itemInTableRowCounter != 0 || coffeeMachineList.
+                        indexOf(coffeeMachineObj) == (coffeeMachineList.size() - 1)) {
+                    cmfTableLayoutContainer.addView(tableRow);
                 }
 
                 //reset counter
-                if(itemInTableRowCounter == 0) {
-                    itemInTableRowCounter ++;
+                if (itemInTableRowCounter == 0) {
+                    itemInTableRowCounter++;
                 } else {
                     itemInTableRowCounter = 0;
                 }
 
                 //set data to template
-                ((TextView)coffeeMachineTemplate.findViewById(R.id.coffeeMachineNameTextId))
-                        .setText(coffeMachineObj.getName());
+                setCustomFontByView(getActivity().getAssets(), coffeeMachineTemplate.findViewById(
+                        R.id.coffeeMachineNameTextId), false);
+                ((TextView) coffeeMachineTemplate.findViewById(R.id.coffeeMachineNameTextId))
+                        .setText(coffeeMachineObj.getName());
+                ((TextView) coffeeMachineTemplate.findViewById(R.id.coffeeMachineNameTextId))
+                        .setTextColor(getResources().getColor(R.color.light_black));
+                //coffee machine update
+                ((TextView) coffeeMachineTemplate.findViewById(R.id.coffeeMachineLastUpdateTextId))
+                        .setText("Last update: 01.02.14");
+                setCustomFontByView(getActivity().getAssets(), coffeeMachineTemplate.findViewById(
+                        R.id.coffeeMachineLastUpdateTextId), false);
 
-                final String coffeMachineId = coffeMachineObj.getId();
+
+                //TODO refactor please
+                String iconPath = (coffeeMachineObj.getIconPath());
+                int picResource = -1;
+                if (iconPath.equals(new String("coffee1.jpg"))) {
+                    picResource = R.drawable.coffee1;
+                } else if (iconPath.equals(new String("coffee2.jpg"))) {
+                    picResource = R.drawable.coffee2;
+                } else if (iconPath.equals(new String("coffee3.jpg"))) {
+                    picResource = R.drawable.coffee3;
+                } else if (iconPath.equals(new String("coffee4.jpg"))) {
+                    picResource = R.drawable.coffee4;
+                }
+                ImageView coffeePic = (ImageView) coffeeMachineTemplate.findViewById(R.id.coffeeIconId);
+
+                try {
+                    //make piechart
+                    pieChartList = getPieChartData();
+
+                    Bitmap bmpAbove = CoffeeMachineActivity.getRoundedBitmapByPicPath(picResource);
+                    Bitmap bmpBelow = NewUserFragment.getRoundedBitmap(Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE,
+                            getResources().getColor(R.color.middle_grey));
+                    Bitmap coffeeMachineBmp = Common.overlayBitmaps(bmpBelow, bmpAbove);
+                    coffeePic.setImageBitmap(coffeeMachineBmp);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "failed to load profile pic from storage - load the guest one");
+                    coffeePic.setImageResource(R.drawable.coffe_cup_black_white);
+                }
+
                 (coffeeMachineTemplate.findViewById(R.id.coffeeIconId)).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        Log.e(TAG, "u clicked");
-                        getCoffeeMachineReviewById(coffeMachineId);
+//                        final String coffeeMachineId = coffeeMachineObj.getId();
+                        getCoffeeMachineReviewById(coffeeMachineObj.getId());
                     }
                 });
             }
         }
 
-        //set custom font
-        Common.setCustomFont(coffeMachineFragment, this.getActivity().getAssets());
-        return coffeMachineFragment;
+        return coffeeMachineFragment;
     }
 
     private boolean getCoffeeMachineReviewById(String coffeMachineId){
@@ -111,4 +161,60 @@ public class CoffeeMachineFragment extends Fragment {
         return true;
     }
 
+
+    public ArrayList<PieChart> getPieChartData() {
+        ArrayList<PieChart> pieChartList = new ArrayList<PieChart>();
+
+        int reviewNumber, reviewTotal = 8, cnt = 0;
+        reviewNumber = 5;
+        cnt += reviewNumber;
+        pieChartList.add(new PieChart(getResources().getColor(R.color.light_green), (360 * reviewNumber) / reviewTotal));
+        reviewNumber = 2;
+        cnt += reviewNumber;
+        pieChartList.add(new PieChart(getResources().getColor(R.color.light_yellow), (360 * reviewNumber) / reviewTotal));
+        reviewNumber = 1;
+        cnt += reviewNumber;
+        pieChartList.add(new PieChart(getResources().getColor(R.color.light_black), (360 * reviewNumber) / reviewTotal));
+        if(cnt != reviewTotal) {
+            reviewNumber = reviewTotal - cnt;
+            pieChartList.add(new PieChart(getResources().getColor(R.color.middle_grey), (360 * reviewNumber) / reviewTotal));
+        }
+
+        return pieChartList;
+    }
+
+
+    Runnable newTask = new Runnable() {
+            @Override
+            public void run() {
+            }
+        };
+
+    public Animation initAnimation() {
+//                TranslateAnimation anim = new TranslateAnimation(200,0,-200,0);
+//                anim.setDuration(500);
+//                final ScaleAnimation growAnim = new ScaleAnimation(0.1f, 1.0f, 0.1f, 1.0f, 1f, 1f);
+        Animation growAnim = AnimationUtils.loadAnimation(getActivity(),R.anim.zoom_in);
+        if(growAnim != null) {
+            growAnim.setDuration(Common.ANIMATION_GROW_TIME);
+            growAnim.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    Log.d("ANIMATION", "start animation");
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    Log.d("ANIMATION", "end animation");
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+        }
+
+        return growAnim;
+    }
 }

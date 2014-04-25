@@ -1,5 +1,6 @@
 package com.application.takeacoffee;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,21 +21,24 @@ import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.takeacoffee.fragments.CoffeeMachineFragment;
 import com.application.takeacoffee.fragments.NewUserFragment;
 
+import static com.application.takeacoffee.fragments.NewUserFragment.getRoundedRectBitmap;
+
 public class CoffeeMachineActivity extends SherlockActivity {
     public static final String TAG ="MainActivity";
     private static final String EMPTY_VALUE = "EMPTY_VALUE";
     private static final String NEW_USER_FRAGMENT_TAG = "NEW_USER_FRAGMENT_TAG";
+    private static Activity mainActivityRef;
 
     public boolean loggedUser;
     //    private ArrayList<CoffeeMachine> coffeeMachineList;
     private static CoffeeMachineDataStorageApplication coffeeMachineApplication;
-    public Context context = null;
+    public static Context context = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Sherlock_Light_DarkActionBar); //Used for theme switching in samples
         super.onCreate(savedInstanceState);
         context = this.getApplicationContext();
-
+        mainActivityRef = this;
         setContentView(R.layout.coffe_machine_layout);
 
         Common.setCustomFont(findViewById(R.id.scrollViewContainerId), this.getAssets());
@@ -88,25 +92,14 @@ public class CoffeeMachineActivity extends SherlockActivity {
         loggedUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "logged", Toast.LENGTH_LONG).show();
+                Toast.makeText(mainActivityRef, "logged", Toast.LENGTH_LONG).show();
                 addChangeUserFragment(getFragmentManager());
             }
         });
         setProfilePicFromStorage((ImageView)findViewById(R.id.loggedUserImageViewId));
     }
 
-    public static boolean setProfilePicFromStorage(ImageView v) {
-        try {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            Bitmap bitmap = BitmapFactory.decodeFile(coffeeMachineApplication.coffeeMachineData.getProfilePicturePath(), options);
-            v.setImageBitmap(bitmap);
-            return true;
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+
     public void setNotLoggedUserView() {
         ((TextView)findViewById(R.id.loggedUserTextId)).setText("guest");
 
@@ -175,5 +168,52 @@ public class CoffeeMachineActivity extends SherlockActivity {
 	    return super.onCreateOptionsMenu(menu);
 	}
 	*/
+    public static boolean setProfilePicFromStorage(ImageView v) {
+    try {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(coffeeMachineApplication.coffeeMachineData.getProfilePicturePath(), options);
+        v.setImageBitmap(bitmap);
+        return true;
+    } catch(Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
 
+    public static boolean sePictureByPicPath(ImageView v, int pictureName) {
+        try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            Bitmap bitmap = BitmapFactory.decodeResource(mainActivityRef.getResources(), pictureName);
+            Bitmap roundedBitmap = getRoundedRectBitmap(bitmap, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
+            v.setImageBitmap(roundedBitmap);
+            return true;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static Bitmap getRoundedBitmapByPicPath(int pictureName) {
+        try {
+/*            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;*/
+            Bitmap bitmap = BitmapFactory.decodeResource(mainActivityRef.getResources(), pictureName);
+            Bitmap roundedBitmap = getRoundedRectBitmap(bitmap, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
+
+            return roundedBitmap;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Bitmap getRoundedBitmapByColor(Bitmap bmp, int color) {
+        Bitmap bmp2 = bmp.copy(bmp.getConfig(), true);
+        bmp2.eraseColor(color);
+        Bitmap roundedBitmap = getRoundedRectBitmap(bmp2, Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE);
+        return roundedBitmap;
+    }
 }

@@ -1,29 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="300dip"
-            android:background="@color/light_red">
-    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="@dimen/header_text_size"
-            android:text="Add a not so bad Review"/>
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        <ImageView
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+        <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/user_icon_white" />
+                android:layout_height="match_parent"
+                android:textSize="@dimen/header_text_size"
+                android:gravity="center"
+                android:text="Add your review"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal">
         <EditText
+                android:id="@+id/notSoBadReviewEditTextId"
                 android:textSize="@dimen/header_text_size"
                 android:textColor="@color/light_black"
                 android:layout_height="wrap_content"
-                android:layout_width="fill_parent"
+                android:layout_width="300dip"
+                android:background="@color/light_grey"
                 android:hint="write post" />
+        <Button
+                android:id="@+id/addNotSoBadReviewButtonId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_padding"
+                android:text="add comment"
+                android:background="@drawable/button_rounded_shape"/>
+
     </LinearLayout>
 </LinearLayout>

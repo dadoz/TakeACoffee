@@ -14,15 +14,19 @@ public class Review {
 	private ReviewStatusEnum status;
     private String comment;
     private Date date;
+    private String profilePicPath;
+    private String userId;
 
-	public Review(String id, final String username, String comment, ReviewStatusEnum status, Date date){
+	public Review(String id, String userId, final String username, String comment, ReviewStatusEnum status, String profilePicPath, Date date) {
 
         //this.id = getUniqueID();
         this.id = id;
+        this.userId = userId;
 		this.username = username;
         this.status = status;
         this.comment = comment;
         this.date = date;
+        this.profilePicPath = profilePicPath;
     }
 
 	public String getUsername() {
@@ -35,6 +39,10 @@ public class Review {
 
     public String getComment() {
         return this.comment;
+    }
+
+    public String getUserId(){
+        return this.userId;
     }
 
     public void setComment(String value) {
@@ -55,4 +63,7 @@ public class Review {
         return this.status;
     }
 
+    public String getProfilePicPath() {
+        return this.profilePicPath;
+    }
 }

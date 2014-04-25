@@ -2,15 +2,17 @@ package com.application.models;
 
 import java.util.ArrayList;
 
-public class CoffeMachine {
+public class CoffeeMachine {
     private String id;
+    private String iconPath;
 	private String name;
 	private String address;
     public ArrayList<Review> reviewsList;
 
-	public CoffeMachine(String id, final String name, String address , ArrayList<Review> reviewsList){
+	public CoffeeMachine(String id, final String name, String address , String iconPath,ArrayList<Review> reviewsList){
 
         //this.id = getUniqueID();
+        this.iconPath = iconPath;
         this.id = id;
 		this.name = name;
 		this.address = address;
@@ -20,7 +22,12 @@ public class CoffeMachine {
 	public String getName() {
 		return name;
 	}
-	
+
+    public String getIconPath() {
+        return iconPath;
+    }
+
+
 	public String getAddress(){
 		return address;
 	}

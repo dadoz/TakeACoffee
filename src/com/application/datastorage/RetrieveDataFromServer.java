@@ -1,7 +1,7 @@
 package com.application.datastorage;
 
 import com.application.commons.Common.ReviewStatusEnum;
-import com.application.models.CoffeMachine;
+import com.application.models.CoffeeMachine;
 import com.application.models.Review;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,27 +13,27 @@ import java.util.Date;
 public class RetrieveDataFromServer {
 	// private final static String TAG ="retrieveDataFromServer";
 
-	static ArrayList<CoffeMachine> getCoffeMachineData() {
+	static ArrayList<CoffeeMachine> getCoffeeMachineData() {
 		String JSONData = getData();
 
-		ArrayList<CoffeMachine> dataArray = parseData(JSONData);
+		ArrayList<CoffeeMachine> dataArray = parseData(JSONData);
 		return dataArray;
 	}
 
 	private static String getData() {
         //TODO add Date field on JSON data
-		String JSONData = "{'coffe_machine_data' : [{'coffe_machine_id':'STATIC_COFFEMACHINEID_1', 'coffe_machine_name':'New Kinder','coffe_machine_address':'Main Street - London', 'coffe_machine_reviews' : [] }, {'coffe_machine_id':'STATIC_COFFEMACHINEID_2','coffe_machine_name':'Hey Machine','coffe_machine_address':'Even village - Mexico', 'coffe_machine_reviews' : [{'review_id':'STATIC_REVIEWID_1', 'review_username':'Mike pp', 'review_comment':'this is the comment on machine', 'review_status':'NOT_BAD'}, {'review_id':'STATIC_REVIEWID_2', 'review_username':'Henry d', 'review_comment':'this is the comment on machine cos I want to say thats nothing in front of your problems didnt u agree with me?', 'review_status':'GOOD'}] }, {'coffe_machine_id':'STATIC_COFFEMACHINEID_3', 'coffe_machine_name':'New Palace ','coffe_machine_address':'Main Street - London', 'coffe_machine_reviews' : [] }, {'coffe_machine_id':'STATIC_COFFEMACHINEID_4', 'coffe_machine_name':'Black Cat ','coffe_machine_address':'Main Street - London', 'coffe_machine_reviews' : [] } ]}";
+		String JSONData = "{'coffe_machine_data' : [{'coffe_machine_id':'STATIC_coffeeMachineId_1', 'coffe_machine_name':'New Kinder','coffe_machine_address':'Main Street - London', 'coffe_machine_icon_name':'coffee1.jpg', 'coffe_machine_reviews' : [] }, {'coffe_machine_id':'STATIC_coffeeMachineId_2','coffe_machine_name':'Hey Machine','coffe_machine_address':'Even village - Mexico', 'coffe_machine_icon_name':'coffee2.jpg', 'coffe_machine_reviews' : [{'review_id':'STATIC_REVIEWID_1', 'review_username':'Mike pp', 'review_comment':'this is the comment on machine', 'review_status':'NOT_BAD'}, {'review_id':'STATIC_REVIEWID_2', 'review_username':'Henry d', 'review_comment':'this is the comment on machine cos I want to say thats nothing in front of your problems didnt u agree with me?', 'review_status':'GOOD'}] }, {'coffe_machine_id':'STATIC_coffeeMachineId_3', 'coffe_machine_name':'New Palace ','coffe_machine_address':'Main Street - London', 'coffe_machine_icon_name':'coffee3.jpg', 'coffe_machine_reviews' : [] }, {'coffe_machine_id':'STATIC_coffeeMachineId_4', 'coffe_machine_name':'Black Cat ','coffe_machine_address':'Main Street - London', 'coffe_machine_icon_name':'coffee4.jpg', 'coffe_machine_reviews' : [] } ]}";
 
 		return JSONData;
 	}
 
-	private static ArrayList<CoffeMachine> parseData(String data) {
+	private static ArrayList<CoffeeMachine> parseData(String data) {
 		try {
 
 			JSONObject jsonObj = (JSONObject) new JSONObject(data);
 			JSONArray jsonArray = jsonObj.getJSONArray("coffe_machine_data");
 
-			ArrayList<CoffeMachine> dataArray = new ArrayList<CoffeMachine>();
+			ArrayList<CoffeeMachine> dataArray = new ArrayList<CoffeeMachine>();
 
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject coffeMachineObj = jsonArray.getJSONObject(i);
@@ -41,12 +41,15 @@ public class RetrieveDataFromServer {
 				String name = coffeMachineObj.getString("coffe_machine_name");
 				String address = coffeMachineObj
 						.getString("coffe_machine_address");
-				String coffeMachineId = coffeMachineObj
+				String coffeeMachineId = coffeMachineObj
 						.getString("coffe_machine_id");
 
 				JSONArray reviewsArray = coffeMachineObj
 						.getJSONArray("coffe_machine_reviews");
-				ArrayList<Review> reviewsList = new ArrayList<Review>();
+                String iconPath = coffeMachineObj
+                        .getString("coffe_machine_icon_name");
+
+                ArrayList<Review> reviewsList = new ArrayList<Review>();
 				for (int j = 0; j < reviewsArray.length(); j++) {
 					JSONObject reviewObj = reviewsArray.getJSONObject(j);
 
@@ -63,12 +66,11 @@ public class RetrieveDataFromServer {
 	//						.getInt("review_status");
 
 					
-					
-					reviewsList.add(new Review(reviewId, reviewUsername,
-							reviewComment, ReviewStatusEnum.NOT_SET, reviewDate));
+					reviewsList.add(new Review(reviewId, "not-available", reviewUsername,
+							reviewComment, ReviewStatusEnum.GOOD, null, reviewDate));
 				}
 
-				dataArray.add(new CoffeMachine(coffeMachineId, name, address,
+				dataArray.add(new CoffeeMachine(coffeeMachineId, name, address, iconPath,
 						reviewsList));
 			}
 			return dataArray;

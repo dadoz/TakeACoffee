@@ -1,10 +1,12 @@
 package com.application.datastorage;
 
-import com.application.models.CoffeMachine;
+import com.application.commons.Common;
+import com.application.models.CoffeeMachine;
 import com.application.models.Review;
 import com.application.models.User;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +17,7 @@ import java.util.ArrayList;
  */
 public class CoffeeMachineDataStorage {
     private static final String TAG = "CoffeMachineDataStorage";
-    private ArrayList<CoffeMachine> coffeMachineList;
+    private ArrayList<CoffeeMachine> coffeeMachineList;
     private boolean registeredUserStatus = false;
     private User registeredUser;
     private String currentCoffeMachineSelectedId;
@@ -25,16 +27,16 @@ public class CoffeeMachineDataStorage {
 
     public CoffeeMachineDataStorage() {
         //get data from JSON
-        coffeMachineList = RetrieveDataFromServer.getCoffeMachineData();
+        coffeeMachineList = RetrieveDataFromServer.getCoffeeMachineData();
     }
 
-    public ArrayList<CoffeMachine> getCoffeMachineList(){
-        return coffeMachineList;
+    public ArrayList<CoffeeMachine> getCoffeeMachineList(){
+        return coffeeMachineList;
     }
 
-    public CoffeMachine getCoffeMachineById(String id){
-    	if(coffeMachineList != null){
-    		for(CoffeMachine coffeMachineObj: coffeMachineList) {
+    public CoffeeMachine getCoffeMachineById(String id){
+    	if(coffeeMachineList != null){
+    		for(CoffeeMachine coffeMachineObj: coffeeMachineList) {
     			if((coffeMachineObj.getId()).equals(id)){
             		return coffeMachineObj;    				
     			}
@@ -43,13 +45,23 @@ public class CoffeeMachineDataStorage {
         return null;
     }
 
-    public ArrayList<Review> getReviewListByCoffeMachineId(String coffeMachineId){
-        for(CoffeMachine coffeMachineObj : coffeMachineList) {
-            if(coffeMachineObj.getId().equals(coffeMachineId)) {
-                return coffeMachineObj.getReviewList();
+    public ArrayList<Review> getReviewListByCoffeMachineId(String coffeeMachineId){
+        for(CoffeeMachine coffeeMachineObj : coffeeMachineList) {
+            if(coffeeMachineObj.getId().equals(coffeeMachineId)) {
+                return coffeeMachineObj.getReviewList();
             }
         }
         return null;
+    }
+
+    public void addReviewByCoffeeMachineId(String coffeeMachineId, String userId, String username, String reviewText, String profilePicturePath, Common.ReviewStatusEnum status) {
+        for(CoffeeMachine coffeeMachineObj : coffeeMachineList) {
+            if(coffeeMachineObj.getId().equals(coffeeMachineId)) {
+                String id = "fakeId"; //TODO generate id
+                Date date = new Date();
+                coffeeMachineObj.addReviewObj(new Review(id, userId, username, reviewText, status, profilePicturePath, date));
+            }
+        }
     }
 
     public void initRegisteredUser(String username){
@@ -57,6 +69,16 @@ public class CoffeeMachineDataStorage {
     	this.registeredUser = new User(id, username);
         registeredUserStatus = true;
 
+    }
+    public boolean removeReviewByCoffeeMachineId(String coffeeMachineId, Review reviewObj) {
+        for(CoffeeMachine coffeeMachineObj : coffeeMachineList) {
+            if(coffeeMachineObj.getId().equals(coffeeMachineId)) {
+                String id = "fakeId"; //TODO generate id
+                Date date = new Date();
+                coffeeMachineObj.getReviewList().remove(reviewObj);
+            }
+        }
+        return false;
     }
 
     public boolean getRegisteredUserStatus(){
@@ -86,4 +108,5 @@ public class CoffeeMachineDataStorage {
     public String getProfilePicturePath() {
         return profilePicturePath;
     }
+
 }
