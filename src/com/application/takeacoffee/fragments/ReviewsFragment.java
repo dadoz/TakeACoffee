@@ -147,7 +147,7 @@ public class ReviewsFragment extends Fragment {
             public void onClick(View view) {
                 Log.e(TAG,"clicked good");
 //                createReviewsListDialog();
-                createReviewsListView(getFragmentManager(), Common.ReviewStatusEnum.GOOD);
+                createReviewsListView(getFragmentManager(), Common.ReviewStatusEnum.GOOD, args);
             }
         });
         ImageView badReviewButton = (ImageView)reviewLayoutView.findViewById(R.id.badReviewButtonId);
@@ -158,7 +158,7 @@ public class ReviewsFragment extends Fragment {
             public void onClick(View view) {
                 Log.e(TAG,"clicked bad");
 //                createReviewsListDialog();
-                createReviewsListView(getFragmentManager(), Common.ReviewStatusEnum.NOTSOBAD);
+                createReviewsListView(getFragmentManager(), Common.ReviewStatusEnum.NOTSOBAD, args);
             }
         });
         ImageView worstReviewButton = (ImageView)reviewLayoutView.findViewById(R.id.worstReviewButtonId);
@@ -169,7 +169,7 @@ public class ReviewsFragment extends Fragment {
             public void onClick(View view) {
                 Log.e(TAG,"clicked worst");
 //                createReviewsListDialog();
-                createReviewsListView(getFragmentManager(), Common.ReviewStatusEnum.WORST);
+                createReviewsListView(getFragmentManager(), Common.ReviewStatusEnum.WORST, args);
             }
         });
 
@@ -205,7 +205,7 @@ public class ReviewsFragment extends Fragment {
 */
     }
 
-    public void createReviewsListView(FragmentManager fragManager, Common.ReviewStatusEnum reviewStatus) {
+    public static void createReviewsListView(FragmentManager fragManager, Common.ReviewStatusEnum reviewStatus, Bundle args) {
         //customDialog.setContentView(R.layout.dialog_review_layout);
         ReviewListFragment fragmentObj = new ReviewListFragment();
         args.putString(Common.REVIEW_STATUS_KEY, reviewStatus.name());

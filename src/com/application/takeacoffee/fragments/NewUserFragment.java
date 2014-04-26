@@ -88,7 +88,7 @@ public class NewUserFragment extends Fragment{
 
                 updateUserBox(username);
                 sharedPref.edit().putString(Common.SHAREDPREF_REGISTERED_USERNAME, username).commit();
-                if(coffeeMachineApplication.coffeeMachineData.getRegisteredUserStatus()) {
+                if(!coffeeMachineApplication.coffeeMachineData.getRegisteredUserStatus()) {
                     coffeeMachineApplication.coffeeMachineData.initRegisteredUser(username);
                 } else {
                     coffeeMachineApplication.coffeeMachineData.setRegisteredUser(username);

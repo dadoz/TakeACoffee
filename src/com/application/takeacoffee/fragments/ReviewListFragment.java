@@ -305,9 +305,8 @@ public class ReviewListFragment extends Fragment {
                     setProfilePicFromStorage((ImageView)reviewTemplate.findViewById(R.id.profilePicReviewTemplateId));
                 }
                 //check my post and add action
-                Log.e(TAG, "this is one of my userId" + reviewObj.getUserId() + user.getId());
+//                Log.e(TAG, "this is one of my userId" + reviewObj.getUserId() + user.getId());
                 if(reviewObj.getUserId() == user.getId()) {
-                    Log.e(TAG, "this is one of my post");
                     reviewTemplate.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View view) {
