@@ -136,9 +136,10 @@ public class AddReviewFragment extends Fragment {
         });
 
         //add with NO text
-        addReviewWithoutTextImageView.setImageBitmap(getRoundedBitmap(
-                Common.ICON_SMALL_SIZE, mainActivityRef.getResources()
-                        .getColor(R.color.light_grey)));
+//        addReviewWithoutTextImageView.setImageBitmap(getRoundedBitmap(
+//                Common.ICON_SMALL_SIZE, mainActivityRef.getResources()
+//                        .getColor(R.color.light_grey)));
+//        addReviewWithoutTextImageView.setImageDrawable(mainActivityRef.getResources().getDrawable(R.drawable.like_icon));
         addReviewWithoutTextImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -155,6 +156,10 @@ public class AddReviewFragment extends Fragment {
         if(reviewWithText) {
             //get text by editText
             reviewText = reviewEditText.getText().toString();
+            if(reviewText.equals(new String("")))  {
+                Common.displayError("you must insert your text review!", mainActivityRef);
+                return;
+            }
         }
         Common.ReviewStatusEnum reviewStatus = Common.ReviewStatusEnum.valueOf(choiceTypeReviewLayout
                 .getTag().toString());
