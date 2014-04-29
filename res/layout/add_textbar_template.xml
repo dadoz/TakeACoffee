@@ -16,7 +16,7 @@
                 android:layout_marginRight="@dimen/small_padding"
                 android:layout_width="match_parent"
                 android:hint="write post" />
-        <Button
+        <!--<Button
                 android:layout_gravity="center"
                 android:id="@+id/addReviewButtonId"
                 android:layout_width="wrap_content"
@@ -25,5 +25,5 @@
                 android:textSize="@dimen/header_button_text"
                 android:textColor="@color/light_red"
                 android:background="@drawable/button_rounded_shape"
-                />
+                />-->
 </LinearLayout>

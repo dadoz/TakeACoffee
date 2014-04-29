@@ -20,5 +20,5 @@
     <dimen name="text_big_22">22dip</dimen>
     <dimen name="large_padding">60dip</dimen>
     <dimen name="small_padding_5">5dip</dimen>
-
+    <dimen name="big_button_size">300dip</dimen>
 </resources>
