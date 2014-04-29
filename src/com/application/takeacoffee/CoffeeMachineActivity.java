@@ -9,8 +9,8 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockActivity;
@@ -87,8 +87,8 @@ public class CoffeeMachineActivity extends SherlockActivity {
         ((TextView)findViewById(R.id.loggedUserTextId)).setText(
                 coffeeMachineApplication.coffeeMachineData.getRegisteredUser().getUsername());
 
-        Button loggedUserButton = (Button)findViewById(R.id.loggedUserButtonId);
-        loggedUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
+        LinearLayout loggedUserButton = (LinearLayout)findViewById(R.id.loggedUserButtonId);
+//        loggedUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
         loggedUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,9 +103,9 @@ public class CoffeeMachineActivity extends SherlockActivity {
     public void setNotLoggedUserView() {
         ((TextView)findViewById(R.id.loggedUserTextId)).setText("guest");
 
-        Button loggedUserButton = (Button)findViewById(R.id.loggedUserButtonId);
-        loggedUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
-        loggedUserButton.setText("new");
+        LinearLayout loggedUserButton = (LinearLayout)findViewById(R.id.loggedUserButtonId);
+//        loggedUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
+//        loggedUserButton.setText("new");
         loggedUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

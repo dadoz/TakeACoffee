@@ -11,9 +11,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
-
-            <!-- HEADER - need to be modified -->
             <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/small_padding"
+                    android:layout_marginRight="@dimen/small_padding">
+                    <include layout="@layout/user_logged_box_template"/>
+            </LinearLayout>
+
+                        <!-- HEADER - need to be modified -->
+<!--            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/light_black"
@@ -24,11 +31,12 @@
                 <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="0.5dp"
-                        android:background="@color/dark_black"/>
+                        android:background="@color/dark_black"/>-->
 
                 <!-- USER LOGGED -->
+            <!--
                 <include layout="@layout/user_logged_box_template"/>
-            </LinearLayout>
+            </LinearLayout>-->
 
             <!-- FRAGMENT CONTENT -->
             <LinearLayout

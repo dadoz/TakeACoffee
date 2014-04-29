@@ -33,19 +33,31 @@ public class CoffeeMachineFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
-        int itemInTableRowCounter = 0;
-
         mHandler = new Handler();
 
         //get data from application
         coffeeMachineList = ((CoffeeMachineDataStorageApplication) getActivity().getApplication())
                 .coffeeMachineData.getCoffeeMachineList();
-        View coffeeMachineFragment = inflater.inflate(R.layout.coffe_machine_fragment, container, false);
+        final View coffeeMachineFragment = inflater.inflate(R.layout.coffe_machine_fragment, container, false);
         //set custom font
         Common.setCustomFont(coffeeMachineFragment, this.getActivity().getAssets());
 
-        boolean firstAnimationStarted = false;
+//        boolean firstAnimationStarted = false;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                initView(coffeeMachineFragment);
+            }
+        });
+//        initView(coffeeMachineFragment);
+
+        return coffeeMachineFragment;
+    }
+
+    private void initView(View coffeeMachineFragment) {
+        int itemInTableRowCounter = 0;
         TableRow tableRow = null;
+
         if (coffeeMachineList != null && coffeeMachineList.size() != 0) {
             for (final CoffeeMachine coffeeMachineObj : coffeeMachineList) {
 //                Log.e(TAG, "coffeMachineData - " + coffeeMachineObj.getAddress() +
@@ -138,10 +150,7 @@ public class CoffeeMachineFragment extends Fragment {
                 });
             }
         }
-
-        return coffeeMachineFragment;
     }
-
     private boolean getCoffeeMachineReviewById(String coffeMachineId){
         //change fragment
         Bundle args = new Bundle();

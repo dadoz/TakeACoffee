@@ -52,6 +52,8 @@ public class NewUserFragment extends Fragment{
 
         final View userView = inflater.inflate(R.layout.new_user_fragment, container, false);
 
+        final EditText usernameEditText = (EditText) userView.findViewById(R.id.usernameNewUserEditTextId);
+
         ImageView profilePic = (ImageView)userView .findViewById(R.id.profilePicImageViewId);
         if(!CoffeeMachineActivity.setProfilePicFromStorage(profilePic)) {
             Log.e(TAG, "failed to load profile pic from storage - load the guest one");
@@ -63,32 +65,38 @@ public class NewUserFragment extends Fragment{
                 setProfilePic();
             }
         });
-
-
+        //set old username on editText
+        if (coffeeMachineApplication.coffeeMachineData.getRegisteredUserStatus()) {
+            usernameEditText.setText(coffeeMachineApplication
+                    .coffeeMachineData.getRegisteredUser().getUsername());
+        }
         //get change button and change to save button
-        Button headerchangeUserButton = (Button)mainActivityRef.findViewById(R.id.loggedUserButtonId);
-        headerchangeUserButton.setText("SAVE");
-        headerchangeUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape_yellow)));
-        headerchangeUserButton.setOnClickListener(new View.OnClickListener() {
+//        LinearLayout headerchangeUserButton = (LinearLayout)mainActivityRef.findViewById(R.id.loggedUserButtonId);
+//        headerchangeUserButton.setText("SAVE");
+//        headerchangeUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape_yellow)));
+
+        //unbind loggedUserButtonId action
+        mainActivityRef.findViewById(R.id.loggedUserButtonId).setOnClickListener(null);
+        userView.findViewById(R.id.saveUserButtonId).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //check and save
-                EditText usernameEditText = (EditText)userView.findViewById(R.id.usernameNewUserEditTextId);
+//                usernameEditText = (EditText) userView.findViewById(R.id.usernameNewUserEditTextId);
                 String username = usernameEditText.getText().toString();
                 Log.e(TAG, "u clicked save - " + username + " --");
-                if(username == null || username.matches("")) {
+                if (username == null || username.matches("")) {
                     Common.displayError("no username set - please insert your one", view.getContext());
                     return;
                 }
 
                 //hide keyboard
-                InputMethodManager imm = (InputMethodManager)mainActivityRef.getSystemService(
+                InputMethodManager imm = (InputMethodManager) mainActivityRef.getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
 
                 updateUserBox(username);
                 sharedPref.edit().putString(Common.SHAREDPREF_REGISTERED_USERNAME, username).commit();
-                if(!coffeeMachineApplication.coffeeMachineData.getRegisteredUserStatus()) {
+                if (!coffeeMachineApplication.coffeeMachineData.getRegisteredUserStatus()) {
                     coffeeMachineApplication.coffeeMachineData.initRegisteredUser(username);
                 } else {
                     coffeeMachineApplication.coffeeMachineData.setRegisteredUser(username);
@@ -118,9 +126,9 @@ public class NewUserFragment extends Fragment{
     }
 
     public void resetChangeButton() {
-        //change button to change instead of new (with new bind)
-        ((Button)mainActivityRef.findViewById(R.id.loggedUserButtonId)).setText("change");
-        (mainActivityRef.findViewById(R.id.loggedUserButtonId)).setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
+        //set button to change user instead of new (with new bind)
+//        ((Button)mainActivityRef.findViewById(R.id.loggedUserButtonId)).setText("change");
+//        (mainActivityRef.findViewById(R.id.loggedUserButtonId)).setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
         (mainActivityRef.findViewById(R.id.loggedUserButtonId)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

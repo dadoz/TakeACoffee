@@ -18,5 +18,7 @@
     <dimen name="medium_padding">20dip</dimen>
     <dimen name="text_big_24">24dip</dimen>
     <dimen name="text_big_22">22dip</dimen>
+    <dimen name="large_padding">60dip</dimen>
+    <dimen name="small_padding_5">5dip</dimen>
 
 </resources>

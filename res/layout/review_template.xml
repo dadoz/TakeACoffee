@@ -31,7 +31,7 @@
                         android:layout_marginTop="@dimen/small_padding"
                         android:layout_marginBottom="@dimen/small_padding"
                         android:text="reviewer username"
-                        android:textColor="@color/light_black"
+                        android:textColor="@color/light_red"
                         android:textSize="@dimen/header_text_size" />
                 <TextView
                         android:id="@+id/reviewCommentTextId"
@@ -39,7 +39,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="@dimen/small_padding"
                         android:text="review content"
-                        android:textColor="@color/dark_black"
+                        android:textColor="@color/light_black"
                         android:textSize="@dimen/text_big_22" />
             </LinearLayout>
 

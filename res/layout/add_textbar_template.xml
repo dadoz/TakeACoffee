@@ -5,14 +5,15 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:background="@color/white">
+        android:layout_margin="@dimen/small_padding"
+        android:gravity="center_horizontal">
         <EditText
                 android:layout_weight="1"
                 android:id="@+id/reviewEditTextId"
                 android:textSize="@dimen/header_text_size"
                 android:textColor="@color/light_black"
                 android:layout_height="50dip"
+                android:layout_marginRight="@dimen/small_padding"
                 android:layout_width="match_parent"
                 android:hint="write post" />
         <Button
@@ -23,6 +24,6 @@
                 android:text="post"
                 android:textSize="@dimen/header_button_text"
                 android:textColor="@color/light_red"
-                android:background="@color/white"
+                android:background="@drawable/button_rounded_shape"
                 />
 </LinearLayout>

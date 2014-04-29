@@ -23,7 +23,7 @@ public class AddReviewFragment extends Fragment {
     private static LinearLayout addReviewAction, addReviewTextBarContainer;
     private static ScrollView addReviewViewContainerLayout;
     private static View choiceTypeReviewLayout;
-    private static TextView goodReviewTab, notSoBadReviewTab, worstReviewTab, addTextbarTextHeader;
+    private static TextView goodReviewTab, notSoBadReviewTab, worstReviewTab;//, addTextbarTextHeader;
     private static ImageView addReviewWithoutTextImageView, addReviewWithMoreTextImageView;
     private static Button addReviewButton;
     private static EditText reviewEditText;
@@ -61,7 +61,7 @@ public class AddReviewFragment extends Fragment {
         goodReviewTab = (TextView)addReviewView.findViewById(R.id.goodTabTextId);
         notSoBadReviewTab = (TextView)addReviewView.findViewById(R.id.notBadTabTextId);
         worstReviewTab = (TextView)addReviewView.findViewById(R.id.worstTabTextId);
-        addTextbarTextHeader = (TextView)addReviewView.findViewById(R.id.addTextbarTextHeaderId);
+//        addTextbarTextHeader = (TextView)addReviewView.findViewById(R.id.addTextbarTextHeaderId);
 
         initView(coffeeMachineId);
         Common.setCustomFont(addReviewView, getActivity().getAssets());
@@ -71,7 +71,7 @@ public class AddReviewFragment extends Fragment {
 
     public static void initView(final String coffeeMachineId) {
         addReviewTextBarContainer.setVisibility(View.GONE);
-        addTextbarTextHeader.setVisibility(View.GONE);
+//        addTextbarTextHeader.setVisibility(View.GONE);
         //init reviewStatus
         choiceTypeReviewLayout.setTag(Common.ReviewStatusEnum.GOOD);
 
@@ -83,7 +83,7 @@ public class AddReviewFragment extends Fragment {
                 addReviewAction.getChildAt(0).setVisibility(View.VISIBLE);
                 addReviewAction.getChildAt(1).setVisibility(View.VISIBLE);
                 addReviewTextBarContainer.setVisibility(View.GONE);
-                addTextbarTextHeader.setVisibility(View.GONE);
+//                addTextbarTextHeader.setVisibility(View.GONE);
 
             }
         });
@@ -95,7 +95,7 @@ public class AddReviewFragment extends Fragment {
                 addReviewAction.getChildAt(0).setVisibility(View.VISIBLE);
                 addReviewAction.getChildAt(1).setVisibility(View.VISIBLE);
                 addReviewTextBarContainer.setVisibility(View.GONE);
-                addTextbarTextHeader.setVisibility(View.GONE);
+                //addTextbarTextHeader.setVisibility(View.GONE);
             }
         });
         worstReviewTab.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +106,7 @@ public class AddReviewFragment extends Fragment {
                 addReviewAction.getChildAt(0).setVisibility(View.VISIBLE);
                 addReviewAction.getChildAt(1).setVisibility(View.VISIBLE);
                 addReviewTextBarContainer.setVisibility(View.GONE);
-                addTextbarTextHeader.setVisibility(View.GONE);
+                //addTextbarTextHeader.setVisibility(View.GONE);
             }
         });
 
@@ -115,18 +115,17 @@ public class AddReviewFragment extends Fragment {
         addReviewWithMoreTextImageView.setImageBitmap(getRoundedBitmap(
                 Common.ICON_SMALL_SIZE, mainActivityRef.getResources()
                         .getColor(R.color.light_grey)));
-        addReviewWithMoreTextImageView.setOnClickListener(new View.OnClickListener() {
+        addReviewAction.getChildAt(1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addReviewAction.getChildAt(0).setVisibility(View.GONE);
+//                addReviewAction.getChildAt(0).setVisibility(View.GONE);
                 addReviewAction.getChildAt(1).setVisibility(View.GONE);
                 //addReviewAction.addView(addTextBarView);
 //                addReview(coffeeMachineId, false);
                 addReviewTextBarContainer.setVisibility(View.VISIBLE);
-                addTextbarTextHeader.setVisibility(View.VISIBLE);
+                //addTextbarTextHeader.setVisibility(View.VISIBLE);
             }
         });
-
         addReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,11 +135,11 @@ public class AddReviewFragment extends Fragment {
         });
 
         //add with NO text
-//        addReviewWithoutTextImageView.setImageBitmap(getRoundedBitmap(
-//                Common.ICON_SMALL_SIZE, mainActivityRef.getResources()
-//                        .getColor(R.color.light_grey)));
+        addReviewWithoutTextImageView.setImageBitmap(getRoundedBitmap(
+                Common.ICON_SMALL_SIZE, mainActivityRef.getResources()
+                        .getColor(R.color.light_grey)));
 //        addReviewWithoutTextImageView.setImageDrawable(mainActivityRef.getResources().getDrawable(R.drawable.like_icon));
-        addReviewWithoutTextImageView.setOnClickListener(new View.OnClickListener() {
+        addReviewAction.getChildAt(0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addReview(coffeeMachineId, false);
