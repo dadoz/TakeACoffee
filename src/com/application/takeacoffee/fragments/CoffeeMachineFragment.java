@@ -1,7 +1,9 @@
 package com.application.takeacoffee.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -15,12 +17,12 @@ import android.widget.*;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.CoffeeMachine;
-import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
 
 import static com.application.commons.Common.setCustomFontByView;
+import static com.application.takeacoffee.fragments.NewUserFragment.getRoundedRectBitmap;
 
 /**
  * Created by davide on 3/13/14.
@@ -30,10 +32,12 @@ public class CoffeeMachineFragment extends Fragment {
     private ArrayList<CoffeeMachine> coffeeMachineList;
     private ArrayList<PieChart> pieChartList;
     private Handler mHandler;
+    private static Activity mainActivityRef;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mHandler = new Handler();
+        mainActivityRef = getActivity();
 
         //get data from application
         coffeeMachineList = ((CoffeeMachineDataStorageApplication) getActivity().getApplication())
@@ -131,7 +135,7 @@ public class CoffeeMachineFragment extends Fragment {
                     //make piechart
                     pieChartList = getPieChartData();
 
-                    Bitmap bmpAbove = CoffeeMachineActivity.getRoundedBitmapByPicPath(picResource);
+                    Bitmap bmpAbove = getRoundedBitmapByPicPath(picResource);
                     Bitmap bmpBelow = NewUserFragment.getRoundedBitmap(Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE,
                             getResources().getColor(R.color.middle_grey));
                     Bitmap coffeeMachineBmp = Common.overlayBitmaps(bmpBelow, bmpAbove);
@@ -227,4 +231,19 @@ public class CoffeeMachineFragment extends Fragment {
 
         return growAnim;
     }
+
+    public static Bitmap getRoundedBitmapByPicPath(int pictureName) {
+        try {
+/*            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;*/
+            Bitmap bitmap = BitmapFactory.decodeResource(mainActivityRef.getResources(), pictureName);
+            Bitmap roundedBitmap = getRoundedRectBitmap(bitmap, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
+
+            return roundedBitmap;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

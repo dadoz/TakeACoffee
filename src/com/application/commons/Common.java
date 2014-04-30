@@ -23,6 +23,8 @@ public class Common {
     public static final String EMPTY_PIC_PATH = "EMPTY_PIC_PATH";
     public static final int VIBRATE_TIME = 15;
     public static final long ANIMATION_GROW_TIME = 400;
+    public static final String EMPTY_VALUE = "EMPTY_VALUE";
+    public static final String NEW_USER_FRAGMENT_TAG = "NEW_USER_FRAGMENT_TAG";
 
     public enum ReviewStatusEnum {
         GOOD,
