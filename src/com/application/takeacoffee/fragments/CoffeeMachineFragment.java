@@ -151,6 +151,7 @@ public class CoffeeMachineFragment extends Fragment {
             }
         }
     }
+
     private boolean getCoffeeMachineReviewById(String coffeMachineId){
         //change fragment
         Bundle args = new Bundle();

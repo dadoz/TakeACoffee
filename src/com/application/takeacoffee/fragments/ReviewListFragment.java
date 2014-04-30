@@ -42,7 +42,7 @@ public class ReviewListFragment extends Fragment {
         mainActivityRef = getActivity();
         View reviewListView = inflater.inflate(R.layout.review_list_fragment, container, false);
         View modifyReviewView = inflater.inflate(R.layout.modify_review_template, container, false);
-        View editReviewView = inflater.inflate(R.layout.edit_review_template, container, false);
+        //View editReviewView = inflater.inflate(R.layout.edit_review_template, container, false);
         View emptyView = inflater.inflate(R.layout.empty_data_status_layout, container, false);
 
         //get data from application
@@ -61,21 +61,17 @@ public class ReviewListFragment extends Fragment {
         if(reviewList == null) {
             Log.d(TAG,"this is the getReviewData EMPTY");
             Common.setCustomFont(emptyView, this.getActivity().getAssets());
-            //ReviewsFragment.setHeaderReview(getFragmentManager(), args,
-            //        coffeeMachineApplication, coffeeMachineId, emptyView);
             return emptyView;
         }
 
         setReviewStatus(reviewListView, reviewStatus);
 
-        initModifyReviewView(modifyReviewView, editReviewView, reviewList, coffeeMachineId);
-        setDataToReviewList(reviewListView, modifyReviewView, reviewList);
+        initModifyReviewView(modifyReviewView, null, reviewList, coffeeMachineId);
+        setDataToReviewList(reviewListView, modifyReviewView, reviewList); //TODO refactoring this one
 
         Common.setCustomFont(reviewListView, getActivity().getAssets());
-        Common.setCustomFont(editReviewView, getActivity().getAssets());
         Common.setCustomFont(modifyReviewView, getActivity().getAssets());
         return reviewListView;
-        //return null;
     }
 
     private void setReviewStatus(final View reviewListView, final Common.ReviewStatusEnum reviewStatus) {
@@ -156,15 +152,13 @@ public class ReviewListFragment extends Fragment {
         (modifyReviewView.findViewById(R.id.modifyReviewEditLayoutId)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //EDIT ACTION
-//                Common.displayError("hey u want to edit your review", getActivity());
-                //reviewModfiedBackStorage
 
-                ViewGroup parent = (ViewGroup) view.getParent().getParent();
+/*                ViewGroup parent = (ViewGroup) view.getParent().getParent();
                 int childIndexPosition = parent.indexOfChild(modifyReviewView);
                 parent.removeView(modifyReviewView);
-                parent.addView(editReviewView, childIndexPosition);
-                initEditReviewView(editReviewView);
+                parent.addView(editReviewView, childIndexPosition);*/
+                getEditReviewFragment(reviewList.get(0).getId());
+//                initEditReviewView(editReviewView);
             }
 
         });
@@ -276,6 +270,27 @@ public class ReviewListFragment extends Fragment {
         dialog.show();
     }
 
+
+    private boolean getEditReviewFragment(String reviewId){
+        //change fragment
+        Bundle args = new Bundle();
+        args.putString(Common.COFFE_MACHINE_ID_KEY, reviewId);
+
+        EditReviewFragment reviewsFrag = new EditReviewFragment();
+        reviewsFrag.setArguments(args);
+
+        getFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.card_flip_left_in,
+                        R.anim.card_flip_left_out,
+                        R.anim.card_flip_right_in,
+                        R.anim.card_flip_right_out)
+                .replace(R.id.coffeeMachineContainerLayoutId, reviewsFrag)
+                .addToBackStack("back")
+                .commit();
+        return true;
+    }
+
+    //TODO refactioring
     public void setDataToReviewList(View customView, final View modifyReviewView, ArrayList<Review> reviewList) {
         //TODO replace with a listView please
         try {
@@ -315,7 +330,7 @@ public class ReviewListFragment extends Fragment {
                                 Common.vibrate(getActivity(), Common.VIBRATE_TIME);
                                 LinearLayout parent = (LinearLayout)view.getParent();
                                 reviewModifiedViewStorage = reviewTemplate; //store temporary my replaced view
-                                reviewModifiedObjStorage = reviewObj;
+                                reviewModifiedObjStorage = reviewObj; //TODO please remove it - this is crazyness
                                 //parent.startViewTransition(reviewTemplate);
                                 int childIndexPosition = parent.indexOfChild(reviewTemplate);
                                 parent.removeView(reviewTemplate);
