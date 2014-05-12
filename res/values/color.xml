@@ -4,6 +4,7 @@
     <color name="coffee_yellow">#f7c781</color>
     <color name="light_grey">#eee</color>
     <color name="middle_grey">#d5d5d5</color>
+    <color name="middle_grey_lighter">#dbdbdb</color>
     <color name="dark_grey">#aaa</color>
     <color name="stone_grey">#ababab</color>
     <!-- <color name="coffe_dark">#8b5f3c</color> light b6b1a8 -->
@@ -16,6 +17,9 @@
     <color name="light_green">#15E49F</color>
     <color name="blue_cobalt">#2B60DE</color>
     <color name="light_yellow">#FFC946</color>
+    <color name="light_yellow_lemon">#f3f564</color>
+    <color name="light_violet">#9657b6</color>
+
 <!--    <color name="yellow_melon">#FFC946</color>
    <color name="green_marine">#84dfbd</color >#52bf8b F1F146-->
     <color name="green_marine">#a1d0be</color>

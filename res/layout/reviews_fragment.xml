@@ -17,7 +17,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/middle_grey"
-                    android:paddingBottom="40dip"
+                    android:paddingBottom="@dimen/small_padding"
                     android:orientation="vertical">
                 <TextView
                         android:layout_width="wrap_content"
@@ -25,17 +25,10 @@
                         android:layout_gravity="center"
                         android:textSize="@dimen/title_text_size"
                         android:text="Today"/>
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:textSize="@dimen/text_small"
-                        android:textColor="@color/dark_grey"
-                        android:text="Read today's review for this machine"/>
                 <TableLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="20dip">
+                        android:layout_marginTop="@dimen/small_padding">
                     <TableRow
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
@@ -48,17 +41,18 @@
                             <ImageView
                                     android:id="@+id/goodReviewButtonId"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/good_circle_icon_five_more"
+                                    android:layout_height="@dimen/extra_huge_icon_size"
+                                    android:src="@drawable/coffe_cup_icon_green_sample"
                                     />
-                            <TextView
+
+<!--                            <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:textColor="@color/light_black"
                                     android:layout_marginTop="@dimen/small_padding"
                                     android:textSize="@dimen/text_medium_20"
-                                    android:text="Good!"/>
+                                    android:text="good review"/>-->
                         </LinearLayout>
                         <LinearLayout
                                 android:layout_height="wrap_content"
@@ -68,17 +62,17 @@
                             <ImageView
                                     android:id="@+id/badReviewButtonId"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/bad_circle_icon_zero"
+                                    android:layout_height="@dimen/extra_huge_icon_size"
+                                    android:src="@drawable/coffe_cup_icon_empty"
                                     />
-                            <TextView
+<!--                            <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:textColor="@color/light_black"
                                     android:layout_marginTop="@dimen/small_padding"
                                     android:textSize="@dimen/text_medium_20"
-                                    android:text="Not so bad!"/>
+                                    android:text="Not so bad review"/>-->
                         </LinearLayout>
                         <LinearLayout
                                 android:layout_height="wrap_content"
@@ -88,20 +82,27 @@
                             <ImageView
                                     android:id="@+id/worstReviewButtonId"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:src="@drawable/worst_circle_icon_ten_more"
+                                    android:layout_height="@dimen/extra_huge_icon_size"
+                                    android:src="@drawable/coffe_cup_icon_violet_sample"
                                     />
-                            <TextView
+<!--                            <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:textColor="@color/light_black"
                                     android:layout_marginTop="@dimen/small_padding"
                                     android:textSize="@dimen/text_medium_20"
-                                    android:text="Worst!"/>
+                                    android:text="Terrible review"/>-->
                         </LinearLayout>
                     </TableRow>
                 </TableLayout>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="@dimen/text_small"
+                        android:textColor="@color/dark_grey"
+                        android:text="Read today's review for this machine"/>
 
             </LinearLayout>
 
@@ -125,10 +126,11 @@
                         android:text="Load more reviews for this machine"/>
                     <ImageView
                         android:id="@+id/prevReviewsButtonId"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/medium_icon_size"
+                        android:layout_height="@dimen/medium_icon_size"
                         android:layout_marginTop="40dip"
-                        android:layout_gravity="center"/>
+                        android:layout_gravity="center"
+                            android:src="@drawable/refresh_icon"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

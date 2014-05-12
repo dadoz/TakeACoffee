@@ -6,16 +6,18 @@ public class User {
 	private String id;
 	private String username;
 	private ArrayList<Review> reviewsList;
-	
+    private String profilePicturePath;
+/*
 	public User(String id, String username, ArrayList<Review> reviewsList){
 		this.id = id;
 		this.username = username;
 		this.reviewsList = reviewsList;
 	}
-
-	public User(String id, String username){
+*/
+	public User(String id, String username, String profilePicturePath) {
 		this.id = id;
-		this.username = username;		
+		this.username = username;
+        this.profilePicturePath = profilePicturePath;
 	}
 	
 	public String getId(){
@@ -36,5 +38,12 @@ public class User {
 	public void setUsername(String username){
 		this.username = username;
 	}
+
+    public String getProfilePicturePath() {
+        return this.profilePicturePath;
+    }
+    public void setProfilePicturePath(String profilePicturePath) {
+        this.profilePicturePath = profilePicturePath;
+    }
 
 }

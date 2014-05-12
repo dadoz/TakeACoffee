@@ -13,9 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
+import com.application.models.User;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
@@ -54,8 +58,12 @@ public class NewUserFragment extends Fragment{
 
         final EditText usernameEditText = (EditText) userView.findViewById(R.id.usernameNewUserEditTextId);
 
+        User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+
         ImageView profilePic = (ImageView)userView .findViewById(R.id.profilePicImageViewId);
-        if(!CoffeeMachineActivity.setProfilePicFromStorage(profilePic)) {
+        if(user != null) {
+            Common.drawProfilePictureByPath(profilePic, user.getProfilePicturePath(),
+                    getResources().getDrawable(R.drawable.user_icon));
             Log.e(TAG, "failed to load profile pic from storage - load the guest one");
         }
 
@@ -66,9 +74,8 @@ public class NewUserFragment extends Fragment{
             }
         });
         //set old username on editText
-        if (coffeeMachineApplication.coffeeMachineData.getRegisteredUserStatus()) {
-            usernameEditText.setText(coffeeMachineApplication
-                    .coffeeMachineData.getRegisteredUser().getUsername());
+        if (user != null) {
+            usernameEditText.setText(user.getUsername());
         }
         //get change button and change to save button
 //        LinearLayout headerchangeUserButton = (LinearLayout)mainActivityRef.findViewById(R.id.loggedUserButtonId);
@@ -83,7 +90,7 @@ public class NewUserFragment extends Fragment{
                 //check and save
 //                usernameEditText = (EditText) userView.findViewById(R.id.usernameNewUserEditTextId);
                 String username = usernameEditText.getText().toString();
-                Log.e(TAG, "u clicked save - " + username + " --");
+                Log.e(TAG, "u clicked save - " + username + " -");
                 if (username == null || username.matches("")) {
                     Common.displayError("no username set - please insert your one", view.getContext());
                     return;
@@ -96,10 +103,11 @@ public class NewUserFragment extends Fragment{
 
                 updateUserBox(username);
                 sharedPref.edit().putString(Common.SHAREDPREF_REGISTERED_USERNAME, username).commit();
-                if (!coffeeMachineApplication.coffeeMachineData.getRegisteredUserStatus()) {
-                    coffeeMachineApplication.coffeeMachineData.initRegisteredUser(username);
+                User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+                if (user == null) {
+                    coffeeMachineApplication.coffeeMachineData.initRegisteredUserByUsername(username);
                 } else {
-                    coffeeMachineApplication.coffeeMachineData.setRegisteredUser(username);
+                    user.setUsername(username);
                 }
                 getFragmentManager().popBackStack();
             }
@@ -110,10 +118,18 @@ public class NewUserFragment extends Fragment{
     }
 
     public void updateUserBox(String username) {
+        Bitmap bitmap;
         //set profile pic image
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(coffeeMachineApplication.coffeeMachineData.getProfilePicturePath(), options);
+
+        User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+        if(user != null && user.getProfilePicturePath() != null) {
+            bitmap = BitmapFactory.decodeFile(user.getProfilePicturePath(), options);
+        } else {
+            Log.e(TAG, "failed to load profile pic from storage - load the guest one");
+            bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.user_icon);
+        }
 
         ((ImageView)mainActivityRef.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
 
@@ -167,7 +183,14 @@ public class NewUserFragment extends Fragment{
                         } else {
                             //store url in application
                             Log.d(TAG, "[PROFILE PIC] path file - " + profileImagePath);
-                            coffeeMachineApplication.coffeeMachineData.setProfilePicturePath(profileImagePath);
+                            User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+
+                            if(user != null) {
+                                user.setProfilePicturePath(profileImagePath);
+                            } else {
+                                coffeeMachineApplication.coffeeMachineData.initRegisteredUserByProfilePicturePath(profileImagePath);
+                            }
+//                            coffeeMachineApplication.coffeeMachineData.setProfilePicturePath(profileImagePath);
                             sharedPref.edit().putString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, profileImagePath).commit();
                         }
 

@@ -20,7 +20,6 @@ public class CoffeeMachineDataStorage {
     private ArrayList<CoffeeMachine> coffeeMachineList;
     private boolean registeredUserStatus = false;
     private User registeredUser;
-    private String currentCoffeMachineSelectedId;
 
     //PROFILE PIC
     private static String profilePicturePath;
@@ -54,27 +53,37 @@ public class CoffeeMachineDataStorage {
         return null;
     }
 
-    public void addReviewByCoffeeMachineId(String coffeeMachineId, String userId, String username, String reviewText, String profilePicturePath, Common.ReviewStatusEnum status) {
+    public Review addReviewByCoffeeMachineId(String coffeeMachineId, String userId, String username, String reviewText, String profilePicturePath, Common.ReviewStatusEnum status) {
+        Review review = null;
         for(CoffeeMachine coffeeMachineObj : coffeeMachineList) {
             if(coffeeMachineObj.getId().equals(coffeeMachineId)) {
-                String id = "fakeId"; //TODO generate id
+//                String id = "fakeId"; //TODO generate id
+                String id = new String(coffeeMachineId + username + new Date().getTime());
                 Date date = new Date();
-                coffeeMachineObj.addReviewObj(new Review(id, userId, username, reviewText, status, profilePicturePath, date));
+                review = new Review(id, userId, username, reviewText, status, profilePicturePath, date);
+                coffeeMachineObj.addReviewObj(review);
             }
         }
+        return review;
     }
 
-    public void initRegisteredUser(String username){
-    	String id="fakeId";
-    	this.registeredUser = new User(id, username);
+    public void initRegisteredUserByUsername(String username) {
+    	String id="userId";
+    	this.registeredUser = new User(id, username, null);
         registeredUserStatus = true;
 
     }
+
+    public void initRegisteredUserByProfilePicturePath(String profilePicturePath) {
+        String id="userId";
+        this.registeredUser = new User(id, null, profilePicturePath);
+        registeredUserStatus = true;
+
+    }
+
     public boolean removeReviewByCoffeeMachineId(String coffeeMachineId, Review reviewObj) {
         for(CoffeeMachine coffeeMachineObj : coffeeMachineList) {
             if(coffeeMachineObj.getId().equals(coffeeMachineId)) {
-                String id = "fakeId"; //TODO generate id
-                Date date = new Date();
                 coffeeMachineObj.getReviewList().remove(reviewObj);
             }
         }
@@ -89,24 +98,13 @@ public class CoffeeMachineDataStorage {
     	return this.registeredUser;
     }
 
-    public void setRegisteredUser(String username){
-    	this.registeredUser.setUsername(username);
-    }
-    
-    public void setCurrentCoffeMachineSelectedId(String id){
-    	currentCoffeMachineSelectedId = id;
-    }
 
-    public String getCurrentCoffeMachineSelectedId(){
-    	return this.currentCoffeMachineSelectedId;
-    }
-
-    public void setProfilePicturePath(String path) {
+/*    public void setProfilePicturePath(String path) {
         profilePicturePath = path;
     }
 
     public String getProfilePicturePath() {
         return profilePicturePath;
     }
-
+*/
 }

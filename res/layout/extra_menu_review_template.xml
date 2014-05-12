@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/modifyReviewContainerLayoutId"
+    android:id="@+id/extraMenuItemViewId"
     android:layout_width="fill_parent"
     android:layout_height="120dp"
-    android:background="@color/middle_grey"
+    android:background="@color/light_green"
     android:orientation="horizontal" >
 
         <LinearLayout
@@ -14,9 +14,9 @@
             android:layout_marginLeft="@dimen/medium_padding"
             android:orientation="vertical" >
             <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_edit"/>
+                    android:layout_width="@dimen/small_icon_size"
+                    android:layout_height="@dimen/small_icon_size"
+                    android:src="@drawable/edit_icon"/>
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -31,9 +31,9 @@
                 android:gravity="center"
                 android:orientation="vertical" >
             <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_delete"/>
+                    android:layout_width="@dimen/small_icon_size"
+                    android:layout_height="@dimen/small_icon_size"
+                    android:src="@drawable/delete_icon"/>
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -50,9 +50,9 @@
                 android:orientation="vertical" >
                 <ImageView
                     android:id="@+id/changeTypeIconImageViewId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_btn_speak_now"/>
+                    android:layout_width="@dimen/small_icon_size"
+                    android:layout_height="@dimen/small_icon_size"
+                    android:src="@drawable/coffe_cup_icon"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -63,9 +63,9 @@
 
     <ImageView
             android:id="@+id/modifyReviewBackImageViewId"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/small_icon_size"
             android:layout_height="fill_parent"
-            android:layout_marginLeft="50dp"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"/>
+            android:layout_marginLeft="80dp"
+            android:src="@drawable/undo_icon"/>
 
 </LinearLayout>

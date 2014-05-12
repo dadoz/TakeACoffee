@@ -3,8 +3,6 @@ package com.application.takeacoffee;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -59,9 +57,13 @@ public class CoffeeMachineActivity extends Activity {
             if(username.compareTo(Common.EMPTY_VALUE) != 0) {
                 Log.e(TAG,"this is my username" + username);
                 coffeeMachineApplication = (CoffeeMachineDataStorageApplication)getApplication();
-                coffeeMachineApplication.coffeeMachineData.initRegisteredUser(username);
+                coffeeMachineApplication.coffeeMachineData.initRegisteredUserByUsername(username);
                 String profilePicPath = sharedPref.getString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, Common.EMPTY_VALUE);
-                coffeeMachineApplication.coffeeMachineData.setProfilePicturePath(profilePicPath);
+                if(profilePicPath == Common.EMPTY_VALUE) {
+                    profilePicPath = null;
+                }
+                coffeeMachineApplication.coffeeMachineData.getRegisteredUser().setProfilePicturePath(profilePicPath);
+
                 return true;
             } else {
                 Log.e(TAG, "no username set");
@@ -90,7 +92,11 @@ public class CoffeeMachineActivity extends Activity {
                 addChangeUserFragment(getFragmentManager());
             }
         });
-        setProfilePicFromStorage((ImageView)findViewById(R.id.loggedUserImageViewId));
+
+        Common.drawProfilePictureByPath((ImageView)findViewById(R.id.loggedUserImageViewId),
+                coffeeMachineApplication.coffeeMachineData.getRegisteredUser()
+                        .getProfilePicturePath(), getResources()
+                        .getDrawable(R.drawable.user_icon));
     }
 
 
@@ -113,7 +119,12 @@ public class CoffeeMachineActivity extends Activity {
         NewUserFragment newUserFragment = new NewUserFragment();
         //add fragment content to add user
         fragManager.beginTransaction()
-                .setCustomAnimations(R.anim.card_flip_left_in, R.anim.card_flip_left_out, R.anim.card_flip_right_in, R.anim.card_flip_right_out)
+                .setCustomAnimations(R.anim.fade_in,
+                        R.anim.fade_out)
+/*                .setCustomAnimations(R.anim.card_flip_left_in,
+                    R.anim.card_flip_left_out,
+                    R.anim.card_flip_right_in,
+                    R.anim.card_flip_right_out)*/
                 .replace(R.id.coffeeMachineContainerLayoutId, newUserFragment, Common.NEW_USER_FRAGMENT_TAG)
                 .addToBackStack("back")
                 .commit();
@@ -162,18 +173,6 @@ public class CoffeeMachineActivity extends Activity {
 	    return super.onCreateOptionsMenu(menu);
 	}
 	*/
-    public static boolean setProfilePicFromStorage(ImageView v) {
-    try {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(coffeeMachineApplication.coffeeMachineData.getProfilePicturePath(), options);
-        v.setImageBitmap(bitmap);
-        return true;
-    } catch(Exception e) {
-        e.printStackTrace();
-    }
-    return false;
-}
 
     /**MOVE OUT THIS FUNCTION**/
 /*    public static boolean sePictureByPicPath(ImageView v, int pictureName) {

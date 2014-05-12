@@ -3,18 +3,14 @@ package com.application.commons;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Typeface;
+import android.graphics.*;
+import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 public class Common {
 	public static final String SHAREDPREF_REGISTERED_USERNAME = "SHAREDPREF_REGISTERED_USERNAME";
@@ -25,6 +21,12 @@ public class Common {
     public static final long ANIMATION_GROW_TIME = 400;
     public static final String EMPTY_VALUE = "EMPTY_VALUE";
     public static final String NEW_USER_FRAGMENT_TAG = "NEW_USER_FRAGMENT_TAG";
+    public static final String SELECTED_ITEM = "SELECTED_ITEM";
+    public static final String REVIEW_ID = "REVIEW_ID";
+    private static final String TAG = "Common_TAG";
+    public static final String ADD_REVIEW_FROM_LISTVIEW = "ADD_REVIEW_FROM_LISTVIEW";
+    public static int ITEM_NOT_SELECTED = -1;
+    public static String SET_MORE_TEXT_ON_REVIEW = "SET_MORE_TEXT_ON_REVIEW";
 
     public enum ReviewStatusEnum {
         GOOD,
@@ -102,6 +104,24 @@ public class Common {
         int floatImageSize = (bmpBelow.getWidth() - bmpAbove.getWidth()) / 2;
         canvas.drawBitmap(bmpAbove, floatImageSize, floatImageSize, null);
         return  bitmapOverlay;
+    }
+
+    public static boolean drawProfilePictureByPath(ImageView v, String profilePicturePath, Drawable defaultIcon) {
+        try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            if(profilePicturePath != null) {
+                Bitmap bitmap = BitmapFactory.decodeFile(profilePicturePath, options);
+                v.setImageBitmap(bitmap);
+            } else {
+                v.setImageDrawable(defaultIcon);
+            }
+            return true;
+        } catch(Exception e) {
+            Log.e(TAG, "cannot load profile picture - set the default one");
+//            e.printStackTrace();
+        }
+        return false;
     }
 
 

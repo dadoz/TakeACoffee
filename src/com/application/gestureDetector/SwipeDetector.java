@@ -3,12 +3,18 @@ package com.application.gestureDetector;
 /**
  * Created by davide on 05/04/14.
  */
+
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import com.application.commons.Common;
+import com.application.takeacoffee.fragments.AddReviewFragment;
 
 public class SwipeDetector implements View.OnTouchListener {
 
-    private int swipeLeftCounter = 0;
+    private int swipeLeftCounter;
+    private static int MAX_SWIPE_COUNTER = 2;
+    private static int MIN_SWIPE_COUNTER = 0;
 
     public static enum Action {
         LR, // Left to Right
@@ -23,9 +29,11 @@ public class SwipeDetector implements View.OnTouchListener {
     private static final int MIN_DISTANCE = 100;
     private float downX, downY, upX, upY;
     private Action mSwipeDetected = Action.None;
+    private String coffeeMachineId;
 
-    public SwipeDetector( int swipeLeftCounter) {
-        this.swipeLeftCounter = swipeLeftCounter;
+    public SwipeDetector(String coffeeMachineId, Common.ReviewStatusEnum reviewStatus) {
+        this.swipeLeftCounter = convertStatusToCounter(reviewStatus);
+        this.coffeeMachineId = coffeeMachineId;
     }
 
     public boolean swipeDetected() {
@@ -58,18 +66,20 @@ public class SwipeDetector implements View.OnTouchListener {
                     if (deltaX < 0) {
                         mSwipeDetected = Action.LR;
 
-                        if(swipeLeftCounter > 0) {
+                        if(swipeLeftCounter > MIN_SWIPE_COUNTER) {
                             this.swipeLeftCounter--;
-                            //AddReviewFragment.swipeFragment(Action.LR, this.swipeLeftCounter);
+                            Log.e(TAG, "LEFT swipe");
+                            actionOnSwipe(this.coffeeMachineId, convertCounterToStatus(this.swipeLeftCounter));
                         }
                         return false;
                     }
                     if (deltaX > 0) {
 
                         mSwipeDetected = Action.RL;
-                        if(swipeLeftCounter < 2) {
+                        if(swipeLeftCounter < MAX_SWIPE_COUNTER) {
                             this.swipeLeftCounter++;
-                            //AddReviewFragment.swipeFragment(Action.RL, this.swipeLeftCounter);
+                            Log.e(TAG, "RIGHT swipe");
+                            actionOnSwipe(this.coffeeMachineId, convertCounterToStatus(this.swipeLeftCounter));
                         }
                         return false;
                     }
@@ -89,6 +99,34 @@ public class SwipeDetector implements View.OnTouchListener {
             }
         }
         return false;
+    }
+
+    private void actionOnSwipe(String coffeeMachineId, Common.ReviewStatusEnum reviewStatus) {
+        AddReviewFragment.swipeFragment(coffeeMachineId, reviewStatus);
+    }
+
+    private int convertStatusToCounter(Common.ReviewStatusEnum reviewStatus) {
+        switch (reviewStatus) {
+            case GOOD:
+                return 0;
+            case NOTSOBAD:
+                return 1;
+            case WORST:
+                return 2;
+        }
+        return -1;
+    }
+
+    private Common.ReviewStatusEnum convertCounterToStatus(int counter) {
+        switch (counter) {
+            case 0:
+                return Common.ReviewStatusEnum.GOOD;
+            case 1:
+                return Common.ReviewStatusEnum.NOTSOBAD;
+            case 2:
+                return Common.ReviewStatusEnum.WORST;
+        }
+        return Common.ReviewStatusEnum.NOTSET;
     }
 
 }

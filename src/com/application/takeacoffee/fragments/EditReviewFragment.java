@@ -9,13 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import com.application.commons.Common;
+import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.Review;
+import com.application.models.User;
 import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
-
-import static com.application.takeacoffee.CoffeeMachineActivity.setProfilePicFromStorage;
 
 /**
  * Created by davide on 30/04/14.
@@ -23,42 +24,63 @@ import static com.application.takeacoffee.CoffeeMachineActivity.setProfilePicFro
 public class EditReviewFragment extends Fragment{
     private static Activity mainActivityRef;
     private ArrayList<Review> reviewsList;
+    private CoffeeMachineDataStorageApplication coffeeMachineApplication;
     private static final String TAG = "EditReviewFragment";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mainActivityRef = getActivity();
         View editReviewView = inflater.inflate(R.layout.edit_review_template, container, false);
 
+        String reviewId = getArguments().getString(Common.REVIEW_ID);
+        String coffeeMachineId = getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
+        //get data from application
+        coffeeMachineApplication = (CoffeeMachineDataStorageApplication) this.getActivity().getApplication();
+        reviewsList = coffeeMachineApplication.coffeeMachineData.getReviewListByCoffeMachineId(coffeeMachineId);
+
+
         Common.setCustomFont(editReviewView, getActivity().getAssets());
+        initView(reviewId, editReviewView); //test
         return editReviewView;
     }
 
-    private void initView(int reviewIndex, View editReviewView) {
-        //set profile pic
-        String profilePicPath = reviewsList.get(reviewIndex).getProfilePicPath(); // TODO to must be refactored
-        if(profilePicPath != null) {
-            setProfilePicFromStorage((ImageView)editReviewView.findViewById(R.id.profilePicReviewTemplateId));
-        }
-
-//        String reviewComment = ((TextView)reviewModifiedViewStorage.findViewById(R.id.reviewCommentTextId)).getText().toString();
-        String reviewComment = "old text";
-        ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)).setText(reviewComment);
-
-        editReviewView.findViewById(R.id.saveReviewButtonId).setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                Log.e(TAG, "hey u want to save your review");
-/*                String reviewCommentNew = ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)).getText().toString();
-                reviewModifiedObjStorage.setComment(reviewCommentNew);
-                ViewGroup parent = (ViewGroup)view.getParent().getParent();
-                int childIndexPosition = parent.indexOfChild(editReviewView);
-                parent.removeView(editReviewView);
-                ((TextView)reviewModifiedViewStorage.findViewById(R.id.reviewCommentTextId)).setText(reviewCommentNew);
-                parent.addView(reviewModifiedViewStorage, childIndexPosition);*/
-
+    private Review getReviewById(ArrayList<Review> reviewsList, String reviewId) {
+        for(Review review:reviewsList) {
+            if(review.getId().equals(reviewId)) {
+                return review;
             }
-        });
+        }
+        return null;
+    }
+
+    private void initView(String reviewId, final View editReviewView) {
+        User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+
+        final Review review = getReviewById(reviewsList, reviewId);
+        if(review != null) {
+
+            //set review data
+            if(user != null) {
+                ((TextView) editReviewView.findViewById(R.id.reviewEditUsernameTextId)).setText(user.getUsername());
+                Common.drawProfilePictureByPath((ImageView) editReviewView
+                        .findViewById(R.id.profilePicReviewEditTemplateId), user.getProfilePicturePath(),
+                        getResources().getDrawable(R.drawable.user_icon));
+            }
+            ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)).setText(review.getComment());
+
+            editReviewView.findViewById(R.id.saveReviewButtonId).setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+                    Common.displayError("review saved", mainActivityRef);
+                    String reviewCommentNew = ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)).getText().toString();
+                    review.setComment(reviewCommentNew);
+                    Common.hideKeyboard(mainActivityRef, ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)));
+                    getFragmentManager().popBackStack();
+                }
+            });
+        } else {
+            Log.e(TAG, "error - no review found");
+        }
 
     }
 }

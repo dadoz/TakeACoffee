@@ -33,20 +33,20 @@ public class CoffeeMachineFragment extends Fragment {
     private ArrayList<PieChart> pieChartList;
     private Handler mHandler;
     private static Activity mainActivityRef;
+    private static LinearLayout settingsLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mHandler = new Handler();
         mainActivityRef = getActivity();
+        //get views
+        final View coffeeMachineFragment = inflater.inflate(R.layout.coffe_machine_fragment, container, false);
+        settingsLayout = (LinearLayout)coffeeMachineFragment.findViewById(R.id.settingsLayoutId);
 
         //get data from application
         coffeeMachineList = ((CoffeeMachineDataStorageApplication) getActivity().getApplication())
                 .coffeeMachineData.getCoffeeMachineList();
-        final View coffeeMachineFragment = inflater.inflate(R.layout.coffe_machine_fragment, container, false);
-        //set custom font
-        Common.setCustomFont(coffeeMachineFragment, this.getActivity().getAssets());
 
-//        boolean firstAnimationStarted = false;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -55,6 +55,8 @@ public class CoffeeMachineFragment extends Fragment {
         });
 //        initView(coffeeMachineFragment);
 
+        //set custom font
+        Common.setCustomFont(coffeeMachineFragment, this.getActivity().getAssets());
         return coffeeMachineFragment;
     }
 
@@ -154,6 +156,15 @@ public class CoffeeMachineFragment extends Fragment {
                 });
             }
         }
+
+        //set action to settings view
+        settingsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Common.displayError("settings view", mainActivityRef);
+            }
+        });
+
     }
 
     private boolean getCoffeeMachineReviewById(String coffeMachineId){
@@ -165,10 +176,12 @@ public class CoffeeMachineFragment extends Fragment {
         reviewsFrag.setArguments(args);
 
         getFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.card_flip_left_in,
+                .setCustomAnimations(R.anim.fade_in,
+                        R.anim.fade_out)
+/*                .setCustomAnimations(R.anim.card_flip_left_in,
                     R.anim.card_flip_left_out,
                     R.anim.card_flip_right_in,
-                    R.anim.card_flip_right_out)
+                    R.anim.card_flip_right_out)*/
                 .replace(R.id.coffeeMachineContainerLayoutId, reviewsFrag)
                 .addToBackStack("back")
                 .commit();
@@ -198,44 +211,8 @@ public class CoffeeMachineFragment extends Fragment {
     }
 
 
-    Runnable newTask = new Runnable() {
-            @Override
-            public void run() {
-            }
-        };
-
-    public Animation initAnimation() {
-//                TranslateAnimation anim = new TranslateAnimation(200,0,-200,0);
-//                anim.setDuration(500);
-//                final ScaleAnimation growAnim = new ScaleAnimation(0.1f, 1.0f, 0.1f, 1.0f, 1f, 1f);
-        Animation growAnim = AnimationUtils.loadAnimation(getActivity(),R.anim.zoom_in);
-        if(growAnim != null) {
-            growAnim.setDuration(Common.ANIMATION_GROW_TIME);
-            growAnim.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    Log.d("ANIMATION", "start animation");
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    Log.d("ANIMATION", "end animation");
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-        }
-
-        return growAnim;
-    }
-
     public static Bitmap getRoundedBitmapByPicPath(int pictureName) {
         try {
-/*            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;*/
             Bitmap bitmap = BitmapFactory.decodeResource(mainActivityRef.getResources(), pictureName);
             Bitmap roundedBitmap = getRoundedRectBitmap(bitmap, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
 

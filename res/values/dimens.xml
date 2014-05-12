@@ -21,4 +21,11 @@
     <dimen name="large_padding">60dip</dimen>
     <dimen name="small_padding_5">5dip</dimen>
     <dimen name="big_button_size">300dip</dimen>
+    <dimen name="small_icon_size">40dp</dimen>
+    <dimen name="medium_icon_size">60dp</dimen>
+    <dimen name="large_icon_size">80dp</dimen>
+    <dimen name="huge_icon_size">100dp</dimen>
+    <dimen name="extra_huge_icon_size">160dp</dimen>
+    <dimen name="big_content_size">200dp</dimen>
+
 </resources>
