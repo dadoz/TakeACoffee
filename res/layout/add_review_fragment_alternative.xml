@@ -45,6 +45,7 @@
             </LinearLayout>
         </RelativeLayout>
 
+        <!-- add more review template -->
         <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -75,19 +76,19 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/light_black"
+                        android:textColor="@color/light_red"
                         android:padding="@dimen/small_padding"
                         android:textSize="@dimen/text_big_22"
                         android:text="post"/>
             </LinearLayout>
         </LinearLayout>
-<!--        <LinearLayout android:layout_below="@id/headerAddReviewLayoutId" android:layout_width="fill_parent" android:layout_height="1dp" android:layout_marginRight="@dimen/small_padding" android:layout_marginLeft="@dimen/small_padding" android:background="@color/dark_black"/>-->
 
-    <!--button choice -->
-    <RelativeLayout
+    <!--Main content view -->
+    <LinearLayout
             android:id="@+id/mainAddReviewLayoutId"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_below="@id/headerAddReviewLayoutId">
         <ScrollView
                 android:id="@+id/containerAddReviewId"
@@ -117,11 +118,14 @@
                             android:text="Your review comment"/>
                     <TextView
                             android:id="@+id/reviewTextIconTextViewId"
+                            android:layout_marginBottom="@dimen/large_padding"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/light_black"
-                            android:textSize="@dimen/text_big_24"kòjaj
-                            android:text=" alkjfòkajdfkjaòsdkjfòakjsdòfkajòsdkfaòskdjfòkasjdkjasòdkfjaòslkdjfòaksdjfòkasjdsfjjkòjfaajfksfjkòjajsfjkòjajsfjkòjajsfj "/>
+                            android:textSize="@dimen/text_big_24"
+                            android:layout_marginRight="@dimen/large_padding"
+                            android:layout_marginLeft="@dimen/large_padding"
+                            android:text=" - " />
     <!--                <EditText
                             android:id="@+id/reviewEditTextId"
                             android:textSize="@dimen/header_text_size"
@@ -133,23 +137,15 @@
                             android:lines="1"
                             android:hint="write post" />
     -->
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
-        </ScrollView>
-
-            <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignRight="@+id/containerAddReviewId"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/small_padding"
-                    android:layout_marginLeft="@dimen/text_small"
-                    android:src="@drawable/left_arrow"/>
-        </RelativeLayout>
+            </ScrollView>
+        </LinearLayout>
+        <!-- bottom button -->
         <LinearLayout
                 android:id="@+id/addReviewButtonId"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/button_height"
                 android:gravity="center"
                 android:layout_alignParentBottom="true"
                 android:background="@color/dark_black"
@@ -164,5 +160,5 @@
                     android:text="add review"
                     />
         </LinearLayout>
-            </RelativeLayout>
+    </RelativeLayout>
 </LinearLayout>
