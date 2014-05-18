@@ -51,12 +51,23 @@
 
     </LinearLayout>
 
-   <TextView
-        android:layout_alignParentRight="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Politecnico di Torino"
-        android:layout_centerVertical="true"
-        android:textSize="@dimen/text_small"
-        android:textColor="@color/light_black"/>
+    <LinearLayout
+            android:id="@+id/headerMapLayoutId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_alignParentRight="true">
+        <ImageView
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
+                android:src="@drawable/position_icon"/>
+        <TextView
+                android:layout_width="@dimen/huge_icon_size"
+                android:layout_height="wrap_content"
+                android:text="Politecnico di Torino"
+                android:textSize="@dimen/text_small"
+                android:textColor="@color/light_black"/>
+
+    </LinearLayout>
 </RelativeLayout>

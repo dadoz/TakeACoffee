@@ -25,10 +25,29 @@
                 android:gravity="center"
                 android:textColor="@color/dark_grey"
                 android:text="tap on one coffee machine icon to READ or ADD some review!" />
+        <LinearLayout
+                android:id="@+id/mapContainerLayoutId"
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:background="@color/middle_grey"
+                android:minHeight="@dimen/huge_icon_size">
+            <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_big_26"
+                    android:padding="@dimen/small_padding"
+                    android:textColor="@color/light_black"
+                    android:text="MAP" />
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="480dip"
+                        android:src="@drawable/map_screenshot"/>
+        </LinearLayout>
         <TableLayout
                 android:id="@+id/coffeeMachineTableLayoutId"
                 android:layout_marginTop="@dimen/small_padding"
-                android:background="@color/light_red"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
@@ -40,11 +59,12 @@
                 android:background="@color/light_black"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:minHeight="@dimen/large_icon_size"
                 android:padding="@dimen/small_padding">
-            <ImageView
-                    android:layout_width="@dimen/huge_icon_size"
-                    android:layout_height="@dimen/huge_icon_size"
-                    android:src="@drawable/settings_icon"/>
+            <!--<ImageView
+                    android:layout_width="@dimen/medium_icon_size"
+                    android:layout_height="@dimen/medium_icon_size"
+                    android:src="@drawable/settings_icon"/>-->
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

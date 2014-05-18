@@ -55,6 +55,9 @@ public class CoffeeMachineFragment extends Fragment {
         });
 //        initView(coffeeMachineFragment);
 
+
+        //header stuff
+        setHeaderAction(coffeeMachineFragment);
         //set custom font
         Common.setCustomFont(coffeeMachineFragment, this.getActivity().getAssets());
         return coffeeMachineFragment;
@@ -139,7 +142,7 @@ public class CoffeeMachineFragment extends Fragment {
 
                     Bitmap bmpAbove = getRoundedBitmapByPicPath(picResource);
                     Bitmap bmpBelow = NewUserFragment.getRoundedBitmap(Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE,
-                            getResources().getColor(R.color.middle_grey));
+                            getResources().getColor(R.color.light_black));
                     Bitmap coffeeMachineBmp = Common.overlayBitmaps(bmpBelow, bmpAbove);
                     coffeePic.setImageBitmap(coffeeMachineBmp);
                 } catch (Exception e) {
@@ -165,6 +168,18 @@ public class CoffeeMachineFragment extends Fragment {
             }
         });
 
+    }
+
+    private void setHeaderAction(final View coffeeMachineFragment) {
+        mainActivityRef.findViewById(R.id.headerMapLayoutId).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View mapContainerLayout = coffeeMachineFragment.findViewById(R.id.mapContainerLayoutId);
+                View coffeeMachineTableLayout = coffeeMachineFragment.findViewById(R.id.coffeeMachineTableLayoutId);
+                mapContainerLayout.setVisibility(View.VISIBLE);
+                coffeeMachineTableLayout.setVisibility(View.GONE);
+            }
+        });
     }
 
     private boolean getCoffeeMachineReviewById(String coffeMachineId){

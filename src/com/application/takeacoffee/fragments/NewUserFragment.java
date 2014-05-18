@@ -137,11 +137,11 @@ public class NewUserFragment extends Fragment{
         ((TextView)mainActivityRef.findViewById(R.id.loggedUserTextId)).setText(username);
 
         //reset button on prev status
-        resetChangeButton();
+        CoffeeMachineActivity.addChangeUserFragment(getFragmentManager());
 
     }
 
-    public void resetChangeButton() {
+/*    public void resetChangeButton() {
         //set button to change user instead of new (with new bind)
 //        ((Button)mainActivityRef.findViewById(R.id.loggedUserButtonId)).setText("change");
 //        (mainActivityRef.findViewById(R.id.loggedUserButtonId)).setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
@@ -152,7 +152,7 @@ public class NewUserFragment extends Fragment{
                 CoffeeMachineActivity.addChangeUserFragment(mainActivityRef.getFragmentManager());
             }
         });
-    }
+    }*/
 
     public void setProfilePic() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);

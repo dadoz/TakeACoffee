@@ -93,7 +93,8 @@ public class ReviewsFragment extends Fragment {
         fragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.fade_in,
                         R.anim.fade_out)
-                .replace(R.id.coffeeMachineContainerLayoutId, addReviewFragment)
+                .replace(R.id.coffeeMachineContainerLayoutId, addReviewFragment,
+                        Common.ADD_REVIEW_FRAGMENT_TAG)
                 .addToBackStack("back")
                 .commit();
     }
@@ -206,6 +207,7 @@ public class ReviewsFragment extends Fragment {
                 .addToBackStack("back")
                 .commit();
     }
+
 
     public class ReviewListButtonListener implements View.OnClickListener {
         private boolean isListViewEmpty;

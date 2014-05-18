@@ -264,9 +264,9 @@ public class ReviewListFragment extends Fragment {
                     reviewObj.getProfilePicPath(), getResources().getDrawable(R.drawable.user_icon));
 
             //set background color
-            if(position % 2 != 0) {
+/*            if(position % 2 != 0) {
                 mainItemView.setBackgroundColor(getResources().getColor(R.color.middle_grey));
-            }
+            }*/
 
             //set extra menu visibility
             extraMenuItemView.setVisibility(View.GONE);

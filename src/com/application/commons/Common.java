@@ -20,13 +20,16 @@ public class Common {
     public static final int VIBRATE_TIME = 15;
     public static final long ANIMATION_GROW_TIME = 400;
     public static final String EMPTY_VALUE = "EMPTY_VALUE";
-    public static final String NEW_USER_FRAGMENT_TAG = "NEW_USER_FRAGMENT_TAG";
     public static final String SELECTED_ITEM = "SELECTED_ITEM";
     public static final String REVIEW_ID = "REVIEW_ID";
     private static final String TAG = "Common_TAG";
     public static final String ADD_REVIEW_FROM_LISTVIEW = "ADD_REVIEW_FROM_LISTVIEW";
+    public static final String COFFEE_MACHINE_FRAGMENT_TAG = "COFFEE_MACHINE_FRAGMENT_TAG";
     public static int ITEM_NOT_SELECTED = -1;
     public static String SET_MORE_TEXT_ON_REVIEW = "SET_MORE_TEXT_ON_REVIEW";
+
+    public static final String NEW_USER_FRAGMENT_TAG = "NEW_USER_FRAGMENT_TAG";
+    public static final String ADD_REVIEW_FRAGMENT_TAG = "ADD_REVIEW_FRAGMENT";
 
     public enum ReviewStatusEnum {
         GOOD,
@@ -42,11 +45,12 @@ public class Common {
 
     public static int ICON_SMALL_SIZE = 180;
     public static int PROFILE_PIC_CIRCLE_MASK_SIZE = 300;
-    public static int PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE = 340;
+    public static int PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE = 312;
     public static String COFFE_MACHINE_ID_KEY = "coffeMachineId";
 
     public static void setCustomFontByView(AssetManager assets, View view, boolean boldSet) {
-        Typeface boldFont = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAir.ttf");
+//        Typeface boldFont = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAir.ttf");
+        Typeface boldFont = Typeface.createFromAsset(assets, "fonts/AmaticSC-Regular.ttf");
         if(boldSet) {
             boldFont = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAirBold.ttf");
         }
@@ -60,7 +64,8 @@ public class Common {
         //set custom font style
 //        Typeface font = Typeface.createFromAsset(assets, "fonts/Qiber.otf");
 //        Typeface font = Typeface.createFromAsset(assets, "fonts/rabiohead.ttf");
-        Typeface font = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAir.ttf");
+//        Typeface font = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAir.ttf");
+        Typeface font = Typeface.createFromAsset(assets, "fonts/AmaticSC-Regular.ttf");
 
         ViewGroup root = (ViewGroup)fragmentView.getRootView();
         setFont(root, font);

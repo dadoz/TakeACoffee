@@ -10,8 +10,6 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
-
-
         <RelativeLayout
                 android:id="@+id/headerAddReviewLayoutId"
                 android:layout_alignParentTop="true"
@@ -44,21 +42,27 @@
                         android:text="Add text"/>-->
             </LinearLayout>
         </RelativeLayout>
-
         <!-- add more review template -->
         <LinearLayout
+                android:id="@+id/addMoreTextLayoutId"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/light_grey"
+                android:minHeight="@dimen/medium_icon_size"
                 android:visibility="gone"
+                android:background="@color/light_grey"
+
                 android:orientation="horizontal">
-            <ImageView
+            <LinearLayout
                     android:id="@+id/addReviewUndoImageId"
-                    android:layout_width="@dimen/small_icon_size"
-                    android:layout_height="@dimen/small_icon_size"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="@dimen/small_padding"
-                    android:src="@drawable/undo_icon"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent">
+                <ImageView
+                        android:layout_width="@dimen/small_min_icon_size"
+                        android:layout_height="@dimen/small_min_icon_size"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/small_padding"
+                        android:src="@drawable/undo_icon"/>
+            </LinearLayout>
             <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"

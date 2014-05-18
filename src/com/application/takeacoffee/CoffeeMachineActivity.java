@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
+import com.application.takeacoffee.fragments.AddReviewFragment;
 import com.application.takeacoffee.fragments.CoffeeMachineFragment;
 import com.application.takeacoffee.fragments.NewUserFragment;
 
@@ -75,7 +76,7 @@ public class CoffeeMachineActivity extends Activity {
 
     private void initView() {
         getFragmentManager().beginTransaction()
-                .add(R.id.coffeeMachineContainerLayoutId, new CoffeeMachineFragment())
+                .add(R.id.coffeeMachineContainerLayoutId, new CoffeeMachineFragment(), Common.COFFEE_MACHINE_FRAGMENT_TAG)
                 .commit();
     }
 
@@ -132,9 +133,47 @@ public class CoffeeMachineActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        //get back from
         final NewUserFragment fragment = (NewUserFragment)getFragmentManager().findFragmentByTag(Common.NEW_USER_FRAGMENT_TAG);
         if(fragment != null) {
-            fragment.resetChangeButton();
+            if(fragment.isVisible()) {
+                (findViewById(R.id.loggedUserButtonId)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+//                    Common.displayError("change username", view.getContext());
+                        addChangeUserFragment(getFragmentManager());
+                    }
+                });
+            }
+        }
+
+        final AddReviewFragment addReviewfragment = (AddReviewFragment)getFragmentManager().findFragmentByTag(Common.ADD_REVIEW_FRAGMENT_TAG);
+        if(addReviewfragment != null) {
+            if(addReviewfragment.isVisible()) {
+                //headerAddReviewLayout
+                View addMoreTextView = addReviewfragment.getView().findViewById(R.id.addMoreTextLayoutId);
+                View headerAddReviewView = addReviewfragment.getView().findViewById(R.id.headerAddReviewLayoutId);
+                if(addMoreTextView.getVisibility() == View.VISIBLE) {
+                    addMoreTextView.setVisibility(View.GONE);
+                    headerAddReviewView.setVisibility(View.VISIBLE);
+                    addReviewfragment.getView().findViewById(R.id.addReviewButtonId).setVisibility(View.VISIBLE);
+
+                    return;
+                }
+            }
+        }
+
+        final CoffeeMachineFragment coffeeMachineFragment = (CoffeeMachineFragment)getFragmentManager().findFragmentByTag(Common.COFFEE_MACHINE_FRAGMENT_TAG);
+        if(coffeeMachineFragment != null) {
+            if(coffeeMachineFragment.isVisible()) {
+                View mapContainerLayout = coffeeMachineFragment.getView().findViewById(R.id.mapContainerLayoutId);
+                View coffeeMachineTableLayout = coffeeMachineFragment.getView().findViewById(R.id.coffeeMachineTableLayoutId);
+                if (mapContainerLayout.getVisibility() == View.VISIBLE) {
+                    mapContainerLayout.setVisibility(View.GONE);
+                    coffeeMachineTableLayout.setVisibility(View.VISIBLE);
+                    return;
+                }
+            }
         }
         super.onBackPressed();
     }
