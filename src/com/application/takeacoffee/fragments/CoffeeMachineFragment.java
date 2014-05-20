@@ -1,11 +1,11 @@
 package com.application.takeacoffee.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,6 +22,7 @@ import com.application.takeacoffee.R;
 import java.util.ArrayList;
 
 import static com.application.commons.Common.setCustomFontByView;
+import static com.application.takeacoffee.CoffeeMachineActivity.addReviewByFragment;
 import static com.application.takeacoffee.fragments.NewUserFragment.getRoundedRectBitmap;
 
 /**
@@ -53,8 +54,6 @@ public class CoffeeMachineFragment extends Fragment {
                 initView(coffeeMachineFragment);
             }
         });
-//        initView(coffeeMachineFragment);
-
 
         //header stuff
         setHeaderAction(coffeeMachineFragment);
@@ -165,6 +164,8 @@ public class CoffeeMachineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Common.displayError("settings view", mainActivityRef);
+                addReviewByFragment();
+
             }
         });
 
@@ -191,12 +192,8 @@ public class CoffeeMachineFragment extends Fragment {
         reviewsFrag.setArguments(args);
 
         getFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.fade_in,
-                        R.anim.fade_out)
-/*                .setCustomAnimations(R.anim.card_flip_left_in,
-                    R.anim.card_flip_left_out,
-                    R.anim.card_flip_right_in,
-                    R.anim.card_flip_right_out)*/
+//                .setCustomAnimations(R.anim.fade_in,
+//                        R.anim.fade_out)
                 .replace(R.id.coffeeMachineContainerLayoutId, reviewsFrag)
                 .addToBackStack("back")
                 .commit();

@@ -23,7 +23,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/small_padding"
-                    android:text="Good review"/>
+                    android:text="review status"/>
             <LinearLayout
                     android:id="@+id/addMoreTextOnReviewButtonId"
                     android:layout_width="wrap_content"
@@ -57,8 +57,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent">
                 <ImageView
-                        android:layout_width="@dimen/small_min_icon_size"
-                        android:layout_height="@dimen/small_min_icon_size"
+                        android:layout_width="@dimen/extra_small_icon_size"
+                        android:layout_height="@dimen/extra_small_icon_size"
                         android:layout_gravity="center_vertical"
                         android:layout_margin="@dimen/small_padding"
                         android:src="@drawable/undo_icon"/>
@@ -93,6 +93,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_marginTop="@dimen/medium_padding"
             android:layout_below="@id/headerAddReviewLayoutId">
         <ScrollView
                 android:id="@+id/containerAddReviewId"

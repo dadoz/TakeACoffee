@@ -1,9 +1,13 @@
 package com.application.takeacoffee.fragments;
 
-import android.app.*;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,13 +21,15 @@ import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
 
+import static com.application.takeacoffee.CoffeeMachineActivity.addReviewByFragment;
+
 /**
  * Created by davide on 08/04/14.
  */
 public class ReviewListFragment extends Fragment {
     private static final String TAG = "ReviewListFragment";
     private static CoffeeMachineDataStorageApplication coffeeMachineApplication;
-    private static Activity mainActivityRef = null;
+    private static FragmentActivity mainActivityRef = null;
     Common.ReviewStatusEnum reviewStatus;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
@@ -71,7 +77,8 @@ public class ReviewListFragment extends Fragment {
                     Bundle args = new Bundle();
                     args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
                     args.putBoolean(Common.ADD_REVIEW_FROM_LISTVIEW, true);
-                    ReviewsFragment.addReviewByFragment(getFragmentManager(), args);
+//                    ReviewsFragment.addReviewByFragment(getFragmentManager(), args);
+                    addReviewByFragment();
                 }
             });
         }
@@ -196,8 +203,8 @@ public class ReviewListFragment extends Fragment {
         reviewsFrag.setArguments(args);
 
         fragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.fade_in,
-                        R.anim.fade_out)
+//                .setCustomAnimations(R.anim.fade_in,
+//                        R.anim.fade_out)
                 .replace(R.id.coffeeMachineContainerLayoutId, reviewsFrag)
                 .addToBackStack("back")
                 .commit();

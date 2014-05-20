@@ -1,9 +1,11 @@
 package com.application.takeacoffee;
 
-import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,23 +14,29 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.application.adapters.ScreenSlidePagerAdapter;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.takeacoffee.fragments.AddReviewFragment;
 import com.application.takeacoffee.fragments.CoffeeMachineFragment;
 import com.application.takeacoffee.fragments.NewUserFragment;
 
-public class CoffeeMachineActivity extends Activity {
+public class CoffeeMachineActivity extends FragmentActivity {
     private static final String TAG ="MainActivity";
+    private static final int NUM_PAGES = 3;
+
+    private ViewPager mPager;
+    private PagerAdapter mPagerAdapter;
+
 
     private boolean loggedUser;
     private static CoffeeMachineDataStorageApplication coffeeMachineApplication;
-
+    static FragmentActivity mainApplication;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.coffe_machine_layout);
-
+        mainApplication = this;
         Common.setCustomFont(findViewById(R.id.scrollViewContainerId),
                 this.getAssets());
 
@@ -46,6 +54,23 @@ public class CoffeeMachineActivity extends Activity {
 
         if(savedInstanceState == null) {
             initView();
+        }
+
+//        addReviewByFragment();
+
+    }
+    public static void addReviewByFragment() {
+        try {
+            mainApplication.findViewById(R.id.pager).setVisibility(View.VISIBLE);
+            mainApplication .findViewById(R.id.coffeeMachineContainerLayoutId).setVisibility(View.GONE);
+
+            ViewPager mPager = (ViewPager) mainApplication.findViewById(R.id.pager);
+            ScreenSlidePagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(mainApplication.getSupportFragmentManager());
+            mPager.setAdapter(mPagerAdapter);
+//        mPager.setOnPageChangeListener(
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
@@ -75,9 +100,16 @@ public class CoffeeMachineActivity extends Activity {
     }
 
     private void initView() {
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .add(R.id.coffeeMachineContainerLayoutId, new CoffeeMachineFragment(), Common.COFFEE_MACHINE_FRAGMENT_TAG)
                 .commit();
+    }
+
+    public void replaceFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.coffeeMachineContainerLayoutId, new CoffeeMachineFragment(), Common.COFFEE_MACHINE_FRAGMENT_TAG)
+                .commit();
+
     }
 
     public void setLoggedUserView() {
@@ -90,7 +122,7 @@ public class CoffeeMachineActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getBaseContext(), "logged", Toast.LENGTH_LONG).show();
-                addChangeUserFragment(getFragmentManager());
+                addChangeUserFragment(getSupportFragmentManager());
             }
         });
 
@@ -111,7 +143,7 @@ public class CoffeeMachineActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getBaseContext(), "not logged", Toast.LENGTH_LONG).show();
-                addChangeUserFragment(getFragmentManager());
+                addChangeUserFragment(getSupportFragmentManager());
             }
         });
     }
@@ -120,12 +152,8 @@ public class CoffeeMachineActivity extends Activity {
         NewUserFragment newUserFragment = new NewUserFragment();
         //add fragment content to add user
         fragManager.beginTransaction()
-                .setCustomAnimations(R.anim.fade_in,
-                        R.anim.fade_out)
-/*                .setCustomAnimations(R.anim.card_flip_left_in,
-                    R.anim.card_flip_left_out,
-                    R.anim.card_flip_right_in,
-                    R.anim.card_flip_right_out)*/
+//                .setCustomAnimations(R.anim.fade_in,
+//                        R.anim.fade_out)
                 .replace(R.id.coffeeMachineContainerLayoutId, newUserFragment, Common.NEW_USER_FRAGMENT_TAG)
                 .addToBackStack("back")
                 .commit();
@@ -134,20 +162,20 @@ public class CoffeeMachineActivity extends Activity {
     @Override
     public void onBackPressed() {
         //get back from
-        final NewUserFragment fragment = (NewUserFragment)getFragmentManager().findFragmentByTag(Common.NEW_USER_FRAGMENT_TAG);
+        final NewUserFragment fragment = (NewUserFragment)getSupportFragmentManager().findFragmentByTag(Common.NEW_USER_FRAGMENT_TAG);
         if(fragment != null) {
             if(fragment.isVisible()) {
                 (findViewById(R.id.loggedUserButtonId)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
 //                    Common.displayError("change username", view.getContext());
-                        addChangeUserFragment(getFragmentManager());
+                        addChangeUserFragment(getSupportFragmentManager());
                     }
                 });
             }
         }
 
-        final AddReviewFragment addReviewfragment = (AddReviewFragment)getFragmentManager().findFragmentByTag(Common.ADD_REVIEW_FRAGMENT_TAG);
+        final AddReviewFragment addReviewfragment = (AddReviewFragment)getSupportFragmentManager().findFragmentByTag(Common.ADD_REVIEW_FRAGMENT_TAG);
         if(addReviewfragment != null) {
             if(addReviewfragment.isVisible()) {
                 //headerAddReviewLayout
@@ -163,7 +191,7 @@ public class CoffeeMachineActivity extends Activity {
             }
         }
 
-        final CoffeeMachineFragment coffeeMachineFragment = (CoffeeMachineFragment)getFragmentManager().findFragmentByTag(Common.COFFEE_MACHINE_FRAGMENT_TAG);
+        final CoffeeMachineFragment coffeeMachineFragment = (CoffeeMachineFragment)getSupportFragmentManager().findFragmentByTag(Common.COFFEE_MACHINE_FRAGMENT_TAG);
         if(coffeeMachineFragment != null) {
             if(coffeeMachineFragment.isVisible()) {
                 View mapContainerLayout = coffeeMachineFragment.getView().findViewById(R.id.mapContainerLayoutId);

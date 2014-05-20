@@ -70,4 +70,27 @@
                 android:textColor="@color/light_black"/>
 
     </LinearLayout>
+    <LinearLayout
+            android:id="@+id/headerTabReviewLayoutId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:gravity="center_vertical"
+            android:layout_alignParentRight="true">
+        <ImageView
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
+                android:src="@drawable/coffe_cup_icon"/>
+        <ImageView
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
+                android:src="@drawable/coffe_cup_icon"/>
+        <ImageView
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
+                android:src="@drawable/coffe_cup_icon"/>
+
+    </LinearLayout>
+
 </RelativeLayout>

@@ -1,8 +1,8 @@
 package com.application.takeacoffee.fragments;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,26 +22,36 @@ import static com.application.takeacoffee.fragments.ReviewsFragment.createReview
  */
 public class AddReviewFragment extends Fragment {
     private static final String TAG = "AddReviewFragment";
-//    private static LinearLayout addReviewAction, addReviewTextBarContainer;
-//    private static LinearLayout addReviewAction;
-//    private static ScrollView addReviewViewContainerLayout;
-//    private static ImageView addReviewWithoutTextImageView, addReviewWithMoreTextImageView;
-    /*private static LinearLayout addMoreTextOnReviewLayout;
-    private static View choiceTypeReviewLayout;
-    private static TextView goodReviewTab, notSoBadReviewTab, worstReviewTab;//, addTextbarTextHeader;
-    private static EditText reviewEditText;*/
 
     private static View addReviewView, addReviewButton;
     private static CoffeeMachineDataStorageApplication coffeeMachineApplication;
     private static boolean addReviewFromListView;
 
-    private static Activity mainActivityRef;
+    private static FragmentActivity mainActivityRef;
     private static Common.ReviewStatusEnum reviewStatus = Common.ReviewStatusEnum.GOOD;
+
+    /**
+     * Factory method for this fragment class. Constructs a new fragment for the given page number.
+     */
+    public static final String ARG_PAGE = "page";
+    private int mPageNumber;
+
+    public int getPageNumber() {
+        return mPageNumber;
+    }
+
+    public static AddReviewFragment create(int pageNumber) {
+        AddReviewFragment fragment = new AddReviewFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_PAGE, pageNumber);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance)  {
         mainActivityRef = getActivity();
         addReviewView = inflater.inflate(R.layout.add_review_fragment_alternative, container, false);
-
         addReviewButton = addReviewView.findViewById(R.id.addReviewButtonId);
 
         //get data from application
@@ -63,13 +73,15 @@ public class AddReviewFragment extends Fragment {
 
         addReviewView.findViewById(R.id.containerAddReviewId).setOnTouchListener(swipeDetector);
 
-        initView(coffeeMachineId, reviewStatus);
+        //initView(coffeeMachineId, reviewStatus);
 
         Common.setCustomFont(addReviewView, getActivity().getAssets());
         return addReviewView;
     }
 
     private void initView(final String coffeeMachineId, Common.ReviewStatusEnum statusValue) {
+        //remove university map box on header
+        setAddReviewHeader();
         swipeFragment(coffeeMachineId, statusValue);
     }
 
@@ -78,12 +90,28 @@ public class AddReviewFragment extends Fragment {
         reviewStatus = statusValue;
         switch (statusValue) {
             case GOOD:
+                hideMoreTextHeader();
+                addReviewView.findViewById(R.id.headerAddReviewLayoutId).setBackgroundColor(
+                        mainActivityRef.getResources().getColor(R.color.light_green_soft));
+                ((TextView)((ViewGroup)addReviewView.findViewById(R.id.headerAddReviewLayoutId)).getChildAt(0))
+                        .setText(Common.GOOD_STATUS_STRING);
+
                 addReviewView.setBackgroundColor(mainActivityRef.getResources().getColor(R.color.light_green));
                 break;
             case NOTSOBAD:
+                hideMoreTextHeader();
+                addReviewView.findViewById(R.id.headerAddReviewLayoutId).setBackgroundColor(
+                        mainActivityRef.getResources().getColor(R.color.light_yellow_lemon_soft));
+                ((TextView)((ViewGroup)addReviewView.findViewById(R.id.headerAddReviewLayoutId)).getChildAt(0))
+                        .setText(Common.NOTSOBAD_STATUS_STRING);
                 addReviewView.setBackgroundColor(mainActivityRef.getResources().getColor(R.color.light_yellow_lemon));
                 break;
             case WORST:
+                hideMoreTextHeader();
+                addReviewView.findViewById(R.id.headerAddReviewLayoutId).setBackgroundColor(
+                        mainActivityRef.getResources().getColor(R.color.light_violet_soft));
+                ((TextView)((ViewGroup)addReviewView.findViewById(R.id.headerAddReviewLayoutId)).getChildAt(0))
+                        .setText(Common.TERRIBLE_STATUS_STRING);
                 addReviewView.setBackgroundColor(mainActivityRef.getResources().getColor(R.color.light_violet));
                 break;
         }
@@ -102,7 +130,6 @@ public class AddReviewFragment extends Fragment {
         });
 
     }
-
 
     public static void addReview(final String coffeeMachineId, final Common.ReviewStatusEnum reviewStatus,
                                  boolean reviewWithText) {
@@ -135,10 +162,9 @@ public class AddReviewFragment extends Fragment {
         mainActivityRef.getFragmentManager().popBackStack();
 
         if(!addReviewFromListView) {
-            createReviewsListView(mainActivityRef.getFragmentManager(), reviewStatus, args);
+            createReviewsListView(mainActivityRef.getSupportFragmentManager(), reviewStatus, args);
         }
     }
-
 
     public class AddMoreTextAction implements View.OnClickListener {
         @Override
@@ -187,8 +213,34 @@ public class AddReviewFragment extends Fragment {
         }
     }
 
+    public static void hideMoreTextHeader() {
+        View addMoreTextView = addReviewView.findViewById(R.id.addMoreTextLayoutId);
+        View headerAddReviewView = addReviewView.findViewById(R.id.headerAddReviewLayoutId);
+        if(addMoreTextView.getVisibility() == View.VISIBLE) {
+            addMoreTextView.setVisibility(View.GONE);
+            headerAddReviewView.setVisibility(View.VISIBLE);
+            addReviewView.findViewById(R.id.addReviewButtonId).setVisibility(View.VISIBLE);
+        }
 
-/*
+    }
+
+    public static void setAddReviewHeader() {
+        View headerMapLayout = mainActivityRef.findViewById(R.id.headerMapLayoutId);
+        View headerTabReviewLayout = mainActivityRef.findViewById(R.id.headerTabReviewLayoutId);
+
+        headerMapLayout.setVisibility(View.GONE);
+        headerTabReviewLayout.setVisibility(View.VISIBLE);
+    }
+
+
+//    private static LinearLayout addReviewAction, addReviewTextBarContainer;
+//    private static LinearLayout addReviewAction;
+//    private static ScrollView addReviewViewContainerLayout;
+//    private static ImageView addReviewWithoutTextImageView, addReviewWithMoreTextImageView;
+    /*private static LinearLayout addMoreTextOnReviewLayout;
+    private static View choiceTypeReviewLayout;
+    private static TextView goodReviewTab, notSoBadReviewTab, worstReviewTab;//, addTextbarTextHeader;
+    private static EditText reviewEditText;
 
 
     public static void initView(final String coffeeMachineId) {

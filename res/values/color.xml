@@ -19,6 +19,9 @@
     <color name="light_yellow">#FFC946</color>
     <color name="light_yellow_lemon">#f3f564</color>
     <color name="light_violet">#9657b6</color>
+    <color name="light_green_soft">#8ae2c4</color>
+    <color name="light_yellow_lemon_soft">#f4f5aa</color>
+    <color name="light_violet_soft">#aa63ce</color>
 
 <!--    <color name="yellow_melon">#FFC946</color>
    <color name="green_marine">#84dfbd</color >#52bf8b F1F146-->

@@ -25,6 +25,10 @@ public class Common {
     private static final String TAG = "Common_TAG";
     public static final String ADD_REVIEW_FROM_LISTVIEW = "ADD_REVIEW_FROM_LISTVIEW";
     public static final String COFFEE_MACHINE_FRAGMENT_TAG = "COFFEE_MACHINE_FRAGMENT_TAG";
+    public static final String TERRIBLE_STATUS_STRING = "Damn Terrible";
+    public static final String GOOD_STATUS_STRING = "That's Good";
+    public static final String NOTSOBAD_STATUS_STRING = "Mmmmmm";
+    public static final int NUM_PAGES = 3;
     public static int ITEM_NOT_SELECTED = -1;
     public static String SET_MORE_TEXT_ON_REVIEW = "SET_MORE_TEXT_ON_REVIEW";
 

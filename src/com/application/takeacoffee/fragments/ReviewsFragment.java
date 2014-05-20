@@ -1,9 +1,9 @@
 package com.application.takeacoffee.fragments;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +19,8 @@ import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
 
+import static com.application.takeacoffee.CoffeeMachineActivity.addReviewByFragment;
+
 /**
  * Created by davide on 3/16/14.
  */
@@ -26,10 +28,11 @@ public class ReviewsFragment extends Fragment {
     private static final String TAG = "ReviewFragment";
     private CoffeeMachineDataStorageApplication coffeeMachineApplication;
     private Bundle args;
-    private static Activity mainActivityRef;
+    private static FragmentActivity mainActivityRef;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mainActivityRef = getActivity();
+
         //get data from application
         coffeeMachineApplication = ((CoffeeMachineDataStorageApplication) this.getActivity()
                 .getApplication());
@@ -81,24 +84,39 @@ public class ReviewsFragment extends Fragment {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        addReviewByFragment(fragmentManager, args);
+                        addReviewByFragment();
                     }
                 });
     }
 
-    public static void addReviewByFragment(FragmentManager fragmentManager, Bundle args) {
+/*    public static void addReviewByFragment(FragmentManager fragmentManager, Bundle args) {
         AddReviewFragment addReviewFragment = new AddReviewFragment();
         addReviewFragment.setArguments(args);
         //add fragment content to add user
         fragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.fade_in,
-                        R.anim.fade_out)
+//                .setCustomAnimations(R.anim.fade_in,
+//                        R.anim.fade_out)
                 .replace(R.id.coffeeMachineContainerLayoutId, addReviewFragment,
                         Common.ADD_REVIEW_FRAGMENT_TAG)
                 .addToBackStack("back")
                 .commit();
-    }
+    }*/
+/*    public static void addReviewByFragment(FragmentManager fragmentManager, Bundle args) {
+        try {
+            mainActivityRef.findViewById(R.id.pager).setVisibility(View.VISIBLE);
+            mainActivityRef.findViewById(R.id.coffeeMachineContainerLayoutId).setVisibility(View.GONE);
 
+            ViewPager mPager = (ViewPager) mainActivityRef.findViewById(R.id.pager);
+            ScreenSlidePagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(mainActivityRef.getSupportFragmentManager());
+            mPager.setAdapter(mPagerAdapter);
+//        mPager.setOnPageChangeListener(
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+*/
     public static ArrayList<Review> getReviewData(String coffeeMachineId,
                                                   CoffeeMachineDataStorageApplication coffeeMachineApplication,
                                                   Common.ReviewStatusEnum reviewStatus) {
@@ -201,8 +219,8 @@ public class ReviewsFragment extends Fragment {
         fragmentObj.setArguments(args);
 
         fragManager.beginTransaction()
-                .setCustomAnimations(R.anim.fade_in,
-                        R.anim.fade_out)
+//                .setCustomAnimations(R.anim.fade_in,
+//                        R.anim.fade_out)
                 .replace(R.id.coffeeMachineContainerLayoutId, fragmentObj)
                 .addToBackStack("back")
                 .commit();

@@ -1,13 +1,13 @@
 package com.application.takeacoffee.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.*;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.User;
-import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 import java.io.File;
@@ -137,7 +136,7 @@ public class NewUserFragment extends Fragment{
         ((TextView)mainActivityRef.findViewById(R.id.loggedUserTextId)).setText(username);
 
         //reset button on prev status
-        CoffeeMachineActivity.addChangeUserFragment(getFragmentManager());
+//        CoffeeMachineActivity.addChangeUserFragment(getFragmentManager()); //TODO test
 
     }
 
