@@ -22,8 +22,8 @@
 
         <ImageView
                 android:id="@+id/reviewStatusAddImageViewId"
-                android:layout_width="@dimen/extra_small_icon_size"
-                android:layout_height="@dimen/extra_small_icon_size"
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/small_padding"
@@ -33,6 +33,7 @@
             android:id="@+id/reviewsContainerListViewId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:listSelector="@color/listview_selector"
             android:orientation="vertical" />
 
 </LinearLayout>

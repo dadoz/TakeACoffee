@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import com.application.commons.Common;
-import com.application.takeacoffee.fragments.AddReviewFragment;
 
 public class SwipeDetector implements View.OnTouchListener {
 
@@ -102,7 +101,7 @@ public class SwipeDetector implements View.OnTouchListener {
     }
 
     private void actionOnSwipe(String coffeeMachineId, Common.ReviewStatusEnum reviewStatus) {
-        AddReviewFragment.swipeFragment(coffeeMachineId, reviewStatus);
+//        AddReviewFragment.swipeFragment(coffeeMachineId, reviewStatus);
     }
 
     private int convertStatusToCounter(Common.ReviewStatusEnum reviewStatus) {

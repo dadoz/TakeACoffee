@@ -22,7 +22,6 @@ import com.application.takeacoffee.R;
 import java.util.ArrayList;
 
 import static com.application.commons.Common.setCustomFontByView;
-import static com.application.takeacoffee.CoffeeMachineActivity.addReviewByFragment;
 import static com.application.takeacoffee.fragments.NewUserFragment.getRoundedRectBitmap;
 
 /**
@@ -65,6 +64,9 @@ public class CoffeeMachineFragment extends Fragment {
     private void initView(View coffeeMachineFragment) {
         int itemInTableRowCounter = 0;
         TableRow tableRow = null;
+
+        //setMap button available
+        mainActivityRef.findViewById(R.id.headerMapLayoutId).setVisibility(View.VISIBLE);
 
         if (coffeeMachineList != null && coffeeMachineList.size() != 0) {
             for (final CoffeeMachine coffeeMachineObj : coffeeMachineList) {
@@ -164,7 +166,6 @@ public class CoffeeMachineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Common.displayError("settings view", mainActivityRef);
-                addReviewByFragment();
 
             }
         });
@@ -175,10 +176,14 @@ public class CoffeeMachineFragment extends Fragment {
         mainActivityRef.findViewById(R.id.headerMapLayoutId).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View mapContainerLayout = coffeeMachineFragment.findViewById(R.id.mapContainerLayoutId);
+/*                View mapContainerLayout = coffeeMachineFragment.findViewById(R.id.mapContainerLayoutId);
                 View coffeeMachineTableLayout = coffeeMachineFragment.findViewById(R.id.coffeeMachineTableLayoutId);
                 mapContainerLayout.setVisibility(View.VISIBLE);
-                coffeeMachineTableLayout.setVisibility(View.GONE);
+                coffeeMachineTableLayout.setVisibility(View.GONE);*/
+                MapFragment mapFragment = new MapFragment();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.coffeeMachineContainerLayoutId,
+                                mapFragment).addToBackStack("back").commit();
             }
         });
     }

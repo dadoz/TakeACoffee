@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/small_padding">
+    <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+            <ImageView
+                    android:id="@+id/goodReviewButtonId"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/extra_huge_icon_size"
+                    android:src="@drawable/coffe_cup_icon_green_sample"
+                    />
+
+            <!--                            <TextView
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="center"
+                                                android:textColor="@color/light_black"
+                                                android:layout_marginTop="@dimen/small_padding"
+                                                android:textSize="@dimen/text_medium_20"
+                                                android:text="good review"/>-->
+        </LinearLayout>
+        <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+            <ImageView
+                    android:id="@+id/badReviewButtonId"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/extra_huge_icon_size"
+                    android:src="@drawable/coffe_cup_icon_empty"
+                    />
+            <!--                            <TextView
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="center"
+                                                android:textColor="@color/light_black"
+                                                android:layout_marginTop="@dimen/small_padding"
+                                                android:textSize="@dimen/text_medium_20"
+                                                android:text="Not so bad review"/>-->
+        </LinearLayout>
+        <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+            <ImageView
+                    android:id="@+id/worstReviewButtonId"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/extra_huge_icon_size"
+                    android:src="@drawable/coffe_cup_icon_violet_sample"
+                    />
+            <!--                            <TextView
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="center"
+                                                android:textColor="@color/light_black"
+                                                android:layout_marginTop="@dimen/small_padding"
+                                                android:textSize="@dimen/text_medium_20"
+                                                android:text="Terrible review"/>-->
+        </LinearLayout>
+    </TableRow>
+</TableLayout>

@@ -35,6 +35,24 @@ public class Common {
     public static final String NEW_USER_FRAGMENT_TAG = "NEW_USER_FRAGMENT_TAG";
     public static final String ADD_REVIEW_FRAGMENT_TAG = "ADD_REVIEW_FRAGMENT";
 
+    public static ReviewStatusEnum parseStatusFromPageNumber(int pageNumber) {
+        ReviewStatusEnum status;
+        switch (pageNumber) {
+            case 0:
+                status = ReviewStatusEnum.GOOD;
+                break;
+            case 1:
+                status = ReviewStatusEnum.NOTSOBAD;
+                break;
+            case 2:
+                status = ReviewStatusEnum.WORST;
+                break;
+            default:
+                status = ReviewStatusEnum.NOTSET;
+        }
+        return status;
+    }
+
     public enum ReviewStatusEnum {
         GOOD,
         NOTSOBAD,

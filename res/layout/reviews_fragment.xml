@@ -16,88 +16,40 @@
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/middle_grey"
+                    android:background="@color/light_green"
                     android:paddingBottom="@dimen/small_padding"
                     android:orientation="vertical">
+                <RelativeLayout
+                        android:id="@+id/choiceReviewsHeaderLayoutId"
+                        android:orientation="horizontal"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content">
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:textSize="@dimen/title_text_size"
+                            android:text="Today"/>
+                    <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:padding="@dimen/small_padding"
+                            android:src="@drawable/left_arrow"/>
+                </RelativeLayout>
+                <LinearLayout android:id="@+id/choiceReviewsContainerLayoutId"
+                              android:orientation="vertical"
+                              android:layout_width="match_parent"
+                              android:layout_height="wrap_content">
+    <!--                <include layout="@layout/table_review_choice_template" />-->
+                    <include layout="@layout/choice_review_template_good" />
+                    <include layout="@layout/choice_review_template_notsobad" />
+                    <include layout="@layout/choice_review_template_worst" />
+                </LinearLayout>
                 <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:textSize="@dimen/title_text_size"
-                        android:text="Today"/>
-                <TableLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="@dimen/small_padding">
-                    <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                        <LinearLayout
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content"
-                                android:orientation="vertical"
-                                android:layout_weight="1">
-                            <ImageView
-                                    android:id="@+id/goodReviewButtonId"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="@dimen/extra_huge_icon_size"
-                                    android:src="@drawable/coffe_cup_icon_green_sample"
-                                    />
-
-<!--                            <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:textColor="@color/light_black"
-                                    android:layout_marginTop="@dimen/small_padding"
-                                    android:textSize="@dimen/text_medium_20"
-                                    android:text="good review"/>-->
-                        </LinearLayout>
-                        <LinearLayout
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content"
-                                android:orientation="vertical"
-                                android:layout_weight="1">
-                            <ImageView
-                                    android:id="@+id/badReviewButtonId"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="@dimen/extra_huge_icon_size"
-                                    android:src="@drawable/coffe_cup_icon_empty"
-                                    />
-<!--                            <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:textColor="@color/light_black"
-                                    android:layout_marginTop="@dimen/small_padding"
-                                    android:textSize="@dimen/text_medium_20"
-                                    android:text="Not so bad review"/>-->
-                        </LinearLayout>
-                        <LinearLayout
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content"
-                                android:orientation="vertical"
-                                android:layout_weight="1">
-                            <ImageView
-                                    android:id="@+id/worstReviewButtonId"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="@dimen/extra_huge_icon_size"
-                                    android:src="@drawable/coffe_cup_icon_violet_sample"
-                                    />
-<!--                            <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:textColor="@color/light_black"
-                                    android:layout_marginTop="@dimen/small_padding"
-                                    android:textSize="@dimen/text_medium_20"
-                                    android:text="Terrible review"/>-->
-                        </LinearLayout>
-                    </TableRow>
-                </TableLayout>
-                <TextView
-                        android:layout_width="wrap_content"
+                        android:visibility="gone"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:textSize="@dimen/text_small"

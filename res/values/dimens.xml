@@ -28,5 +28,6 @@
     <dimen name="extra_huge_icon_size">160dp</dimen>
     <dimen name="big_content_size">200dp</dimen>
     <dimen name="extra_small_icon_size">20dip</dimen>
+    <dimen name="text_big_30">30dp</dimen>
 
 </resources>

@@ -3,6 +3,7 @@ package com.application.takeacoffee.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
-import com.application.gestureDetector.SwipeDetector;
 import com.application.models.User;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 import static com.application.takeacoffee.fragments.ReviewsFragment.createReviewsListView;
@@ -22,29 +23,23 @@ import static com.application.takeacoffee.fragments.ReviewsFragment.createReview
  */
 public class AddReviewFragment extends Fragment {
     private static final String TAG = "AddReviewFragment";
-
-    private static View addReviewView, addReviewButton;
     private static CoffeeMachineDataStorageApplication coffeeMachineApplication;
-    private static boolean addReviewFromListView;
 
     private static FragmentActivity mainActivityRef;
-    private static Common.ReviewStatusEnum reviewStatus = Common.ReviewStatusEnum.GOOD;
 
-    /**
-     * Factory method for this fragment class. Constructs a new fragment for the given page number.
-     */
+    private View addReviewView, addReviewButton;
+    private boolean addReviewFromListView;
+
     public static final String ARG_PAGE = "page";
-    private int mPageNumber;
 
-    public int getPageNumber() {
-        return mPageNumber;
-    }
-
-    public static AddReviewFragment create(int pageNumber) {
+    public static AddReviewFragment create(int pageNumber, String coffeeMachineId) {
+        Log.e(TAG, "static create of " + pageNumber);
         AddReviewFragment fragment = new AddReviewFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, pageNumber);
+        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
         fragment.setArguments(args);
+        //mPageNumber = pageNumber;
         return fragment;
     }
 
@@ -64,17 +59,20 @@ public class AddReviewFragment extends Fragment {
         if(obj == null) {
             obj = new Boolean(false);
         }
+        int pageNumber = this.getArguments().getInt(ARG_PAGE);
+
+
         addReviewFromListView = obj.booleanValue();
-
-        SwipeDetector swipeDetector = new SwipeDetector(coffeeMachineId, reviewStatus);
-
         (addReviewView.findViewById(R.id.addReviewUndoImageId)).setOnClickListener(new AddMoreTextAction());
         (addReviewView.findViewById(R.id.addMoreTextOnReviewButtonId)).setOnClickListener(new AddMoreTextAction());
 
-        addReviewView.findViewById(R.id.containerAddReviewId).setOnTouchListener(swipeDetector);
+//        SwipeDetector swipeDetector = new SwipeDetector(coffeeMachineId, reviewStatus);
+   //     addReviewView.findViewById(R.id.containerAddReviewId).setOnTouchListener(swipeDetector);
 
-        //initView(coffeeMachineId, reviewStatus);
-
+        Log.d(TAG, "pageCounter" + pageNumber);
+        Common.displayError("page " + pageNumber, mainActivityRef);
+        Common.ReviewStatusEnum reviewStatus = Common.parseStatusFromPageNumber(pageNumber);
+        initView(coffeeMachineId, reviewStatus);
         Common.setCustomFont(addReviewView, getActivity().getAssets());
         return addReviewView;
     }
@@ -85,10 +83,9 @@ public class AddReviewFragment extends Fragment {
         swipeFragment(coffeeMachineId, statusValue);
     }
 
-    public static void swipeFragment(final String coffeeMachineId, Common.ReviewStatusEnum statusValue) {
+    public void swipeFragment(final String coffeeMachineId, final Common.ReviewStatusEnum reviewStatus) {
         //replace view
-        reviewStatus = statusValue;
-        switch (statusValue) {
+        switch (reviewStatus) {
             case GOOD:
                 hideMoreTextHeader();
                 addReviewView.findViewById(R.id.headerAddReviewLayoutId).setBackgroundColor(
@@ -123,6 +120,7 @@ public class AddReviewFragment extends Fragment {
                 if((addReviewView.findViewById(R.id.reviewTextIconTextViewId)).getTag() != null) {
 //                    Common.hideKeyboard(mainActivityRef, (EditText)reviewEditText);
                     addReview(coffeeMachineId, reviewStatus, true);
+                    CoffeeMachineActivity.hideAddReviewView();
                     return;
                 }
                 addReview(coffeeMachineId, reviewStatus, false);
@@ -131,7 +129,7 @@ public class AddReviewFragment extends Fragment {
 
     }
 
-    public static void addReview(final String coffeeMachineId, final Common.ReviewStatusEnum reviewStatus,
+    public void addReview(final String coffeeMachineId, final Common.ReviewStatusEnum reviewStatus,
                                  boolean reviewWithText) {
         Bundle args = new Bundle();
         args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
@@ -213,7 +211,7 @@ public class AddReviewFragment extends Fragment {
         }
     }
 
-    public static void hideMoreTextHeader() {
+    public void hideMoreTextHeader() {
         View addMoreTextView = addReviewView.findViewById(R.id.addMoreTextLayoutId);
         View headerAddReviewView = addReviewView.findViewById(R.id.headerAddReviewLayoutId);
         if(addMoreTextView.getVisibility() == View.VISIBLE) {

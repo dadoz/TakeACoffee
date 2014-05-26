@@ -7,9 +7,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,16 +21,15 @@ import com.application.takeacoffee.fragments.CoffeeMachineFragment;
 import com.application.takeacoffee.fragments.NewUserFragment;
 
 public class CoffeeMachineActivity extends FragmentActivity {
-    private static final String TAG ="MainActivity";
-    private static final int NUM_PAGES = 3;
+    private static final String TAG = "MainActivity";
 
-    private ViewPager mPager;
-    private PagerAdapter mPagerAdapter;
-
+    private static ViewPager mPager;
+    private static PagerAdapter mPagerAdapter;
 
     private boolean loggedUser;
     private static CoffeeMachineDataStorageApplication coffeeMachineApplication;
     static FragmentActivity mainApplication;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,46 +44,92 @@ public class CoffeeMachineActivity extends FragmentActivity {
 
         loggedUser = initDataApplication();
         //change username
-        if(loggedUser) {
+        if (loggedUser) {
             setLoggedUserView();
         } else {
             setNotLoggedUserView();
         }
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             initView();
         }
-
-//        addReviewByFragment();
-
     }
-    public static void addReviewByFragment() {
-        try {
-            mainApplication.findViewById(R.id.pager).setVisibility(View.VISIBLE);
-            mainApplication .findViewById(R.id.coffeeMachineContainerLayoutId).setVisibility(View.GONE);
 
-            ViewPager mPager = (ViewPager) mainApplication.findViewById(R.id.pager);
-            ScreenSlidePagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(mainApplication.getSupportFragmentManager());
+    public static void addReviewByFragment(String coffeeMachineId) {
+        try {
+            mPager = (ViewPager) mainApplication.findViewById(R.id.pager);
+            mPager.setVisibility(View.VISIBLE);
+
+            mainApplication.findViewById(R.id.coffeeMachineContainerLayoutId).setVisibility(View.GONE);
+            mPagerAdapter = new ScreenSlidePagerAdapter(mainApplication.getSupportFragmentManager(), coffeeMachineId);
             mPager.setAdapter(mPagerAdapter);
-//        mPager.setOnPageChangeListener(
+
+            mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                @Override
+                public void onPageSelected(int position) {
+                    try {
+                        ViewGroup headerAddReviewLayout = (ViewGroup) mainApplication.findViewById(R.id.headerTabReviewLayoutId);
+                        //reset color background of tabs
+                        for (int i = 0; i < Common.NUM_PAGES; i++) {
+                            headerAddReviewLayout.getChildAt(i)
+                                    .setBackgroundColor(mainApplication.getResources()
+                                            .getColor(R.color.light_grey));
+                        }
+
+                        Common.ReviewStatusEnum reviewStatus = Common.parseStatusFromPageNumber(position);
+                        Log.e(TAG, " - onPageSelected " + position);
+                        switch (reviewStatus) {
+                            case GOOD:
+                                headerAddReviewLayout.getChildAt(position)
+                                        .setBackgroundColor(mainApplication.getResources()
+                                                .getColor(R.color.light_green));
+                                break;
+                            case NOTSOBAD:
+                                headerAddReviewLayout.getChildAt(position)
+                                        .setBackgroundColor(mainApplication.getResources()
+                                                .getColor(R.color.light_yellow_lemon));
+                                break;
+                            case WORST:
+                                headerAddReviewLayout.getChildAt(position)
+                                        .setBackgroundColor(mainApplication.getResources()
+                                                .getColor(R.color.light_violet));
+                                break;
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public static void hideAddReviewView() {
+        try {
+            mPager = (ViewPager) mainApplication.findViewById(R.id.pager);
+            mPager.setVisibility(View.GONE);
+            mainApplication.findViewById(R.id.coffeeMachineContainerLayoutId).setVisibility(View.VISIBLE);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
-    private boolean initDataApplication(){
+    private boolean initDataApplication() {
         SharedPreferences sharedPref = getPreferences(0);
-        if(sharedPref!= null) {
+        if (sharedPref != null) {
             String username = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USERNAME, Common.EMPTY_VALUE);
-            if(username.compareTo(Common.EMPTY_VALUE) != 0) {
-                Log.e(TAG,"this is my username" + username);
-                coffeeMachineApplication = (CoffeeMachineDataStorageApplication)getApplication();
+            if (username.compareTo(Common.EMPTY_VALUE) != 0) {
+                Log.e(TAG, "this is my username" + username);
+                coffeeMachineApplication = (CoffeeMachineDataStorageApplication) getApplication();
                 coffeeMachineApplication.coffeeMachineData.initRegisteredUserByUsername(username);
                 String profilePicPath = sharedPref.getString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, Common.EMPTY_VALUE);
-                if(profilePicPath == Common.EMPTY_VALUE) {
+                if (profilePicPath == Common.EMPTY_VALUE) {
                     profilePicPath = null;
                 }
                 coffeeMachineApplication.coffeeMachineData.getRegisteredUser().setProfilePicturePath(profilePicPath);
@@ -113,10 +157,10 @@ public class CoffeeMachineActivity extends FragmentActivity {
     }
 
     public void setLoggedUserView() {
-        ((TextView)findViewById(R.id.loggedUserTextId)).setText(
+        ((TextView) findViewById(R.id.loggedUserTextId)).setText(
                 coffeeMachineApplication.coffeeMachineData.getRegisteredUser().getUsername());
 
-        LinearLayout loggedUserButton = (LinearLayout)findViewById(R.id.loggedUserButtonId);
+        LinearLayout loggedUserButton = (LinearLayout) findViewById(R.id.loggedUserButtonId);
 //        loggedUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
         loggedUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,17 +170,18 @@ public class CoffeeMachineActivity extends FragmentActivity {
             }
         });
 
-        Common.drawProfilePictureByPath((ImageView)findViewById(R.id.loggedUserImageViewId),
+        Common.drawProfilePictureByPath((ImageView) findViewById(R.id.loggedUserImageViewId),
                 coffeeMachineApplication.coffeeMachineData.getRegisteredUser()
                         .getProfilePicturePath(), getResources()
-                        .getDrawable(R.drawable.user_icon));
+                        .getDrawable(R.drawable.user_icon)
+        );
     }
 
 
     public void setNotLoggedUserView() {
-        ((TextView)findViewById(R.id.loggedUserTextId)).setText("guest");
+        ((TextView) findViewById(R.id.loggedUserTextId)).setText("guest");
 
-        LinearLayout loggedUserButton = (LinearLayout)findViewById(R.id.loggedUserButtonId);
+        LinearLayout loggedUserButton = (LinearLayout) findViewById(R.id.loggedUserButtonId);
 //        loggedUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
 //        loggedUserButton.setText("new");
         loggedUserButton.setOnClickListener(new View.OnClickListener() {
@@ -161,10 +206,18 @@ public class CoffeeMachineActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        //get back from
-        final NewUserFragment fragment = (NewUserFragment)getSupportFragmentManager().findFragmentByTag(Common.NEW_USER_FRAGMENT_TAG);
-        if(fragment != null) {
-            if(fragment.isVisible()) {
+        //
+        if (mPager != null && mPager.getVisibility() == View.VISIBLE) {
+            mPager.setVisibility(View.GONE);
+            mainApplication.findViewById(R.id.coffeeMachineContainerLayoutId).setVisibility(View.VISIBLE);
+            mainApplication.findViewById(R.id.headerTabReviewLayoutId).setVisibility(View.GONE);
+            return;
+        }
+
+        //check get back action from NewUserFragment
+        final NewUserFragment fragment = (NewUserFragment) getSupportFragmentManager().findFragmentByTag(Common.NEW_USER_FRAGMENT_TAG);
+        if (fragment != null) {
+            if (fragment.isVisible()) {
                 (findViewById(R.id.loggedUserButtonId)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -175,22 +228,24 @@ public class CoffeeMachineActivity extends FragmentActivity {
             }
         }
 
-        final AddReviewFragment addReviewfragment = (AddReviewFragment)getSupportFragmentManager().findFragmentByTag(Common.ADD_REVIEW_FRAGMENT_TAG);
-        if(addReviewfragment != null) {
-            if(addReviewfragment.isVisible()) {
-                //headerAddReviewLayout
+        //check get back action from addReview
+        final AddReviewFragment addReviewfragment = (AddReviewFragment) getSupportFragmentManager().findFragmentByTag(Common.ADD_REVIEW_FRAGMENT_TAG);
+        if (addReviewfragment != null) {
+            if (addReviewfragment.isVisible()) {
+                //headerAddReviewLayout TODO refactoring it
                 View addMoreTextView = addReviewfragment.getView().findViewById(R.id.addMoreTextLayoutId);
                 View headerAddReviewView = addReviewfragment.getView().findViewById(R.id.headerAddReviewLayoutId);
-                if(addMoreTextView.getVisibility() == View.VISIBLE) {
+                if (addMoreTextView.getVisibility() == View.VISIBLE) {
                     addMoreTextView.setVisibility(View.GONE);
                     headerAddReviewView.setVisibility(View.VISIBLE);
                     addReviewfragment.getView().findViewById(R.id.addReviewButtonId).setVisibility(View.VISIBLE);
-
                     return;
                 }
             }
         }
 
+        //check get back action from coffeeMachine
+/*
         final CoffeeMachineFragment coffeeMachineFragment = (CoffeeMachineFragment)getSupportFragmentManager().findFragmentByTag(Common.COFFEE_MACHINE_FRAGMENT_TAG);
         if(coffeeMachineFragment != null) {
             if(coffeeMachineFragment.isVisible()) {
@@ -202,66 +257,8 @@ public class CoffeeMachineActivity extends FragmentActivity {
                     return;
                 }
             }
-        }
+        }*/
+
         super.onBackPressed();
     }
-
-    @Override
-    public final boolean onCreateOptionsMenu(Menu menu) {
-        //Used to put dark icons on light action bar
-
-/*        menu.add("Save")
-                .setIcon(android.R.drawable.ic_menu_save)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-
-        menu.add("Search")
-                .setIcon(android.R.drawable.ic_menu_search)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
-        menu.add("Refresh")
-                .setIcon(android.R.drawable.ic_menu_rotate)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);*/
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //This uses the imported MenuItem from ActionBarSherlock
-        Toast.makeText(this, "Got click: " + item.getTitle(), Toast.LENGTH_SHORT).show();
-        return true;
-    }
-
-//	@Override
-/*	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-//		getMenuInflater().inflate(R.menu.main, menu);
-//		return true;
-	    return super.onCreateOptionsMenu(menu);
-	}
-	*/
-
-    /**MOVE OUT THIS FUNCTION**/
-/*    public static boolean sePictureByPicPath(ImageView v, int pictureName) {
-        try {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            Bitmap bitmap = BitmapFactory.decodeResource(mainActivityRef.getResources(), pictureName);
-            Bitmap roundedBitmap = getRoundedRectBitmap(bitmap, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
-            v.setImageBitmap(roundedBitmap);
-            return true;
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-
-    public static Bitmap getRoundedBitmapByColor(Bitmap bmp, int color) {
-        Bitmap bmp2 = bmp.copy(bmp.getConfig(), true);
-        bmp2.eraseColor(color);
-        Bitmap roundedBitmap = getRoundedRectBitmap(bmp2, Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE);
-        return roundedBitmap;
-    }*/
 }

@@ -53,6 +53,7 @@
 
     <LinearLayout
             android:id="@+id/headerMapLayoutId"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -81,15 +82,17 @@
         <ImageView
                 android:layout_width="@dimen/small_icon_size"
                 android:layout_height="@dimen/small_icon_size"
-                android:src="@drawable/coffe_cup_icon"/>
+                android:layout_marginRight="@dimen/small_padding"
+                android:src="@drawable/good_review_icon"/>
         <ImageView
                 android:layout_width="@dimen/small_icon_size"
                 android:layout_height="@dimen/small_icon_size"
-                android:src="@drawable/coffe_cup_icon"/>
+                android:layout_marginRight="@dimen/small_padding"
+                android:src="@drawable/notsobad_review_icon"/>
         <ImageView
                 android:layout_width="@dimen/small_icon_size"
                 android:layout_height="@dimen/small_icon_size"
-                android:src="@drawable/coffe_cup_icon"/>
+                android:src="@drawable/worst_review_icon"/>
 
     </LinearLayout>
 

@@ -78,7 +78,7 @@ public class ReviewListFragment extends Fragment {
                     args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
                     args.putBoolean(Common.ADD_REVIEW_FROM_LISTVIEW, true);
 //                    ReviewsFragment.addReviewByFragment(getFragmentManager(), args);
-                    addReviewByFragment();
+                    addReviewByFragment(coffeeMachineId);
                 }
             });
         }

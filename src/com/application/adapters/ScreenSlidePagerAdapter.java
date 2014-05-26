@@ -7,17 +7,20 @@ import com.application.commons.Common;
 import com.application.takeacoffee.fragments.AddReviewFragment;
 
 /**
- * A simple pager adapter that represents 5 {@link com.application.takeacoffee.fragments.ScreenSlidePageFragment} objects, in
+ * A simple pager adapter that represents 5 {@link com.application.takeacoffee.fragments} objects, in
  * sequence.
  */
 public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-    public ScreenSlidePagerAdapter(FragmentManager fm) {
+    private String coffeeMachineId;
+
+    public ScreenSlidePagerAdapter(FragmentManager fm, String coffeeMachineId) {
         super(fm);
+        this.coffeeMachineId = coffeeMachineId;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return AddReviewFragment.create(position);
+        return AddReviewFragment.create(position, coffeeMachineId);
     }
 
     @Override

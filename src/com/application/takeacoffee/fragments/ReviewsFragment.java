@@ -26,9 +26,12 @@ import static com.application.takeacoffee.CoffeeMachineActivity.addReviewByFragm
  */
 public class ReviewsFragment extends Fragment {
     private static final String TAG = "ReviewFragment";
+    private static final int MAX_NUMBER_TEMPLATE = 3;
     private CoffeeMachineDataStorageApplication coffeeMachineApplication;
     private Bundle args;
     private static FragmentActivity mainActivityRef;
+    private View reviewsLayoutView;
+    private int choiceReviewCounter = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mainActivityRef = getActivity();
@@ -58,36 +61,113 @@ public class ReviewsFragment extends Fragment {
         }
 
         //data are stored in reviewList
-        View reviewsLayoutView = inflater.inflate(R.layout.reviews_fragment, container, false);
-        initView(reviewsLayoutView, coffeeMachineId);
+        reviewsLayoutView = inflater.inflate(R.layout.reviews_fragment, container, false);
+        //initView(reviewsLayoutView, coffeeMachineId); //TODO remove it
 
         //set review header (coffee machine name)
         setHeaderReview(getFragmentManager(), args, coffeeMachineApplication, coffeeMachineId, reviewsLayoutView);
+        setChoiceReviewHeader(coffeeMachineId);
 
         //set custom font
         Common.setCustomFont(reviewsLayoutView, this.getActivity().getAssets());
         return reviewsLayoutView;
     }
 
-    static void setHeaderReview(final FragmentManager fragmentManager,
-                                final Bundle args, CoffeeMachineDataStorageApplication coffeeMachineApplication,
-                                String coffeeMachineId, View reviewsLayoutView) {
+    public void setHeaderReview(final FragmentManager fragmentManager,
+                         final Bundle args, CoffeeMachineDataStorageApplication coffeeMachineApplication,
+                         final String coffeeMachineId, View reviewsLayoutView) {
         String coffeeMachineName = coffeeMachineApplication.coffeeMachineData
                 .getCoffeMachineById(coffeeMachineId).getName();
         if(coffeeMachineName != null) {
-            ((TextView)reviewsLayoutView.findViewById(R.id.coffeeMachineNameReviewTextId))
+            ((TextView) this.reviewsLayoutView.findViewById(R.id.coffeeMachineNameReviewTextId))
                     .setText(coffeeMachineName);
         }
 
         //add review button
-        (reviewsLayoutView.findViewById(R.id.addReviewImageViewId))
+        (this.reviewsLayoutView.findViewById(R.id.addReviewImageViewId))
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        addReviewByFragment();
+                        addReviewByFragment(coffeeMachineId);
                     }
                 });
     }
+
+
+    public void setChoiceReviewHeader(final String coffeeMachineId) {
+        View choiceReviewsHeader = reviewsLayoutView.findViewById(R.id.choiceReviewsHeaderLayoutId);
+        setReviewView(coffeeMachineId);
+        choiceReviewsHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (choiceReviewCounter < MAX_NUMBER_TEMPLATE - 1) {
+                    choiceReviewCounter++;
+                } else {
+                    choiceReviewCounter = 0;
+                }
+                setReviewView(coffeeMachineId);
+            }
+        });
+    }
+
+    public void setReviewView(String coffeeMachineId) {
+        final ViewGroup choiceReviewsContainer = (ViewGroup)reviewsLayoutView.findViewById(R.id.choiceReviewsContainerLayoutId);
+
+        for(int i = 0; i < choiceReviewsContainer.getChildCount(); i ++) {
+            choiceReviewsContainer.getChildAt(i).setVisibility(View.GONE);
+        }
+        View choiceReviewView = choiceReviewsContainer.getChildAt(choiceReviewCounter);
+        choiceReviewView.setVisibility(View.VISIBLE);
+
+        ArrayList<Review> reviewListTemp = getReviewData(coffeeMachineId, coffeeMachineApplication,
+                Common.parseStatusFromPageNumber(choiceReviewCounter));
+
+        //check if empty review list
+        if(reviewListTemp == null || reviewListTemp.size() == 0) {
+            ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
+                    .setText("0");
+            choiceReviewView.findViewById(R.id.choiceReviewButtonId)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Common.displayError("No still review", mainActivityRef);
+                        }
+                    });
+        } else {
+            choiceReviewView.findViewById(R.id.choiceReviewButtonId)
+                    .setOnClickListener(new ReviewListButtonListener(reviewListTemp.size() == 0,
+                            Common.parseStatusFromPageNumber(choiceReviewCounter)));
+            ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
+                    .setText(String.valueOf(reviewListTemp.size()));
+        }
+
+        switch (choiceReviewCounter) {
+            case 0:
+
+                ((View)choiceReviewsContainer.getParent()).setBackgroundColor(getResources()
+                        .getColor(R.color.light_green));
+
+/*                        ((ImageView)choiceReviewView.findViewById(R.id.choiceReviewButtonId))
+                                .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/
+                break;
+            case 1:
+                ((View)choiceReviewsContainer.getParent()).setBackgroundColor(getResources()
+                        .getColor(R.color.light_yellow_lemon));
+
+/*                        ((ImageView)choiceReviewView.findViewById(R.id.choiceReviewButtonId))
+                                .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/
+                break;
+            case 2:
+                ((View)choiceReviewsContainer.getParent()).setBackgroundColor(getResources()
+                        .getColor(R.color.light_violet));
+
+/*                        ((ImageView)choiceReviewView.findViewById(R.id.choiceReviewButtonId))
+                                .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/
+                break;
+        }
+
+    }
+
 
 /*    public static void addReviewByFragment(FragmentManager fragmentManager, Bundle args) {
         AddReviewFragment addReviewFragment = new AddReviewFragment();
