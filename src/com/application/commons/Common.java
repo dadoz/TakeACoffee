@@ -29,8 +29,11 @@ public class Common {
     public static final String GOOD_STATUS_STRING = "That's Good";
     public static final String NOTSOBAD_STATUS_STRING = "Mmmmmm";
     public static final int NUM_PAGES = 3;
+    public static final String ARG_REVIEW_PAGE = "REVIEW_PAGE";
     public static int ITEM_NOT_SELECTED = -1;
     public static String SET_MORE_TEXT_ON_REVIEW = "SET_MORE_TEXT_ON_REVIEW";
+    public static final String ARG_PAGE = "page";
+
 
     public static final String NEW_USER_FRAGMENT_TAG = "NEW_USER_FRAGMENT_TAG";
     public static final String ADD_REVIEW_FRAGMENT_TAG = "ADD_REVIEW_FRAGMENT";

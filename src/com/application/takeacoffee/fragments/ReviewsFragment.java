@@ -4,13 +4,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
@@ -31,7 +30,11 @@ public class ReviewsFragment extends Fragment {
     private Bundle args;
     private static FragmentActivity mainActivityRef;
     private View reviewsLayoutView;
-    private int choiceReviewCounter = 0;
+//    private int choiceReviewCounter = 0;
+
+    private ViewPager mPager;
+    private static PagerAdapter mPagerAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mainActivityRef = getActivity();
@@ -62,15 +65,27 @@ public class ReviewsFragment extends Fragment {
 
         //data are stored in reviewList
         reviewsLayoutView = inflater.inflate(R.layout.reviews_fragment, container, false);
-        //initView(reviewsLayoutView, coffeeMachineId); //TODO remove it
 
         //set review header (coffee machine name)
         setHeaderReview(getFragmentManager(), args, coffeeMachineApplication, coffeeMachineId, reviewsLayoutView);
-        setChoiceReviewHeader(coffeeMachineId);
-
+        setReviewPager(coffeeMachineId);
         //set custom font
         Common.setCustomFont(reviewsLayoutView, this.getActivity().getAssets());
         return reviewsLayoutView;
+    }
+
+    public void setReviewPager(final String coffeeMachineId) {
+        //setReviewView(coffeeMachineId, initReviewPosition);
+        mPager = (ViewPager) reviewsLayoutView.findViewById(R.id.reviewsPagerId);
+        mPagerAdapter = new ChoiceReviewPagerAdapter(getChildFragmentManager(), coffeeMachineId);
+        mPager.setAdapter(mPagerAdapter);
+        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                Common.ReviewStatusEnum reviewStatus = Common.parseStatusFromPageNumber(position);
+                Log.e(TAG, " - onPageSelected " + position + " - " + reviewStatus);
+            }
+        });
     }
 
     public void setHeaderReview(final FragmentManager fragmentManager,
@@ -92,8 +107,7 @@ public class ReviewsFragment extends Fragment {
                     }
                 });
     }
-
-
+/*
     public void setChoiceReviewHeader(final String coffeeMachineId) {
         View choiceReviewsHeader = reviewsLayoutView.findViewById(R.id.choiceReviewsHeaderLayoutId);
         setReviewView(coffeeMachineId);
@@ -108,95 +122,8 @@ public class ReviewsFragment extends Fragment {
                 setReviewView(coffeeMachineId);
             }
         });
-    }
-
-    public void setReviewView(String coffeeMachineId) {
-        final ViewGroup choiceReviewsContainer = (ViewGroup)reviewsLayoutView.findViewById(R.id.choiceReviewsContainerLayoutId);
-
-        for(int i = 0; i < choiceReviewsContainer.getChildCount(); i ++) {
-            choiceReviewsContainer.getChildAt(i).setVisibility(View.GONE);
-        }
-        View choiceReviewView = choiceReviewsContainer.getChildAt(choiceReviewCounter);
-        choiceReviewView.setVisibility(View.VISIBLE);
-
-        ArrayList<Review> reviewListTemp = getReviewData(coffeeMachineId, coffeeMachineApplication,
-                Common.parseStatusFromPageNumber(choiceReviewCounter));
-
-        //check if empty review list
-        if(reviewListTemp == null || reviewListTemp.size() == 0) {
-            ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
-                    .setText("0");
-            choiceReviewView.findViewById(R.id.choiceReviewButtonId)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Common.displayError("No still review", mainActivityRef);
-                        }
-                    });
-        } else {
-            choiceReviewView.findViewById(R.id.choiceReviewButtonId)
-                    .setOnClickListener(new ReviewListButtonListener(reviewListTemp.size() == 0,
-                            Common.parseStatusFromPageNumber(choiceReviewCounter)));
-            ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
-                    .setText(String.valueOf(reviewListTemp.size()));
-        }
-
-        switch (choiceReviewCounter) {
-            case 0:
-
-                ((View)choiceReviewsContainer.getParent()).setBackgroundColor(getResources()
-                        .getColor(R.color.light_green));
-
-/*                        ((ImageView)choiceReviewView.findViewById(R.id.choiceReviewButtonId))
-                                .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/
-                break;
-            case 1:
-                ((View)choiceReviewsContainer.getParent()).setBackgroundColor(getResources()
-                        .getColor(R.color.light_yellow_lemon));
-
-/*                        ((ImageView)choiceReviewView.findViewById(R.id.choiceReviewButtonId))
-                                .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/
-                break;
-            case 2:
-                ((View)choiceReviewsContainer.getParent()).setBackgroundColor(getResources()
-                        .getColor(R.color.light_violet));
-
-/*                        ((ImageView)choiceReviewView.findViewById(R.id.choiceReviewButtonId))
-                                .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/
-                break;
-        }
-
-    }
-
-
-/*    public static void addReviewByFragment(FragmentManager fragmentManager, Bundle args) {
-        AddReviewFragment addReviewFragment = new AddReviewFragment();
-        addReviewFragment.setArguments(args);
-        //add fragment content to add user
-        fragmentManager.beginTransaction()
-//                .setCustomAnimations(R.anim.fade_in,
-//                        R.anim.fade_out)
-                .replace(R.id.coffeeMachineContainerLayoutId, addReviewFragment,
-                        Common.ADD_REVIEW_FRAGMENT_TAG)
-                .addToBackStack("back")
-                .commit();
     }*/
-/*    public static void addReviewByFragment(FragmentManager fragmentManager, Bundle args) {
-        try {
-            mainActivityRef.findViewById(R.id.pager).setVisibility(View.VISIBLE);
-            mainActivityRef.findViewById(R.id.coffeeMachineContainerLayoutId).setVisibility(View.GONE);
 
-            ViewPager mPager = (ViewPager) mainActivityRef.findViewById(R.id.pager);
-            ScreenSlidePagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(mainActivityRef.getSupportFragmentManager());
-            mPager.setAdapter(mPagerAdapter);
-//        mPager.setOnPageChangeListener(
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-*/
     public static ArrayList<Review> getReviewData(String coffeeMachineId,
                                                   CoffeeMachineDataStorageApplication coffeeMachineApplication,
                                                   Common.ReviewStatusEnum reviewStatus) {
@@ -228,13 +155,13 @@ public class ReviewsFragment extends Fragment {
         Log.e(TAG, "error - no coffeMachineId found");
         return null;
     }
-
+/*
     private void initView(final View reviewLayoutView, String coffeeMachineId) {
         boolean isListViewEmpty = false;
         Animation anim = AnimationUtils.loadAnimation(mainActivityRef, R.anim.zoom_in);
         anim.setDuration(Common.ANIMATION_GROW_TIME);
 
-        /****GOOD*****/
+        /****GOOD*****//*
         ImageView goodReviewButton = (ImageView)reviewLayoutView.findViewById(R.id.goodReviewButtonId);
         ArrayList<Review> reviewListTemp = getReviewData(coffeeMachineId, coffeeMachineApplication,
                 Common.ReviewStatusEnum.GOOD);
@@ -249,7 +176,7 @@ public class ReviewsFragment extends Fragment {
         goodReviewButton.setOnClickListener(new ReviewListButtonListener(isListViewEmpty,
                 Common.ReviewStatusEnum.GOOD));
 
-        /****NOTSOBAD*****/
+        /****NOTSOBAD*****//*
         isListViewEmpty = false;
         ImageView badReviewButton = (ImageView)reviewLayoutView.findViewById(R.id.badReviewButtonId);
         badReviewButton.startAnimation(anim);
@@ -265,7 +192,7 @@ public class ReviewsFragment extends Fragment {
         badReviewButton.setOnClickListener(new ReviewListButtonListener(isListViewEmpty,
                                                                              Common.ReviewStatusEnum.NOTSOBAD));
 
-        /****WORST*****/
+        /****WORST*****//*
         isListViewEmpty = false;
         ImageView worstReviewButton = (ImageView)reviewLayoutView.findViewById(R.id.worstReviewButtonId);
         //worstReviewButton.setImageBitmap(getRoundedBitmap(Common.ICON_SMALL_SIZE, getResources().getColor(R.color.light_black)));
@@ -282,7 +209,7 @@ public class ReviewsFragment extends Fragment {
                 Common.ReviewStatusEnum.WORST));
 
 
-        /***LOAD MORE REVIEW**/
+        /***LOAD MORE REVIEW**//*
         ImageView prevReviewsImageView = (ImageView)reviewLayoutView.findViewById(R.id.prevReviewsButtonId);
         prevReviewsImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -291,108 +218,7 @@ public class ReviewsFragment extends Fragment {
             }
         });
     }
-
-    public static void createReviewsListView(FragmentManager fragManager, Common.ReviewStatusEnum reviewStatus, Bundle args) {
-        //customDialog.setContentView(R.layout.dialog_review_layout);
-        ReviewListFragment fragmentObj = new ReviewListFragment();
-        args.putString(Common.REVIEW_STATUS_KEY, reviewStatus.name());
-        fragmentObj.setArguments(args);
-
-        fragManager.beginTransaction()
-//                .setCustomAnimations(R.anim.fade_in,
-//                        R.anim.fade_out)
-                .replace(R.id.coffeeMachineContainerLayoutId, fragmentObj)
-                .addToBackStack("back")
-                .commit();
-    }
-
-
-    public class ReviewListButtonListener implements View.OnClickListener {
-        private boolean isListViewEmpty;
-        private Common.ReviewStatusEnum reviewStatus;
-
-        public ReviewListButtonListener(boolean isListViewEmpty, Common.ReviewStatusEnum reviewStatus) {
-            this.isListViewEmpty = isListViewEmpty;
-            this.reviewStatus = reviewStatus;
-        }
-
-        @Override
-        public void onClick(View view) {
-            if(isListViewEmpty) {
-                Common.displayError("still no one review", mainActivityRef);
-//                addReviewWithTextDialog();
-            } else {
-                createReviewsListView(getFragmentManager(), this.reviewStatus, args);
-            }
-        }
-    }
-
-/*    public Dialog addReviewWithTextDialog() {
-        final Dialog dialog = new Dialog(mainActivityRef);
-        dialog.setContentView(R.layout.dialog_add_text_on_review);
-        dialog.findViewById(R.id.addReviewDialogButtonId).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String reviewText = ((EditText)dialog.findViewById(R.id.textReviewDialogEditTextId))
-                        .getText().toString();
-                if(reviewText.trim() != "") {
-                    Common.displayError("this is my text" + reviewText, mainActivityRef);
-                    dialog.dismiss();
-                }
-            }
-        });
-        dialog.show();
-        return dialog;
-    };*/
-/*
-    public void createReviewsListDialog() {
-        final Dialog customDialog = new Dialog(getActivity());
-        customDialog.requestWindowFeature((int) Window.FEATURE_NO_TITLE);
-        customDialog.setContentView(R.layout.dialog_review_layout);
-        setDataToReviewDialog(customDialog, false);
-        View dialogView = customDialog.findViewById(R.id.dialogReviewLayoutId);
-        Common.setCustomFont(dialogView,this.getActivity().getAssets());
-        Log.e(TAG,"clicked worst");
-
-        customDialog.show();
-/*        Button dismissDialogButton = (Button)customDialog.findViewById(R.id.dismissDialogButtonId);
-        dismissDialogButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                customDialog.dismiss();
-            }
-        });
-    }
-//        prevReviewsImageView.setImageBitmap(getRoundedBitmap(Common.ICON_SMALL_SIZE, getResources().getColor(R.color.middle_grey)));
-//        prevReviewsImageView.setImageDrawable(getResources().getDrawable(R.drawable.loading_icon));
-/*
-        LinearLayout linearLayoutContainer = (LinearLayout)reviewLayoutView.findViewById(R.id.tableRowReviewCheckerContainerId);
-        TextIconCustom customImageView = new TextIconCustom(reviewLayoutView.getContext(), 100, Color.WHITE, "2", 100, getResources().getColor(R.color.green_marine));
-        customImageView.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT));
-        linearLayoutContainer.addView(customImageView, 300, 300);
 */
-
-
-/*        Button addReviewBtn = (Button)findViewById(R.id.addReviewButtonId);
-        addReviewBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                // TODO Auto-generated method stub
-                if(!coffeMachineApplication.coffeeMachineData.getRegisteredUserStatus()){
-                    Log.e(TAG, ">>> please insert username at least");
-
-                    DialogFragment dialog = new RegisterUserDialogFragment();
-                    dialog.show(getFragmentManager(), TAG);
-                } else {
-                    Intent intent = new Intent(ReviewsActivity.this,AddReviewActivity.class);
-                    startActivityForResult(intent, ADD_REVIEW_RESULT);
-                }
-            }
-        });
-*/
-
 
 }
 

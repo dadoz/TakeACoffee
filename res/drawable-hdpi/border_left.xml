@@ -3,13 +3,13 @@
     <item android:bottom="10dip" android:top="10dip">
         <shape android:shape="rectangle" >
             <solid
-                    android:color="@color/middle_grey"/>
+                    android:color="@color/light_grey"/>
         </shape>
     </item>
     <item android:left="1dp">
         <shape android:shape="rectangle" >
             <solid
-                    android:color="@color/light_grey"/>
+                    android:color="@color/middle_grey"/>
         </shape>
     </item>
 </layer-list>

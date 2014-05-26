@@ -16,7 +16,8 @@ import com.application.models.User;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
-import static com.application.takeacoffee.fragments.ReviewsFragment.createReviewsListView;
+import static com.application.adapters.ChoiceReviewFragment.createReviewsListView;
+
 
 /**
  * Created by davide on 05/04/14.
@@ -30,13 +31,11 @@ public class AddReviewFragment extends Fragment {
     private View addReviewView, addReviewButton;
     private boolean addReviewFromListView;
 
-    public static final String ARG_PAGE = "page";
-
     public static AddReviewFragment create(int pageNumber, String coffeeMachineId) {
         Log.e(TAG, "static create of " + pageNumber);
         AddReviewFragment fragment = new AddReviewFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_PAGE, pageNumber);
+        args.putInt(Common.ARG_PAGE, pageNumber);
         args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
         fragment.setArguments(args);
         //mPageNumber = pageNumber;
@@ -59,7 +58,7 @@ public class AddReviewFragment extends Fragment {
         if(obj == null) {
             obj = new Boolean(false);
         }
-        int pageNumber = this.getArguments().getInt(ARG_PAGE);
+        int pageNumber = this.getArguments().getInt(Common.ARG_PAGE);
 
 
         addReviewFromListView = obj.booleanValue();
