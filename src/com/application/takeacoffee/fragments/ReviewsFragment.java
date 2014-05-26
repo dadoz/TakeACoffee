@@ -18,8 +18,6 @@ import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
 
-import static com.application.takeacoffee.CoffeeMachineActivity.addReviewByFragment;
-
 /**
  * Created by davide on 3/16/14.
  */
@@ -69,10 +67,18 @@ public class ReviewsFragment extends Fragment {
         //set review header (coffee machine name)
         setHeaderReview(getFragmentManager(), args, coffeeMachineApplication, coffeeMachineId, reviewsLayoutView);
         setReviewPager(coffeeMachineId);
+        setAddReviewHeader();
         //set custom font
         Common.setCustomFont(reviewsLayoutView, this.getActivity().getAssets());
         return reviewsLayoutView;
     }
+    public void setAddReviewHeader() {
+        View headerMapLayout = mainActivityRef.findViewById(R.id.headerMapLayoutId);
+        View headerTabReviewLayout = mainActivityRef.findViewById(R.id.headerTabReviewLayoutId);
+        headerMapLayout.setVisibility(View.GONE);
+        headerTabReviewLayout.setVisibility(View.GONE);
+    }
+
 
     public void setReviewPager(final String coffeeMachineId) {
         //setReviewView(coffeeMachineId, initReviewPosition);
@@ -103,9 +109,24 @@ public class ReviewsFragment extends Fragment {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        addReviewByFragment(coffeeMachineId);
+                        addReviewAction(getFragmentManager());
                     }
                 });
+    }
+
+    public void addReviewAction(FragmentManager fragmentManager) {
+        AddReviewContainerFragment addReviewContainerFragment = new AddReviewContainerFragment();
+        addReviewContainerFragment.setArguments(args);
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.coffeeMachineContainerLayoutId, addReviewContainerFragment)
+                .addToBackStack("back").commit();
+    }
+/*        <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />*
+
     }
 /*
     public void setChoiceReviewHeader(final String coffeeMachineId) {

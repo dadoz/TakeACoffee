@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.User;
-import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 import static com.application.adapters.ChoiceReviewFragment.createReviewsListView;
@@ -76,13 +75,7 @@ public class AddReviewFragment extends Fragment {
         return addReviewView;
     }
 
-    private void initView(final String coffeeMachineId, Common.ReviewStatusEnum statusValue) {
-        //remove university map box on header
-        setAddReviewHeader();
-        swipeFragment(coffeeMachineId, statusValue);
-    }
-
-    public void swipeFragment(final String coffeeMachineId, final Common.ReviewStatusEnum reviewStatus) {
+    private void initView(final String coffeeMachineId, final Common.ReviewStatusEnum reviewStatus) {
         //replace view
         switch (reviewStatus) {
             case GOOD:
@@ -119,7 +112,7 @@ public class AddReviewFragment extends Fragment {
                 if((addReviewView.findViewById(R.id.reviewTextIconTextViewId)).getTag() != null) {
 //                    Common.hideKeyboard(mainActivityRef, (EditText)reviewEditText);
                     addReview(coffeeMachineId, reviewStatus, true);
-                    CoffeeMachineActivity.hideAddReviewView();
+                    //CoffeeMachineActivity.hideAddReviewView();
                     return;
                 }
                 addReview(coffeeMachineId, reviewStatus, false);
@@ -221,7 +214,7 @@ public class AddReviewFragment extends Fragment {
 
     }
 
-    public static void setAddReviewHeader() {
+/*    public static void setAddReviewHeader() {
         View headerMapLayout = mainActivityRef.findViewById(R.id.headerMapLayoutId);
         View headerTabReviewLayout = mainActivityRef.findViewById(R.id.headerTabReviewLayoutId);
 

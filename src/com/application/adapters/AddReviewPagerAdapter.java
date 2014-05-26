@@ -10,10 +10,10 @@ import com.application.takeacoffee.fragments.AddReviewFragment;
  * A simple pager adapter that represents 5 {@link com.application.takeacoffee.fragments} objects, in
  * sequence.
  */
-public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+public class AddReviewPagerAdapter extends FragmentStatePagerAdapter {
     private String coffeeMachineId;
 
-    public ScreenSlidePagerAdapter(FragmentManager fm, String coffeeMachineId) {
+    public AddReviewPagerAdapter(FragmentManager fm, String coffeeMachineId) {
         super(fm);
         this.coffeeMachineId = coffeeMachineId;
     }

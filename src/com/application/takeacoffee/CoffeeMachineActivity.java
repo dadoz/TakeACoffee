@@ -4,27 +4,22 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.application.adapters.ScreenSlidePagerAdapter;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
-import com.application.takeacoffee.fragments.AddReviewFragment;
 import com.application.takeacoffee.fragments.CoffeeMachineFragment;
 import com.application.takeacoffee.fragments.NewUserFragment;
 
 public class CoffeeMachineActivity extends FragmentActivity {
     private static final String TAG = "MainActivity";
 
-    private static ViewPager mPager;
-    private static PagerAdapter mPagerAdapter;
+//    private static ViewPager mPager;
+//    private static PagerAdapter mPagerAdapter;
 
     private boolean loggedUser;
     private static CoffeeMachineDataStorageApplication coffeeMachineApplication;
@@ -55,7 +50,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
         }
     }
 
-    public static void addReviewByFragment(String coffeeMachineId) {
+/*    public static void addReviewByFragment(String coffeeMachineId) {
         try {
             mPager = (ViewPager) mainApplication.findViewById(R.id.pager);
             mPager.setVisibility(View.VISIBLE);
@@ -106,9 +101,9 @@ public class CoffeeMachineActivity extends FragmentActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
-    public static void hideAddReviewView() {
+/*    public static void hideAddReviewView() {
         try {
             mPager = (ViewPager) mainApplication.findViewById(R.id.pager);
             mPager.setVisibility(View.GONE);
@@ -117,7 +112,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 
     private boolean initDataApplication() {
@@ -207,13 +202,13 @@ public class CoffeeMachineActivity extends FragmentActivity {
     @Override
     public void onBackPressed() {
         //
-        if (mPager != null && mPager.getVisibility() == View.VISIBLE) {
+/*        if (mPager != null && mPager.getVisibility() == View.VISIBLE) {
             mPager.setVisibility(View.GONE);
             mainApplication.findViewById(R.id.coffeeMachineContainerLayoutId).setVisibility(View.VISIBLE);
             mainApplication.findViewById(R.id.headerTabReviewLayoutId).setVisibility(View.GONE);
             return;
         }
-
+*/
         //check get back action from NewUserFragment
         final NewUserFragment fragment = (NewUserFragment) getSupportFragmentManager().findFragmentByTag(Common.NEW_USER_FRAGMENT_TAG);
         if (fragment != null) {
@@ -229,7 +224,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
         }
 
         //check get back action from addReview
-        final AddReviewFragment addReviewfragment = (AddReviewFragment) getSupportFragmentManager().findFragmentByTag(Common.ADD_REVIEW_FRAGMENT_TAG);
+/*        final AddReviewFragment addReviewfragment = (AddReviewFragment) getSupportFragmentManager().findFragmentByTag(Common.ADD_REVIEW_FRAGMENT_TAG);
         if (addReviewfragment != null) {
             if (addReviewfragment.isVisible()) {
                 //headerAddReviewLayout TODO refactoring it
@@ -242,7 +237,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
                     return;
                 }
             }
-        }
+        }*/
 
         //check get back action from coffeeMachine
 /*

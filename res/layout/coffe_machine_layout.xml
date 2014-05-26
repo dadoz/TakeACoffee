@@ -19,37 +19,12 @@
                     <include layout="@layout/user_logged_box_template"/>
             </LinearLayout>
 
-                        <!-- HEADER - need to be modified -->
-<!--            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/light_black"
-                android:orientation="vertical"
-                android:padding="10dip" >
-
-                <include layout="@layout/university_box_template"/>
-                <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
-                        android:background="@color/dark_black"/>-->
-
-                <!-- USER LOGGED -->
-            <!--
-                <include layout="@layout/user_logged_box_template"/>
-            </LinearLayout>-->
-
             <!-- FRAGMENT CONTENT -->
             <LinearLayout
                 android:id="@+id/coffeeMachineContainerLayoutId"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical" />
-
-            <android.support.v4.view.ViewPager
-                    android:id="@+id/pager"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
         </LinearLayout>
 
 </LinearLayout>

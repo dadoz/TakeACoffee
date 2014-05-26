@@ -21,8 +21,6 @@ import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
 
-import static com.application.takeacoffee.CoffeeMachineActivity.addReviewByFragment;
-
 /**
  * Created by davide on 08/04/14.
  */
@@ -77,8 +75,7 @@ public class ReviewListFragment extends Fragment {
                     Bundle args = new Bundle();
                     args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
                     args.putBoolean(Common.ADD_REVIEW_FROM_LISTVIEW, true);
-//                    ReviewsFragment.addReviewByFragment(getFragmentManager(), args);
-                    addReviewByFragment(coffeeMachineId);
+                    //(coffeeMachineId);
                 }
             });
         }
