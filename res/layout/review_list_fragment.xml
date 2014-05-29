@@ -20,14 +20,14 @@
                 android:layout_alignParentLeft="true"
                 />
 
-        <ImageView
+        <!--<ImageView
                 android:id="@+id/reviewStatusAddImageViewId"
                 android:layout_width="@dimen/small_icon_size"
                 android:layout_height="@dimen/small_icon_size"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/small_padding"
-                android:src="@drawable/add_icon"/>
+                android:src="@drawable/add_icon"/>-->
     </RelativeLayout>
     <ListView
             android:id="@+id/reviewsContainerListViewId"

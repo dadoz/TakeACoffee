@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,8 +46,8 @@ public class AddReviewContainerFragment extends Fragment {
 
     public void setAddReviewHeader() {
         View headerMapLayout = mainActivityRef.findViewById(R.id.headerMapLayoutId);
-        ViewGroup headerTabReviewLayout = (ViewGroup) mainActivityRef.findViewById(R.id.headerTabReviewLayoutId);
         headerMapLayout.setVisibility(View.GONE);
+/*        ViewGroup headerTabReviewLayout = (ViewGroup) mainActivityRef.findViewById(R.id.headerTabReviewLayoutId);
         headerTabReviewLayout.setVisibility(View.VISIBLE);
         for (int i = 0; i < Common.NUM_PAGES; i++) {
             headerTabReviewLayout.getChildAt(i)
@@ -57,7 +56,7 @@ public class AddReviewContainerFragment extends Fragment {
         }
         headerTabReviewLayout.getChildAt(INIT_POS_ADDREVIEW_TAB)
                 .setBackgroundColor(mainActivityRef.getResources()
-                        .getColor(R.color.light_green));
+                        .getColor(R.color.light_green));*/
     }
 
     public void setAddReviewPager(String coffeeMachineId, final ViewGroup headerTabReviewLayout) {
@@ -68,14 +67,13 @@ public class AddReviewContainerFragment extends Fragment {
             public void onPageSelected(int position) {
                 try {
                     //reset color background of tabs
-                    for (int i = 0; i < Common.NUM_PAGES; i++) {
+/*                    for (int i = 0; i < Common.NUM_PAGES; i++) {
                         headerTabReviewLayout.getChildAt(i)
                                 .setBackgroundColor(mainActivityRef.getResources()
                                         .getColor(R.color.light_grey));
                     }
 
                     Common.ReviewStatusEnum reviewStatus = Common.parseStatusFromPageNumber(position);
-                    Log.e(TAG, " - onPageSelected " + position);
                     switch (reviewStatus) {
                         case GOOD:
                             headerTabReviewLayout.getChildAt(position)
@@ -92,7 +90,7 @@ public class AddReviewContainerFragment extends Fragment {
                                     .setBackgroundColor(mainActivityRef.getResources()
                                             .getColor(R.color.light_violet));
                             break;
-                    }
+                    }*/
 
                 } catch (Exception e) {
                     e.printStackTrace();

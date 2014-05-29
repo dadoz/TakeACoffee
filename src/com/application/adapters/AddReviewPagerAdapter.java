@@ -6,10 +6,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.application.commons.Common;
 import com.application.takeacoffee.fragments.AddReviewFragment;
 
-/**
- * A simple pager adapter that represents 5 {@link com.application.takeacoffee.fragments} objects, in
- * sequence.
- */
 public class AddReviewPagerAdapter extends FragmentStatePagerAdapter {
     private String coffeeMachineId;
 

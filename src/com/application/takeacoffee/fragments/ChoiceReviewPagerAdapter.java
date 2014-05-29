@@ -12,15 +12,16 @@ import com.application.commons.Common;
  */
 public class ChoiceReviewPagerAdapter extends FragmentStatePagerAdapter {
     private String coffeeMachineId;
-
-    public ChoiceReviewPagerAdapter(FragmentManager fm, String coffeeMachineId) {
+    private boolean isTodayReviews;
+    public ChoiceReviewPagerAdapter(FragmentManager fm, String coffeeMachineId, boolean isTodayReviews) {
         super(fm);
         this.coffeeMachineId = coffeeMachineId;
+        this.isTodayReviews = isTodayReviews;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return ChoiceReviewFragment.create(position, coffeeMachineId);
+        return ChoiceReviewFragment.create(position, coffeeMachineId, isTodayReviews);
     }
 
     @Override

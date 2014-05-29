@@ -119,5 +119,5 @@
 
     </LinearLayout>-->
     <!-- add text bar-->
-    <include layout="@layout/add_textbar_template"></include>
+<!--    <include layout="@layout/add_textbar_template"></include>-->
 </LinearLayout>

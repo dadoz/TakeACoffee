@@ -55,12 +55,19 @@ public class ReviewListFragment extends Fragment {
         setDataWithListView(listView, reviewList, coffeeMachineId);
 
         setReviewListHeader(coffeeMachineId, (reviewListView
-                .findViewById(R.id.reviewStatusTextViewId)), reviewListView
-                .findViewById(R.id.reviewStatusAddImageViewId), true);
-
+                .findViewById(R.id.reviewStatusTextViewId)), null, true);
+        //reviewListView.findViewById(R.id.reviewStatusAddImageViewId)
+        setAddReviewHeader();
 
         Common.setCustomFont(reviewListView, getActivity().getAssets());
         return reviewListView;
+    }
+
+    public void setAddReviewHeader() {
+        View headerMapLayout = mainActivityRef.findViewById(R.id.headerMapLayoutId);
+        View headerTabReviewLayout = mainActivityRef.findViewById(R.id.headerTabReviewLayoutId);
+        headerMapLayout.setVisibility(View.GONE);
+        headerTabReviewLayout.setVisibility(View.GONE);
     }
 
     private void setReviewListHeader(final String coffeeMachineId, final View reviewStatusText,
@@ -75,33 +82,11 @@ public class ReviewListFragment extends Fragment {
                     Bundle args = new Bundle();
                     args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
                     args.putBoolean(Common.ADD_REVIEW_FROM_LISTVIEW, true);
-                    //(coffeeMachineId);
                 }
             });
         }
     }
-/*
-    public static void addReviewByReviewList(final String coffeeMachineId, Common.ReviewStatusEnum reviewStatus,
-                                             AdapterView<?> adapterView) {
-        String reviewText = "Review for this machine - auto generated";
 
-        //add data to list
-        User loggedUser = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
-        if(loggedUser == null) {
-            Common.displayError("You must be logged in before add review!", mainActivityRef);
-            return;
-        }
-
-        Review review = coffeeMachineApplication.coffeeMachineData.addReviewByCoffeeMachineId(coffeeMachineId,
-                loggedUser.getId(), loggedUser.getUsername(), reviewText,
-                loggedUser.getProfilePicturePath(), reviewStatus);
-
-        if(review != null) {
-            ((ReviewListerAdapter)adapterView.getAdapter()).add(review);
-            ((ReviewListerAdapter)adapterView.getAdapter()).notifyDataSetChanged();
-        }
-    }
-*/
     public void setReviewListHeaderBackgroundLabel(final View reviewStatusText, boolean setLabel) {
         //set changes icon
         String labelStatus = " - ";
@@ -123,9 +108,6 @@ public class ReviewListFragment extends Fragment {
 
         reviewStatusText.setBackgroundColor(colorViewStatus);
         if(setLabel) {
-/*            if(reviewStatus == Common.ReviewStatusEnum.WORST) {
-                ((TextView)reviewStatusText).setTextColor(getResources().getColor(R.color.light_grey));
-            }*/
             ((TextView)reviewStatusText).setText(labelStatus);
         }
     }
@@ -140,7 +122,7 @@ public class ReviewListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final LinearLayout mainItemView = (LinearLayout) view.findViewById(R.id.mainItemViewId);
-                final LinearLayout extraMenuItemView = (LinearLayout) view.findViewById(R.id.extraMenuItemViewId);
+                final View extraMenuItemView =  view.findViewById(R.id.extraMenuItemViewId);
 
                 if(extraMenuItemView.getVisibility() == View.VISIBLE) {
                     ((ReviewListerAdapter)adapterView.getAdapter()).initExtraMenuAction(extraMenuItemView, mainItemView,
@@ -155,8 +137,8 @@ public class ReviewListFragment extends Fragment {
                 User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
                 Review reviewObj = (Review) adapterView.getItemAtPosition(position);
 
-                final LinearLayout mainItemView = (LinearLayout) view.findViewById(R.id.mainItemViewId);
-                final LinearLayout extraMenuItemView = (LinearLayout) view.findViewById(R.id.extraMenuItemViewId);
+                final View mainItemView =  view.findViewById(R.id.mainItemViewId);
+                final View extraMenuItemView =  view.findViewById(R.id.extraMenuItemViewId);
 
                 //check my post and add action
                 if (mainItemView.getVisibility() == View.VISIBLE &&
@@ -255,8 +237,8 @@ public class ReviewListFragment extends Fragment {
 
             LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View rowView = inflater.inflate(R.layout.review_template, parent, false);
-            LinearLayout mainItemView = (LinearLayout)rowView.findViewById(R.id.mainItemViewId);
-            LinearLayout extraMenuItemView = (LinearLayout)rowView.findViewById(R.id.extraMenuItemViewId);
+            View mainItemView = rowView.findViewById(R.id.mainItemViewId);
+            View extraMenuItemView = rowView.findViewById(R.id.extraMenuItemViewId);
 
             //set data to template
             ((TextView)rowView.findViewById(R.id.reviewUsernameTextId)).setText(reviewObj.getUsername());
@@ -340,7 +322,28 @@ public class ReviewListFragment extends Fragment {
         }
     }
 
+/*
+    public static void addReviewByReviewList(final String coffeeMachineId, Common.ReviewStatusEnum reviewStatus,
+                                             AdapterView<?> adapterView) {
+        String reviewText = "Review for this machine - auto generated";
 
+        //add data to list
+        User loggedUser = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+        if(loggedUser == null) {
+            Common.displayError("You must be logged in before add review!", mainActivityRef);
+            return;
+        }
+
+        Review review = coffeeMachineApplication.coffeeMachineData.addReviewByCoffeeMachineId(coffeeMachineId,
+                loggedUser.getId(), loggedUser.getUsername(), reviewText,
+                loggedUser.getProfilePicturePath(), reviewStatus);
+
+        if(review != null) {
+            ((ReviewListerAdapter)adapterView.getAdapter()).add(review);
+            ((ReviewListerAdapter)adapterView.getAdapter()).notifyDataSetChanged();
+        }
+    }
+*/
 
 /*
     private static void initExtraMenuAction(final ReviewListerAdapter reviewListerAdapter, final Review review,

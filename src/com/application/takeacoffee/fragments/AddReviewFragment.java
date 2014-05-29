@@ -3,7 +3,6 @@ package com.application.takeacoffee.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,9 +28,12 @@ public class AddReviewFragment extends Fragment {
 
     private View addReviewView, addReviewButton;
     private boolean addReviewFromListView;
+    private Bundle args;
+
+    private static String reviewText = "Review for this machine - auto generated";
 
     public static AddReviewFragment create(int pageNumber, String coffeeMachineId) {
-        Log.e(TAG, "static create of " + pageNumber);
+        //Log.e(TAG, "static create of " + pageNumber);
         AddReviewFragment fragment = new AddReviewFragment();
         Bundle args = new Bundle();
         args.putInt(Common.ARG_PAGE, pageNumber);
@@ -52,6 +54,8 @@ public class AddReviewFragment extends Fragment {
                 .getApplication());
 
         //get args from fragment
+        args = getArguments();
+
         String coffeeMachineId = (String)this.getArguments().get(Common.COFFE_MACHINE_ID_KEY);
         Boolean obj = (Boolean)this.getArguments().get(Common.ADD_REVIEW_FROM_LISTVIEW);
         if(obj == null) {
@@ -64,11 +68,8 @@ public class AddReviewFragment extends Fragment {
         (addReviewView.findViewById(R.id.addReviewUndoImageId)).setOnClickListener(new AddMoreTextAction());
         (addReviewView.findViewById(R.id.addMoreTextOnReviewButtonId)).setOnClickListener(new AddMoreTextAction());
 
-//        SwipeDetector swipeDetector = new SwipeDetector(coffeeMachineId, reviewStatus);
-   //     addReviewView.findViewById(R.id.containerAddReviewId).setOnTouchListener(swipeDetector);
-
-        Log.d(TAG, "pageCounter" + pageNumber);
-        Common.displayError("page " + pageNumber, mainActivityRef);
+        //Log.d(TAG, "pageCounter" + pageNumber);
+        //Common.displayError("page " + pageNumber, mainActivityRef);
         Common.ReviewStatusEnum reviewStatus = Common.parseStatusFromPageNumber(pageNumber);
         initView(coffeeMachineId, reviewStatus);
         Common.setCustomFont(addReviewView, getActivity().getAssets());
@@ -108,14 +109,9 @@ public class AddReviewFragment extends Fragment {
         addReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    //set MORE text
-                if((addReviewView.findViewById(R.id.reviewTextIconTextViewId)).getTag() != null) {
-//                    Common.hideKeyboard(mainActivityRef, (EditText)reviewEditText);
-                    addReview(coffeeMachineId, reviewStatus, true);
-                    //CoffeeMachineActivity.hideAddReviewView();
-                    return;
-                }
-                addReview(coffeeMachineId, reviewStatus, false);
+                //set MORE text
+                addReview(coffeeMachineId, reviewStatus,
+                        (addReviewView.findViewById(R.id.reviewTextIconTextViewId)).getTag() != null);
             }
         });
 
@@ -123,21 +119,6 @@ public class AddReviewFragment extends Fragment {
 
     public void addReview(final String coffeeMachineId, final Common.ReviewStatusEnum reviewStatus,
                                  boolean reviewWithText) {
-        Bundle args = new Bundle();
-        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
-
-        String reviewText = "Review for this machine - auto generated";
-
-        if(reviewWithText) {
-            //get text by editText
-//            reviewText = ((EditText)reviewEditText).getText().toString();
-            reviewText = ((TextView)addReviewView.findViewById(R.id.reviewTextIconTextViewId)).getText().toString();
-            if(reviewText.equals(new String("")))  {
-                Common.displayError("you must insert your text review!", mainActivityRef);
-                return;
-            }
-        }
-
         //add data to list
         User loggedUser = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
         if(loggedUser == null) {
@@ -145,13 +126,21 @@ public class AddReviewFragment extends Fragment {
             return;
         }
 
+        if(reviewWithText) {
+            reviewText = ((TextView)addReviewView.findViewById(R.id.reviewTextIconTextViewId)).getText().toString();
+            if(reviewText.equals(new String("")))  {
+                Common.displayError("you must insert your text review!", mainActivityRef);
+                return;
+            }
+        }
+
         coffeeMachineApplication.coffeeMachineData.addReviewByCoffeeMachineId(coffeeMachineId,
                 loggedUser.getId(), loggedUser.getUsername(), reviewText,
-                coffeeMachineApplication.coffeeMachineData.getRegisteredUser().getProfilePicturePath(), reviewStatus);
-
-        mainActivityRef.getFragmentManager().popBackStack();
+                coffeeMachineApplication.coffeeMachineData.getRegisteredUser().getProfilePicturePath(),
+                reviewStatus);
 
         if(!addReviewFromListView) {
+            mainActivityRef.getSupportFragmentManager().popBackStack();
             createReviewsListView(mainActivityRef.getSupportFragmentManager(), reviewStatus, args);
         }
     }

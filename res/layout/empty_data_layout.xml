@@ -4,17 +4,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     <include layout="@layout/review_header_template" />
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@color/light_grey"
+            android:padding="@dimen/medium_padding"
+            android:layout_alignParentRight="true">
 
-    <TextView
-        android:id="@+id/emptyDataTextViewId"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:padding="@dimen/small_padding"
-        android:gravity="center_vertical|center_horizontal"
-        android:textColor="@color/light_black"
-        android:background="@color/middle_grey"
-        android:text="Sorry - still no one review!"
-        android:textSize="@dimen/header_button_text"/>
+        <TextView
+            android:id="@+id/emptyDataTextViewId"
+            android:padding="@dimen/small_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/light_black"
+            android:text="Sorry - still no one review!"
+            android:textSize="@dimen/header_button_text"/>
 
+        <ImageView
+                android:id="@+id/addReviewImageViewId2"
+                android:layout_width="@dimen/medium_icon_size"
+                android:layout_height="@dimen/medium_icon_size"
+                android:src="@drawable/add_icon"
+                android:layout_gravity="center"/>
+
+    </LinearLayout>
 
 </LinearLayout>

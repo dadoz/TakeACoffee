@@ -29,5 +29,6 @@
     <dimen name="big_content_size">200dp</dimen>
     <dimen name="extra_small_icon_size">20dip</dimen>
     <dimen name="text_big_30">30dp</dimen>
+    <dimen name="choice_review_pager_size">288dip</dimen>
 
 </resources>

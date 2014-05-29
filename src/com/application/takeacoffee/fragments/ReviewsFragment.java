@@ -22,13 +22,11 @@ import java.util.ArrayList;
  * Created by davide on 3/16/14.
  */
 public class ReviewsFragment extends Fragment {
-    private static final String TAG = "ReviewFragment";
-    private static final int MAX_NUMBER_TEMPLATE = 3;
+    private static final String TAG = "ReviewsFragment";
     private CoffeeMachineDataStorageApplication coffeeMachineApplication;
     private Bundle args;
     private static FragmentActivity mainActivityRef;
     private View reviewsLayoutView;
-//    private int choiceReviewCounter = 0;
 
     private ViewPager mPager;
     private static PagerAdapter mPagerAdapter;
@@ -54,10 +52,21 @@ public class ReviewsFragment extends Fragment {
         if(reviewList == null) {
             //EMPTY listview
             View emptyView = inflater.inflate(R.layout.empty_data_layout, container, false);
+
             //set review header (coffee machine name)
-            setHeaderReview(getFragmentManager(), args, coffeeMachineApplication, coffeeMachineId, emptyView);
+            setHeaderReview(coffeeMachineId);
+            setAddReviewHeader();
             //set custom font
             Common.setCustomFont(emptyView, this.getActivity().getAssets());
+            //add review button
+            emptyView.findViewById(R.id.addReviewImageViewId2)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        addReviewAction(getFragmentManager());
+                    }
+                });
+
             return emptyView;
         }
 
@@ -65,53 +74,74 @@ public class ReviewsFragment extends Fragment {
         reviewsLayoutView = inflater.inflate(R.layout.reviews_fragment, container, false);
 
         //set review header (coffee machine name)
-        setHeaderReview(getFragmentManager(), args, coffeeMachineApplication, coffeeMachineId, reviewsLayoutView);
+        setHeaderReview(coffeeMachineId);
         setReviewPager(coffeeMachineId);
         setAddReviewHeader();
+        setOpenTabReviews();
         //set custom font
         Common.setCustomFont(reviewsLayoutView, this.getActivity().getAssets());
         return reviewsLayoutView;
     }
-    public void setAddReviewHeader() {
-        View headerMapLayout = mainActivityRef.findViewById(R.id.headerMapLayoutId);
-        View headerTabReviewLayout = mainActivityRef.findViewById(R.id.headerTabReviewLayoutId);
-        headerMapLayout.setVisibility(View.GONE);
-        headerTabReviewLayout.setVisibility(View.GONE);
-    }
 
-
-    public void setReviewPager(final String coffeeMachineId) {
-        //setReviewView(coffeeMachineId, initReviewPosition);
-        mPager = (ViewPager) reviewsLayoutView.findViewById(R.id.reviewsPagerId);
-        mPagerAdapter = new ChoiceReviewPagerAdapter(getChildFragmentManager(), coffeeMachineId);
-        mPager.setAdapter(mPagerAdapter);
-        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                Common.ReviewStatusEnum reviewStatus = Common.parseStatusFromPageNumber(position);
-                Log.e(TAG, " - onPageSelected " + position + " - " + reviewStatus);
-            }
-        });
-    }
-
-    public void setHeaderReview(final FragmentManager fragmentManager,
-                         final Bundle args, CoffeeMachineDataStorageApplication coffeeMachineApplication,
-                         final String coffeeMachineId, View reviewsLayoutView) {
-        String coffeeMachineName = coffeeMachineApplication.coffeeMachineData
-                .getCoffeMachineById(coffeeMachineId).getName();
-        if(coffeeMachineName != null) {
-            ((TextView) this.reviewsLayoutView.findViewById(R.id.coffeeMachineNameReviewTextId))
-                    .setText(coffeeMachineName);
-        }
-
-        //add review button
-        (this.reviewsLayoutView.findViewById(R.id.addReviewImageViewId))
+    private void setOpenTabReviews() {
+        reviewsLayoutView.findViewById(R.id.todayReviewsCollapsedButtonId)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        addReviewAction(getFragmentManager());
+                        view.setVisibility(View.GONE);
+                        reviewsLayoutView.findViewById(R.id.prevReviewsCollapsedButtonId)
+                                .setVisibility(View.VISIBLE);
+
+                        reviewsLayoutView.findViewById(R.id.todayReviewsContainerId)
+                                .setVisibility(View.VISIBLE);
+                        reviewsLayoutView.findViewById(R.id.previousReviewsContainerId)
+                                .setVisibility(View.GONE);
                     }
                 });
+        reviewsLayoutView.findViewById(R.id.prevReviewsCollapsedButtonId)
+            .setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    view.setVisibility(View.GONE);
+                    reviewsLayoutView.findViewById(R.id.todayReviewsCollapsedButtonId)
+                            .setVisibility(View.VISIBLE);
+
+                    reviewsLayoutView.findViewById(R.id.todayReviewsContainerId)
+                            .setVisibility(View.GONE);
+                    reviewsLayoutView.findViewById(R.id.previousReviewsContainerId)
+                            .setVisibility(View.VISIBLE);
+                }
+            });
+
+    }
+
+    public void setAddReviewHeader() {
+        View headerMapLayout = mainActivityRef.findViewById(R.id.headerMapLayoutId);
+        headerMapLayout.setVisibility(View.GONE);
+    }
+
+    public void setReviewPager(final String coffeeMachineId) {
+        boolean isTodayReview = true;
+        mPager = (ViewPager) reviewsLayoutView.findViewById(R.id.todayReviewsPagerId);
+        mPagerAdapter = new ChoiceReviewPagerAdapter(getChildFragmentManager(), coffeeMachineId, isTodayReview);
+        mPager.setAdapter(mPagerAdapter);
+
+        isTodayReview = false;
+        ViewPager mPager2 = (ViewPager) reviewsLayoutView.findViewById(R.id.previousReviewsPagerId);
+        ChoiceReviewPagerAdapter mPagerAdapter2 = new ChoiceReviewPagerAdapter(getChildFragmentManager(), coffeeMachineId, isTodayReview);
+        mPager2.setAdapter(mPagerAdapter2);
+
+/*        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener())*/
+    }
+
+    public void setHeaderReview(final String coffeeMachineId) {
+        //SMTHING WRONG - TODO REFACTOR IT
+        String coffeeMachineName = coffeeMachineApplication.coffeeMachineData
+                .getCoffeMachineById(coffeeMachineId).getName();
+        if(coffeeMachineName != null) {
+            ((TextView) reviewsLayoutView.findViewById(R.id.coffeeMachineNameReviewTextId))
+                    .setText(coffeeMachineName);
+        }
     }
 
     public void addReviewAction(FragmentManager fragmentManager) {
@@ -122,28 +152,6 @@ public class ReviewsFragment extends Fragment {
                 .replace(R.id.coffeeMachineContainerLayoutId, addReviewContainerFragment)
                 .addToBackStack("back").commit();
     }
-/*        <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />*
-
-    }
-/*
-    public void setChoiceReviewHeader(final String coffeeMachineId) {
-        View choiceReviewsHeader = reviewsLayoutView.findViewById(R.id.choiceReviewsHeaderLayoutId);
-        setReviewView(coffeeMachineId);
-        choiceReviewsHeader.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (choiceReviewCounter < MAX_NUMBER_TEMPLATE - 1) {
-                    choiceReviewCounter++;
-                } else {
-                    choiceReviewCounter = 0;
-                }
-                setReviewView(coffeeMachineId);
-            }
-        });
-    }*/
 
     public static ArrayList<Review> getReviewData(String coffeeMachineId,
                                                   CoffeeMachineDataStorageApplication coffeeMachineApplication,
@@ -176,70 +184,6 @@ public class ReviewsFragment extends Fragment {
         Log.e(TAG, "error - no coffeMachineId found");
         return null;
     }
-/*
-    private void initView(final View reviewLayoutView, String coffeeMachineId) {
-        boolean isListViewEmpty = false;
-        Animation anim = AnimationUtils.loadAnimation(mainActivityRef, R.anim.zoom_in);
-        anim.setDuration(Common.ANIMATION_GROW_TIME);
-
-        /****GOOD*****//*
-        ImageView goodReviewButton = (ImageView)reviewLayoutView.findViewById(R.id.goodReviewButtonId);
-        ArrayList<Review> reviewListTemp = getReviewData(coffeeMachineId, coffeeMachineApplication,
-                Common.ReviewStatusEnum.GOOD);
-        if(reviewListTemp == null || reviewListTemp.size() == 0) {
-            goodReviewButton.setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon_empty));
-            isListViewEmpty = true;
-        } else {
-            goodReviewButton.setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon_green_sample));
-        }
-        goodReviewButton.startAnimation(anim);
-//        goodReviewButton.setImageBitmap(getRoundedBitmap(Common.ICON_SMALL_SIZE, getResources().getColor(R.color.light_green)));
-        goodReviewButton.setOnClickListener(new ReviewListButtonListener(isListViewEmpty,
-                Common.ReviewStatusEnum.GOOD));
-
-        /****NOTSOBAD*****//*
-        isListViewEmpty = false;
-        ImageView badReviewButton = (ImageView)reviewLayoutView.findViewById(R.id.badReviewButtonId);
-        badReviewButton.startAnimation(anim);
-        reviewListTemp = getReviewData(coffeeMachineId, coffeeMachineApplication,
-                Common.ReviewStatusEnum.NOTSOBAD);
-        if(reviewListTemp == null || reviewListTemp.size() == 0) {
-            badReviewButton.setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon_empty));
-            isListViewEmpty = true;
-        } else {
-            badReviewButton.setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon_yellow_sample));
-        }
-        //      badReviewButton.setImageBitmap(getRoundedBitmap(Common.ICON_SMALL_SIZE, getResources().getColor(R.color.light_yellow)));
-        badReviewButton.setOnClickListener(new ReviewListButtonListener(isListViewEmpty,
-                                                                             Common.ReviewStatusEnum.NOTSOBAD));
-
-        /****WORST*****//*
-        isListViewEmpty = false;
-        ImageView worstReviewButton = (ImageView)reviewLayoutView.findViewById(R.id.worstReviewButtonId);
-        //worstReviewButton.setImageBitmap(getRoundedBitmap(Common.ICON_SMALL_SIZE, getResources().getColor(R.color.light_black)));
-        reviewListTemp = getReviewData(coffeeMachineId, coffeeMachineApplication,
-                Common.ReviewStatusEnum.WORST);
-        if(reviewListTemp == null || reviewListTemp.size() == 0) {
-            worstReviewButton.setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon_empty));
-            isListViewEmpty = true;
-        } else {
-            worstReviewButton.setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon_violet_sample));
-        }
-        worstReviewButton.startAnimation(anim);
-        worstReviewButton.setOnClickListener(new ReviewListButtonListener(isListViewEmpty,
-                Common.ReviewStatusEnum.WORST));
-
-
-        /***LOAD MORE REVIEW**//*
-        ImageView prevReviewsImageView = (ImageView)reviewLayoutView.findViewById(R.id.prevReviewsButtonId);
-        prevReviewsImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Common.displayError("load more reviews", mainActivityRef);
-            }
-        });
-    }
-*/
 
 }
 
