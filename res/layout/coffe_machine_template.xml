@@ -11,7 +11,7 @@
             android:id="@+id/coffeeIconId"
             android:layout_width="120dip"
             android:layout_height="130dip"
-            android:src="@drawable/coffe_cup_black_white" />
+            android:src="@drawable/coffe_cup_icon" />
     <TextView
             android:id="@+id/coffeeMachineNameTextId"
             android:layout_width="wrap_content"

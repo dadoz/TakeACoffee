@@ -5,14 +5,45 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <TextView
-                android:id="@+id/choiceReviewHeaderTitleTextId"
+        <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingBottom="@dimen/small_padding"
-                android:textSize="@dimen/title_text_size"
-                android:text=" - to be set - "/>
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/small_padding"
+                android:paddingRight="@dimen/small_padding"
+                android:paddingBottom="@dimen/small_padding">
+            <LinearLayout
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_small_16"
+                        android:text="latest at:"
+                        />
+                <TextView
+                        android:id="@+id/choiceReviewLatestTimestampTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_big_30"
+                        android:textColor="@color/white"
+                        android:paddingLeft="@dimen/small_padding"
+                        android:text=" - "
+                        />
+            </LinearLayout>
+
+            <TextView
+                    android:id="@+id/choiceReviewHeaderTitleTextId"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/title_text_size"
+                    android:text=" - to be set - "/>
+
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -32,7 +33,7 @@ public class CoffeeMachineFragment extends Fragment {
     private ArrayList<CoffeeMachine> coffeeMachineList;
     private ArrayList<PieChart> pieChartList;
     private Handler mHandler;
-    private static Activity mainActivityRef;
+    private static FragmentActivity mainActivityRef;
     private static LinearLayout settingsLayout;
 
     @Override
@@ -149,7 +150,7 @@ public class CoffeeMachineFragment extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e(TAG, "failed to load profile pic from storage - load the guest one");
-                    coffeePic.setImageResource(R.drawable.coffe_cup_black_white);
+                    coffeePic.setImageResource(R.drawable.coffe_cup_icon);
                 }
 
                 (coffeeMachineTemplate.findViewById(R.id.coffeeIconId)).setOnClickListener(new View.OnClickListener() {
@@ -165,8 +166,12 @@ public class CoffeeMachineFragment extends Fragment {
         settingsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Common.displayError("settings view", mainActivityRef);
+//                Common.displayError("settings view", mainActivityRef);
+                SettingsFragment settingsFragment = new SettingsFragment();
 
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.coffeeMachineContainerLayoutId, settingsFragment)
+                        .addToBackStack("Fragment").commit();
             }
         });
 

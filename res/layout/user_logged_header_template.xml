@@ -6,58 +6,42 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/border_bottom"
-        android:paddingBottom="@dimen/small_padding"
-        android:paddingTop="@dimen/small_padding" >
+        android:padding="@dimen/small_padding" >
         <LinearLayout
                 android:orientation="horizontal"
                 android:id="@+id/loggedUserButtonId"
+                android:gravity="center"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:gravity="center_vertical">
+                android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/loggedUserImageViewId"
-                android:layout_width="@dimen/small_icon_size"
-                android:layout_height="@dimen/small_icon_size"
-                android:src="@drawable/user_icon"
-                 />
+                android:layout_width="@dimen/medium_icon_size"
+                android:layout_height="@dimen/medium_icon_size"
+                android:src="@drawable/user_icon"/>
             <TextView
                 android:id="@+id/loggedUserTextId"
-                android:textSize="@dimen/header_text_size"
-                android:textColor="@color/light_red"
-                android:layout_width="wrap_content"
+                android:textSize="@dimen/text_big_38"
+                android:textColor="@color/dark_black"
+                android:layout_width="@dimen/huge_icon_size"
+                android:ellipsize="end"
+                android:lines="1"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dip"
                 android:layout_marginLeft="@dimen/small_padding"
-                android:text=" - " />
-            <ImageView
+                android:text="not logged" />
+<!--            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/left_arrow"
                 android:layout_marginLeft="@dimen/small_padding"
-                android:layout_toRightOf="@+id/loggedUserTextId"/>
-
-        <!--        <Button
-                        android:id="@+id/loggedUserButtonId"
-                        android:textSize="@dimen/header_button_text"
-                        android:textColor="@color/light_black"
-                        android:background="@drawable/button_rounded_shape"
-                        android:paddingLeft="10.0dip"
-                        android:paddingRight="10.0dip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40.0dip"
-                        android:text="change"
-                        android:layout_alignParentRight="true" />-->
-
+                android:layout_toRightOf="@+id/loggedUserTextId"/>-->
     </LinearLayout>
 
     <LinearLayout
             android:id="@+id/headerMapLayoutId"
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
+            android:layout_centerInParent="true"
             android:layout_alignParentRight="true">
         <ImageView
                 android:layout_width="@dimen/small_icon_size"

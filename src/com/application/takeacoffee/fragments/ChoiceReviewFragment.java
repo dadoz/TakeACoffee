@@ -1,4 +1,4 @@
-package com.application.adapters;
+package com.application.takeacoffee.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,9 +12,6 @@ import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.Review;
 import com.application.takeacoffee.R;
-import com.application.takeacoffee.fragments.AddReviewContainerFragment;
-import com.application.takeacoffee.fragments.AddReviewFragment;
-import com.application.takeacoffee.fragments.ReviewListFragment;
 
 import java.util.ArrayList;
 
@@ -92,6 +89,9 @@ public class ChoiceReviewFragment extends Fragment{
                         }
                     });
         } else {
+            ((TextView) choiceReviewView.findViewById(R.id.choiceReviewLatestTimestampTextView))
+                    .setText(reviewListTemp.get(reviewListTemp.size() - 1)
+                            .getFormattedTimestamp().split(" ")[1]);
             choiceReviewView.findViewById(R.id.choiceReviewButtonId)
                     .setOnClickListener(new ReviewListButtonListener(reviewListTemp.size() == 0,
                             Common.parseStatusFromPageNumber(choiceReviewPosition)));
@@ -122,6 +122,9 @@ public class ChoiceReviewFragment extends Fragment{
                         .getColor(R.color.light_yellow_lemon_soft));
                 ((TextView) footerChoiceReviewView.findViewById(R.id.footerChoiceReviewTextId))
                         .setText("Not so bad");
+                ((TextView) choiceReviewView.findViewById(R.id.choiceReviewLatestTimestampTextView))
+                        .setTextColor(getResources().getColor(R.color.dark_black));
+
 /*                        ((ImageView)choiceReviewView.findViewById(R.id.choiceReviewButtonId))
                                 .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/
                 break;

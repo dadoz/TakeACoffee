@@ -3,7 +3,6 @@
               android:id="@+id/linearLayout"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:background="@color/middle_grey"
               android:orientation="vertical" >
 
     <LinearLayout
@@ -54,18 +53,16 @@
     <LinearLayout
             android:id="@+id/saveReviewButtonId"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/small_padding"
+            android:layout_height="@dimen/button_height"
             android:gravity="center"
-            android:layout_marginTop="@dimen/small_padding"
-            android:background="@drawable/border_bottom"
-            android:orientation="horizontal">
+            android:background="@color/dark_black"
+            android:padding="@dimen/small_padding"
+            android:orientation="vertical">
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/small_padding"
-                android:textColor="@color/light_red"
+                android:textColor="@color/light_grey"
                 android:textSize="@dimen/text_big_24"
                 android:text="save review"
                 />

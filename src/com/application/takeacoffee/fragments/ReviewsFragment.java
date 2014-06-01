@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.application.adapters.ChoiceReviewPagerAdapter;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.Review;
@@ -54,19 +55,19 @@ public class ReviewsFragment extends Fragment {
             View emptyView = inflater.inflate(R.layout.empty_data_layout, container, false);
 
             //set review header (coffee machine name)
-            setHeaderReview(coffeeMachineId);
+            setHeaderReview(coffeeMachineId, emptyView);
             setAddReviewHeader();
-            //set custom font
-            Common.setCustomFont(emptyView, this.getActivity().getAssets());
             //add review button
             emptyView.findViewById(R.id.addReviewImageViewId2)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        addReviewAction(getFragmentManager());
-                    }
-                });
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            addReviewAction(getFragmentManager());
+                        }
+                    });
 
+            //set custom font
+            Common.setCustomFont(emptyView, this.getActivity().getAssets());
             return emptyView;
         }
 
@@ -74,7 +75,7 @@ public class ReviewsFragment extends Fragment {
         reviewsLayoutView = inflater.inflate(R.layout.reviews_fragment, container, false);
 
         //set review header (coffee machine name)
-        setHeaderReview(coffeeMachineId);
+        setHeaderReview(coffeeMachineId, reviewsLayoutView);
         setReviewPager(coffeeMachineId);
         setAddReviewHeader();
         setOpenTabReviews();
@@ -126,22 +127,31 @@ public class ReviewsFragment extends Fragment {
         mPagerAdapter = new ChoiceReviewPagerAdapter(getChildFragmentManager(), coffeeMachineId, isTodayReview);
         mPager.setAdapter(mPagerAdapter);
 
-        isTodayReview = false;
+        isTodayReview = false; //TODO REFACTOR
         ViewPager mPager2 = (ViewPager) reviewsLayoutView.findViewById(R.id.previousReviewsPagerId);
         ChoiceReviewPagerAdapter mPagerAdapter2 = new ChoiceReviewPagerAdapter(getChildFragmentManager(), coffeeMachineId, isTodayReview);
         mPager2.setAdapter(mPagerAdapter2);
-
 /*        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener())*/
     }
 
-    public void setHeaderReview(final String coffeeMachineId) {
+    public void setHeaderReview(final String coffeeMachineId, View view) {
         //SMTHING WRONG - TODO REFACTOR IT
         String coffeeMachineName = coffeeMachineApplication.coffeeMachineData
                 .getCoffeMachineById(coffeeMachineId).getName();
         if(coffeeMachineName != null) {
-            ((TextView) reviewsLayoutView.findViewById(R.id.coffeeMachineNameReviewTextId))
+            ((TextView) view.findViewById(R.id.coffeeMachineNameReviewTextId))
                     .setText(coffeeMachineName);
         }
+        view.findViewById(R.id.reviewsMachineMapButtonId)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        MapFragment mapFragment = new MapFragment();
+                        getFragmentManager().beginTransaction()
+                                .replace(R.id.coffeeMachineContainerLayoutId,
+                                        mapFragment).addToBackStack("back").commit();
+                    }
+                });
     }
 
     public void addReviewAction(FragmentManager fragmentManager) {

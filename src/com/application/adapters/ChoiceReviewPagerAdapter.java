@@ -1,9 +1,9 @@
-package com.application.takeacoffee.fragments;
+package com.application.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import com.application.adapters.ChoiceReviewFragment;
+import com.application.takeacoffee.fragments.ChoiceReviewFragment;
 import com.application.commons.Common;
 
 /**

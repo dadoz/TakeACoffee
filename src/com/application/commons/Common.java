@@ -31,6 +31,7 @@ public class Common {
     public static final int NUM_PAGES = 3;
     public static final String ARG_REVIEW_PAGE = "REVIEW_PAGE";
     public static final String IS_TODAY_REVIEW_KEY = "IS_TODAY_REVIEW_KEY";
+    public static final String FIRST_INIT_VIEW = "FIRST_INIT_VIEW";
     public static int ITEM_NOT_SELECTED = -1;
     public static String SET_MORE_TEXT_ON_REVIEW = "SET_MORE_TEXT_ON_REVIEW";
     public static final String ARG_PAGE = "page";

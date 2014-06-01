@@ -16,7 +16,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/small_padding"
                     android:layout_marginRight="@dimen/small_padding">
-                    <include layout="@layout/user_logged_box_template"/>
+                    <include layout="@layout/user_logged_header_template"/>
             </LinearLayout>
 
             <!-- FRAGMENT CONTENT -->

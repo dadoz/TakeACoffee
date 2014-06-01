@@ -6,5 +6,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_finish">action_finish</string>
     <string name="action_next">action_next</string>
+    <string name="terrible_review_status">Terrible</string>
+    <string name="notsobad_review_status">Not so bad</string>
+    <string name="good_review_status">Good</string>
 
 </resources>

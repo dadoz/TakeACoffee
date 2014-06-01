@@ -1,6 +1,7 @@
 package com.application.takeacoffee.fragments;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +9,7 @@ import android.graphics.*;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +41,7 @@ public class NewUserFragment extends Fragment{
 
     private static File customDir;
 
-    private Activity mainActivityRef;
+    private FragmentActivity mainActivityRef;
     private SharedPreferences sharedPref;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
@@ -76,10 +78,6 @@ public class NewUserFragment extends Fragment{
         if (user != null) {
             usernameEditText.setText(user.getUsername());
         }
-        //get change button and change to save button
-//        LinearLayout headerchangeUserButton = (LinearLayout)mainActivityRef.findViewById(R.id.loggedUserButtonId);
-//        headerchangeUserButton.setText("SAVE");
-//        headerchangeUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape_yellow)));
 
         //unbind loggedUserButtonId action
         mainActivityRef.findViewById(R.id.loggedUserButtonId).setOnClickListener(null);
@@ -87,13 +85,15 @@ public class NewUserFragment extends Fragment{
             @Override
             public void onClick(View view) {
                 //check and save
-//                usernameEditText = (EditText) userView.findViewById(R.id.usernameNewUserEditTextId);
                 String username = usernameEditText.getText().toString();
                 Log.e(TAG, "u clicked save - " + username + " -");
                 if (username == null || username.matches("")) {
                     Common.displayError("no username set - please insert your one", view.getContext());
                     return;
                 }
+                //rebind loggedButtonId
+                mainActivityRef.findViewById(R.id.loggedUserButtonId).setOnClickListener(
+                        new LoggedUserButtonAction(mainActivityRef.getSupportFragmentManager()));
 
                 //hide keyboard
                 InputMethodManager imm = (InputMethodManager) mainActivityRef.getSystemService(
@@ -108,7 +108,15 @@ public class NewUserFragment extends Fragment{
                 } else {
                     user.setUsername(username);
                 }
-                getFragmentManager().popBackStack();
+
+//                Log.e(TAG, getFragmentManager().getBackStackEntryCount() + " frag size");
+                if(getFragmentManager().getBackStackEntryCount() > 0) {
+                    getFragmentManager().popBackStack();
+                } else {
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.coffeeMachineContainerLayoutId, new CoffeeMachineFragment())
+                            .commit();
+                }
             }
         });
 
@@ -131,27 +139,9 @@ public class NewUserFragment extends Fragment{
         }
 
         ((ImageView)mainActivityRef.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
-
         //set username
         ((TextView)mainActivityRef.findViewById(R.id.loggedUserTextId)).setText(username);
-
-        //reset button on prev status
-//        CoffeeMachineActivity.addChangeUserFragment(getFragmentManager()); //TODO test
-
     }
-
-/*    public void resetChangeButton() {
-        //set button to change user instead of new (with new bind)
-//        ((Button)mainActivityRef.findViewById(R.id.loggedUserButtonId)).setText("change");
-//        (mainActivityRef.findViewById(R.id.loggedUserButtonId)).setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
-        (mainActivityRef.findViewById(R.id.loggedUserButtonId)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Common.displayError("change username", view.getContext());
-                CoffeeMachineActivity.addChangeUserFragment(mainActivityRef.getFragmentManager());
-            }
-        });
-    }*/
 
     public void setProfilePic() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
@@ -289,13 +279,6 @@ public class NewUserFragment extends Fragment{
                 //start angle update
                 startAngle += pieChartObj.getData();
             }
-
-/*            Paint paint1 = new Paint();
-            paint1.setAntiAlias(true);
-            paint1.setColor(colorArray[1]);
-            canvas.drawArc(rectF, 45, 315, true, paint1); //rect starAngle sweepAngle useCenter paint
-            paint1.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-*/
             canvas.drawBitmap(bmp, 0, 0, paintCustom);
 
         } catch (NullPointerException e) {
@@ -304,6 +287,21 @@ public class NewUserFragment extends Fragment{
             o.printStackTrace();
         }
         return bmp;
+    }
+
+    public class LoggedUserButtonAction implements View.OnClickListener {
+        android.support.v4.app.FragmentManager fragmentManager;
+        public LoggedUserButtonAction(android.support.v4.app.FragmentManager fragManag) {
+            this.fragmentManager = fragManag;
+        }
+
+        @Override
+        public void onClick(View view) {
+            fragmentManager.beginTransaction()
+                .replace(R.id.coffeeMachineContainerLayoutId, new NewUserFragment(), Common.NEW_USER_FRAGMENT_TAG)
+                .addToBackStack("back")
+                .commit();
+        }
     }
 
 }

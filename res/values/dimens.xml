@@ -16,9 +16,10 @@
     <dimen name="text_small_14">14dp</dimen>
     <dimen name="small_padding">10dip</dimen>
     <dimen name="medium_padding">20dip</dimen>
+    <dimen name="big_padding">40dip</dimen>
+    <dimen name="huge_padding">60dip</dimen>
     <dimen name="text_big_24">24dip</dimen>
     <dimen name="text_big_22">22dip</dimen>
-    <dimen name="large_padding">60dip</dimen>
     <dimen name="small_padding_5">5dip</dimen>
     <dimen name="big_button_size">300dip</dimen>
     <dimen name="small_icon_size">40dp</dimen>
@@ -30,5 +31,7 @@
     <dimen name="extra_small_icon_size">20dip</dimen>
     <dimen name="text_big_30">30dp</dimen>
     <dimen name="choice_review_pager_size">288dip</dimen>
+    <dimen name="text_big_38">38dp</dimen>
+    <dimen name="title_width">280dip</dimen>
 
 </resources>
