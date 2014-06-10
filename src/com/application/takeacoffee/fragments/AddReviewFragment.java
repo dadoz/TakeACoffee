@@ -121,6 +121,18 @@ public class AddReviewFragment extends Fragment {
 
     public void addReview(final String coffeeMachineId, final Common.ReviewStatusEnum reviewStatus,
                                  boolean reviewWithText) {
+
+        switch (reviewStatus) {
+            case GOOD:
+                reviewText = Common.GOOD_STATUS_STRING;
+                break;
+            case NOTSOBAD:
+                reviewText = Common.NOTSOBAD_STATUS_STRING;
+                break;
+            case WORST:
+                reviewText = Common.TERRIBLE_STATUS_STRING;
+                break;
+        }
         //add data to list
         User loggedUser = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
         if(loggedUser == null) {

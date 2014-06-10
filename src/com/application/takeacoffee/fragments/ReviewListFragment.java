@@ -17,9 +17,13 @@ import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.Review;
 import com.application.models.User;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by davide on 08/04/14.
@@ -28,18 +32,22 @@ public class ReviewListFragment extends Fragment {
     private static final String TAG = "ReviewListFragment";
     private static CoffeeMachineDataStorageApplication coffeeMachineApplication;
     private static FragmentActivity mainActivityRef = null;
-    Common.ReviewStatusEnum reviewStatus;
+
+    private Common.ReviewStatusEnum reviewStatus;
+    private View reviewListView;
+    private String coffeeMachineId;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mainActivityRef = getActivity();
-        View reviewListView = inflater.inflate(R.layout.review_list_fragment, container, false);
+        reviewListView = inflater.inflate(R.layout.review_list_fragment, container, false);
         View emptyView = inflater.inflate(R.layout.empty_data_status_layout, container, false);
 
         //get data from
         coffeeMachineApplication = (CoffeeMachineDataStorageApplication) this.getActivity().getApplication();
 
         //get args from fragment
-        String coffeeMachineId = (String)this.getArguments().get(Common.COFFE_MACHINE_ID_KEY);
+        coffeeMachineId = (String)this.getArguments().get(Common.COFFE_MACHINE_ID_KEY);
         reviewStatus = Common.ReviewStatusEnum.valueOf(
                 (String)this.getArguments().get(Common.REVIEW_STATUS_KEY));
         ArrayList<Review> reviewList = ReviewsFragment.getReviewData(coffeeMachineId, coffeeMachineApplication,
@@ -57,17 +65,58 @@ public class ReviewListFragment extends Fragment {
         setReviewListHeader(coffeeMachineId, (reviewListView
                 .findViewById(R.id.reviewStatusTextViewId)), null, true);
         //reviewListView.findViewById(R.id.reviewStatusAddImageViewId)
-        setAddReviewHeader();
+        setHeader();
 
+        setPreviousReviewsButtonAction();
         Common.setCustomFont(reviewListView, getActivity().getAssets());
         return reviewListView;
     }
 
-    public void setAddReviewHeader() {
-        View headerMapLayout = mainActivityRef.findViewById(R.id.headerMapLayoutId);
-        View headerTabReviewLayout = mainActivityRef.findViewById(R.id.headerTabReviewLayoutId);
-        headerMapLayout.setVisibility(View.GONE);
-        headerTabReviewLayout.setVisibility(View.GONE);
+    private void setPreviousReviewsButtonAction() {
+/* TEST **/
+/*        ListView listView = (ListView)reviewListView.findViewById(R.id.reviewsContainerListViewId);
+        ReviewListerAdapter adapter = (ReviewListerAdapter)listView.getAdapter();
+        ArrayList<Review> reviewList = adapter.getList();
+        reviewList.removeAll(reviewList);*/
+
+
+        final View prevReviewsButtonId = reviewListView.findViewById(R.id.prevReviewsButtonId);
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        long yesterdayTimestamp = (cal.getTime()).getTime();
+        cal.add(Calendar.WEEK_OF_MONTH, -1);
+        long prevWeekTimestamp = (cal.getTime()).getTime();
+
+        final ArrayList<Review> prevReviewList = ReviewsFragment.getReviewDataByTimestamp(coffeeMachineId,
+                coffeeMachineApplication, reviewStatus, Common.DATE_NOT_SET, yesterdayTimestamp);
+        if(prevReviewList == null) {
+            Log.e(TAG, "previous review list is empty");
+            prevReviewsButtonId.setVisibility(View.GONE);
+            return;
+        }
+
+
+        prevReviewsButtonId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ListView listView = (ListView)reviewListView.findViewById(R.id.reviewsContainerListViewId);
+                ReviewListerAdapter adapter = (ReviewListerAdapter)listView.getAdapter();
+                ArrayList<Review> reviewList = adapter.getList();
+                reviewList.removeAll(reviewList);
+                reviewList.addAll(prevReviewList);
+                adapter.notifyDataSetChanged();
+                prevReviewsButtonId.setVisibility(View.GONE);
+
+                //setDataWithListView(listView, prevReviewList, coffeeMachineId);
+            }
+        });
+    }
+
+    public void setHeader() {
+        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+        CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, getFragmentManager());
     }
 
     private void setReviewListHeader(final String coffeeMachineId, final View reviewStatusText,
@@ -217,8 +266,6 @@ public class ReviewListFragment extends Fragment {
 
     }
 
-
-
     /****ADAPTER****/
     public class ReviewListerAdapter extends ArrayAdapter<Review>{
         private ArrayList<Review> reviewList;
@@ -229,6 +276,10 @@ public class ReviewListFragment extends Fragment {
             super(context, resource, list);
             this.reviewList = list;
             this.coffeeMachineId = coffeeMachineId;
+        }
+
+        public ArrayList<Review> getList(){
+            return this.reviewList;
         }
 
         public View getView(final int position, View convertView, ViewGroup parent) {

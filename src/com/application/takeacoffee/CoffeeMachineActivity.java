@@ -6,16 +6,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
-import com.application.takeacoffee.fragments.AddReviewFragment;
-import com.application.takeacoffee.fragments.CoffeeMachineFragment;
-import com.application.takeacoffee.fragments.LoadingFragment;
-import com.application.takeacoffee.fragments.NewUserFragment;
+import com.application.takeacoffee.fragments.*;
 
 public class CoffeeMachineActivity extends FragmentActivity {
     private static final String TAG = "MainActivity";
@@ -94,13 +92,6 @@ public class CoffeeMachineActivity extends FragmentActivity {
         }
         return loggedUser;
     }
-/*
-    public void replaceFragment() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.coffeeMachineContainerLayoutId, new CoffeeMachineFragment(), Common.COFFEE_MACHINE_FRAGMENT_TAG)
-                .commit();
-
-    }*/
 
     public static void setLoggedUserView(View mainView) {
         ((TextView) mainView.findViewById(R.id.loggedUserTextId)).setText(
@@ -123,14 +114,10 @@ public class CoffeeMachineActivity extends FragmentActivity {
         );
     }
 
-
     public static void setNotLoggedUserView(View mainView) {
         ((TextView) mainView.findViewById(R.id.loggedUserTextId)).setText("guest");
 
         LinearLayout loggedUserButton = (LinearLayout) mainView.findViewById(R.id.loggedUserButtonId);
-//        loggedUserButton.setBackground((getResources()
-//              .getDrawable(R.drawable.button_rounded_shape)));
-//        loggedUserButton.setText("new");
         loggedUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,21 +128,61 @@ public class CoffeeMachineActivity extends FragmentActivity {
     }
 
     public static void addChangeUserFragment(FragmentManager fragManager) {
-        NewUserFragment newUserFragment = new NewUserFragment();
+        LoginFragment loginFragment = new LoginFragment();
         //add fragment content to add user
         fragManager.beginTransaction()
 //                .setCustomAnimations(R.anim.fade_in,
 //                        R.anim.fade_out)
-                .replace(R.id.coffeeMachineContainerLayoutId, newUserFragment,
+                .replace(R.id.coffeeMachineContainerLayoutId, loginFragment,
                         Common.NEW_USER_FRAGMENT_TAG)
                 .addToBackStack("back")
                 .commit();
     }
 
+
+    //set header bar methods
+    public static void hideAllItemsOnHeaderBar() {
+        ViewGroup headerBar = (ViewGroup) mainActivityRef.findViewById(R.id.headerBarLayoutId);
+        for (int i = 0; i < headerBar.getChildCount(); i ++) {
+            headerBar.getChildAt(i).setVisibility(View.GONE);
+        }
+    }
+
+    public static void setItemOnHeaderBarById(int id, final FragmentManager fragmentManager) {
+        View view = mainActivityRef.findViewById(id);
+        view.setVisibility(View.VISIBLE);
+
+        switch (id) {
+            case R.id.headerMapButtonId :
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        MapFragment mapFragment = new MapFragment();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.coffeeMachineContainerLayoutId,
+                                        mapFragment).addToBackStack("back").commit();
+                    }
+                });
+                break;
+            case R.id.loggedUserButtonId :
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.coffeeMachineContainerLayoutId, new LoginFragment(),
+                                        Common.NEW_USER_FRAGMENT_TAG)
+                                .addToBackStack("back")
+                                .commit();
+                    }
+                });
+                break;
+        }
+    }
+
     @Override
     public void onBackPressed() {
-        //check get back action from NewUserFragment
-        final NewUserFragment fragment = (NewUserFragment) getSupportFragmentManager()
+        //check get back action from LoginFragment
+        final LoginFragment fragment = (LoginFragment) getSupportFragmentManager()
                 .findFragmentByTag(Common.NEW_USER_FRAGMENT_TAG);
         if (fragment != null) {
             if (fragment.isVisible()) {
@@ -207,67 +234,4 @@ public class CoffeeMachineActivity extends FragmentActivity {
     }
 
 
-    /*    public static void addReviewByFragment(String coffeeMachineId) {
-        try {
-            mPager = (ViewPager) mainApplication.findViewById(R.id.pager);
-            mPager.setVisibility(View.VISIBLE);
-
-            mainApplication.findViewById(R.id.coffeeMachineContainerLayoutId).setVisibility(View.GONE);
-            mPagerAdapter = new ScreenSlidePagerAdapter(mainApplication.getSupportFragmentManager(), coffeeMachineId);
-            mPager.setAdapter(mPagerAdapter);
-
-            mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                @Override
-                public void onPageSelected(int position) {
-                    try {
-                        ViewGroup headerAddReviewLayout = (ViewGroup) mainApplication.findViewById(R.id.headerTabReviewLayoutId);
-                        //reset color background of tabs
-                        for (int i = 0; i < Common.NUM_PAGES; i++) {
-                            headerAddReviewLayout.getChildAt(i)
-                                    .setBackgroundColor(mainApplication.getResources()
-                                            .getColor(R.color.light_grey));
-                        }
-
-                        Common.ReviewStatusEnum reviewStatus = Common.parseStatusFromPageNumber(position);
-                        Log.e(TAG, " - onPageSelected " + position);
-                        switch (reviewStatus) {
-                            case GOOD:
-                                headerAddReviewLayout.getChildAt(position)
-                                        .setBackgroundColor(mainApplication.getResources()
-                                                .getColor(R.color.light_green));
-                                break;
-                            case NOTSOBAD:
-                                headerAddReviewLayout.getChildAt(position)
-                                        .setBackgroundColor(mainApplication.getResources()
-                                                .getColor(R.color.light_yellow_lemon));
-                                break;
-                            case WORST:
-                                headerAddReviewLayout.getChildAt(position)
-                                        .setBackgroundColor(mainApplication.getResources()
-                                                .getColor(R.color.light_violet));
-                                break;
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
-/*    public static void hideAddReviewView() {
-        try {
-            mPager = (ViewPager) mainApplication.findViewById(R.id.pager);
-            mPager.setVisibility(View.GONE);
-            mainApplication.findViewById(R.id.coffeeMachineContainerLayoutId).setVisibility(View.VISIBLE);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
 }

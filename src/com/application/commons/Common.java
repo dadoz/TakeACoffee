@@ -35,6 +35,7 @@ public class Common {
     public static int ITEM_NOT_SELECTED = -1;
     public static String SET_MORE_TEXT_ON_REVIEW = "SET_MORE_TEXT_ON_REVIEW";
     public static final String ARG_PAGE = "page";
+    public static final long DATE_NOT_SET = -99;
 
 
     public static final String NEW_USER_FRAGMENT_TAG = "NEW_USER_FRAGMENT_TAG";
@@ -56,6 +57,18 @@ public class Common {
                 status = ReviewStatusEnum.NOTSET;
         }
         return status;
+    }
+
+    public static ReviewStatusEnum parseStatusFromString(String reviewStatus) {
+        if(reviewStatus.equals("GOOD")) {
+            return ReviewStatusEnum.GOOD;
+        } else if(reviewStatus.equals("NOT_BAD")) {
+            return ReviewStatusEnum.NOTSOBAD;
+        } else if(reviewStatus.equals("WORST")) {
+            return ReviewStatusEnum.WORST;
+        }
+        Log.e(TAG, "status not set - sorry I'll not add this review");
+        return ReviewStatusEnum.NOTSET;
     }
 
     public enum ReviewStatusEnum {

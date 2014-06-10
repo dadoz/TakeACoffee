@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/headerBarLayoutId"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/border_bottom"
         android:padding="@dimen/small_padding" >
+
         <LinearLayout
+                android:visibility="gone"
                 android:orientation="horizontal"
                 android:id="@+id/loggedUserButtonId"
                 android:gravity="center"
@@ -28,16 +31,46 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/small_padding"
                 android:text="not logged" />
-<!--            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/left_arrow"
-                android:layout_marginLeft="@dimen/small_padding"
-                android:layout_toRightOf="@+id/loggedUserTextId"/>-->
     </LinearLayout>
 
     <LinearLayout
-            android:id="@+id/headerMapLayoutId"
+            android:visibility="gone"
+            android:id="@+id/headerMapLabelId"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent">
+        <ImageView
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
+                android:layout_gravity="center"
+                android:src="@drawable/position_icon"/>
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent">
+
+                <TextView
+                        android:layout_gravity="left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_big_30"
+                        android:textColor="@color/light_black"
+                        android:text="coffee machine place " />
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:textSize="@dimen/text_medium_20"
+                        android:textColor="@color/dark_grey"
+                        android:text="- last update: 02.08.10" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+    <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/headerMapButtonId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -55,29 +88,30 @@
                 android:textColor="@color/light_black"/>
 
     </LinearLayout>
-    <LinearLayout
-            android:id="@+id/headerTabReviewLayoutId"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            android:gravity="center_vertical"
-            android:layout_alignParentRight="true">
-        <ImageView
-                android:layout_width="@dimen/small_icon_size"
-                android:layout_height="@dimen/small_icon_size"
-                android:layout_marginRight="@dimen/small_padding"
-                android:src="@drawable/good_review_icon"/>
-        <ImageView
-                android:layout_width="@dimen/small_icon_size"
-                android:layout_height="@dimen/small_icon_size"
-                android:layout_marginRight="@dimen/small_padding"
-                android:src="@drawable/notsobad_review_icon"/>
-        <ImageView
-                android:layout_width="@dimen/small_icon_size"
-                android:layout_height="@dimen/small_icon_size"
-                android:src="@drawable/worst_review_icon"/>
 
-    </LinearLayout>
+    <!--    <LinearLayout
+                android:id="@+id/headerTabReviewLayoutId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:gravity="center_vertical"
+                android:layout_alignParentRight="true">
+            <ImageView
+                    android:layout_width="@dimen/small_icon_size"
+                    android:layout_height="@dimen/small_icon_size"
+                    android:layout_marginRight="@dimen/small_padding"
+                    android:src="@drawable/good_review_icon"/>
+            <ImageView
+                    android:layout_width="@dimen/small_icon_size"
+                    android:layout_height="@dimen/small_icon_size"
+                    android:layout_marginRight="@dimen/small_padding"
+                    android:src="@drawable/notsobad_review_icon"/>
+            <ImageView
+                    android:layout_width="@dimen/small_icon_size"
+                    android:layout_height="@dimen/small_icon_size"
+                    android:src="@drawable/worst_review_icon"/>
+
+        </LinearLayout>-->
 
 </RelativeLayout>

@@ -6,13 +6,23 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <RelativeLayout
+                android:id="@+id/choiceReviewHeaderTodayId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/small_padding"
                 android:paddingRight="@dimen/small_padding"
                 android:paddingBottom="@dimen/small_padding">
+
+            <TextView
+                    android:id="@+id/choiceReviewHeaderTitleTextId"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/title_text_size"
+                    android:text="TODAY"/>
             <LinearLayout
+                    android:id="@+id/choiceReviewLatestContainerId"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:orientation="horizontal"
@@ -34,18 +44,73 @@
                         android:text=" - "
                         />
             </LinearLayout>
-
-            <TextView
-                    android:id="@+id/choiceReviewHeaderTitleTextId"
-                    android:layout_centerHorizontal="true"
+            <LinearLayout
+                    android:id="@+id/choiceReviewLatestContainerNotSetId"
+                    android:visibility="gone"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/title_text_size"
-                    android:text=" - to be set - "/>
+                    android:layout_height="wrap_content">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_big_30"
+                        android:textColor="@color/light_black"
+                        android:paddingLeft="@dimen/small_padding"
+                        android:text="NO REVIEW"
+                        />
+            </LinearLayout>
 
         </RelativeLayout>
-        <LinearLayout
+
+
+    <RelativeLayout
+            android:id="@+id/choiceReviewHeaderPreviousId"
+            android:visibility="visible"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/small_padding"
+            android:paddingRight="@dimen/small_padding"
+            android:paddingBottom="@dimen/small_padding">
+        <LinearLayout
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_small_16"
+                    android:text="latest at:"
+                    />
+            <TextView
+                    android:id="@+id/choiceReviewLatestPreviousTimestampTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_big_30"
+                    android:textColor="@color/white"
+                    android:paddingLeft="@dimen/small_padding"
+                    android:text=" - "
+                    />
+        </LinearLayout>
+
+        <TextView
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/title_text_size"
+                android:text="LATEST WEEKS"/>
+
+    </RelativeLayout>
+-->
+
+
+        <LinearLayout
+            android:id="@+id/choiceReviewMainContentId"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
@@ -126,7 +191,7 @@
             android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/light_yellow_lemon_soft"
+            android:background="@color/light_green_soft"
             android:padding="@dimen/small_padding">
         <TextView
                 android:id="@+id/footerChoiceReviewTextId"
@@ -155,5 +220,41 @@
                     android:src="@drawable/add_icon"/>
         </LinearLayout>
     </RelativeLayout>
+    <RelativeLayout
+            android:id="@+id/choiceReviewLatestReviewBottomBoxId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/small_padding"
+            android:paddingRight="@dimen/small_padding"
+            android:paddingBottom="@dimen/small_padding">
 
+        <TextView
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/title_text_size"
+                android:text="LATEST WEEKS"/>
+
+        <LinearLayout
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            <!--<TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="# of rev"
+                    />-->
+
+            <TextView
+                    android:id="@+id/choiceReviewLatestReviewBottomCounterId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/header_text_size"
+                    android:text="x"
+                    />
+        </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>

@@ -15,6 +15,7 @@ import com.application.adapters.ChoiceReviewPagerAdapter;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.Review;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class ReviewsFragment extends Fragment {
 
             //set review header (coffee machine name)
             setHeaderReview(coffeeMachineId, emptyView);
-            setAddReviewHeader();
+            setHeader();
             //add review button
             emptyView.findViewById(R.id.addReviewImageViewId2)
                     .setOnClickListener(new View.OnClickListener() {
@@ -77,13 +78,13 @@ public class ReviewsFragment extends Fragment {
         //set review header (coffee machine name)
         setHeaderReview(coffeeMachineId, reviewsLayoutView);
         setReviewPager(coffeeMachineId);
-        setAddReviewHeader();
-        setOpenTabReviews();
+        setHeader();
+//        setOpenTabReviews();
         //set custom font
         Common.setCustomFont(reviewsLayoutView, this.getActivity().getAssets());
         return reviewsLayoutView;
     }
-
+/*
     private void setOpenTabReviews() {
         reviewsLayoutView.findViewById(R.id.todayReviewsCollapsedButtonId)
                 .setOnClickListener(new View.OnClickListener() {
@@ -115,10 +116,10 @@ public class ReviewsFragment extends Fragment {
             });
 
     }
-
-    public void setAddReviewHeader() {
-        View headerMapLayout = mainActivityRef.findViewById(R.id.headerMapLayoutId);
-        headerMapLayout.setVisibility(View.GONE);
+*/
+    public void setHeader() {
+        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+        CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, getFragmentManager());
     }
 
     public void setReviewPager(final String coffeeMachineId) {
@@ -127,10 +128,10 @@ public class ReviewsFragment extends Fragment {
         mPagerAdapter = new ChoiceReviewPagerAdapter(getChildFragmentManager(), coffeeMachineId, isTodayReview);
         mPager.setAdapter(mPagerAdapter);
 
-        isTodayReview = false; //TODO REFACTOR
+/*        isTodayReview = false; //TODO REFACTOR
         ViewPager mPager2 = (ViewPager) reviewsLayoutView.findViewById(R.id.previousReviewsPagerId);
         ChoiceReviewPagerAdapter mPagerAdapter2 = new ChoiceReviewPagerAdapter(getChildFragmentManager(), coffeeMachineId, isTodayReview);
-        mPager2.setAdapter(mPagerAdapter2);
+        mPager2.setAdapter(mPagerAdapter2);*/
 /*        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener())*/
     }
 
@@ -194,6 +195,43 @@ public class ReviewsFragment extends Fragment {
         Log.e(TAG, "error - no coffeMachineId found");
         return null;
     }
+
+
+    public static ArrayList<Review> getReviewDataByTimestamp(String coffeeMachineId,
+                                                  CoffeeMachineDataStorageApplication coffeeMachineApplication,
+                                                  Common.ReviewStatusEnum reviewStatus,
+                                                  long fromTimestamp, long toTimestamp) {
+        if(coffeeMachineId != null) {
+            //check if coffeMachineId exist -
+            ArrayList<Review> reviewList = coffeeMachineApplication.coffeeMachineData.
+                    getReviewListByCoffeMachineId(coffeeMachineId);
+            if(reviewList == null || reviewList.size() == 0) {
+                Log.e(TAG,"error - no one coffeeMachine owned by this ID");
+                return null;
+            }
+
+            if(reviewStatus != Common.ReviewStatusEnum.NOTSET) {
+                ArrayList<Review> reviewListSortedByStatus = new ArrayList<Review>();
+                //TODO to be refactored
+                for(Review review : reviewList) {
+                    if(reviewStatus == review.getStatus() &&
+                            review.getTimestamp() > fromTimestamp &&
+                            review.getTimestamp() < toTimestamp) {
+                        reviewListSortedByStatus.add(review);
+                    }
+                }
+                if(reviewListSortedByStatus.size() == 0) {
+                    return null;
+                }
+                return reviewListSortedByStatus;
+            }
+            return reviewList;
+
+        }
+        Log.e(TAG, "error - no coffeMachineId found");
+        return null;
+    }
+
 
 }
 

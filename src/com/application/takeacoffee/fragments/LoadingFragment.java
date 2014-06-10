@@ -32,7 +32,7 @@ public class LoadingFragment extends Fragment{
             @Override
             public void onClick(View view) {
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.coffeeMachineContainerLayoutId, new NewUserFragment(), Common.NEW_USER_FRAGMENT_TAG)
+                        .replace(R.id.coffeeMachineContainerLayoutId, new LoginFragment(), Common.NEW_USER_FRAGMENT_TAG)
                         .commit();
             }
         });

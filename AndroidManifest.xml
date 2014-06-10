@@ -8,10 +8,23 @@
         android:minSdkVersion="14"
         android:targetSdkVersion="17" />
 
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature
+            android:glEsVersion="0x00020000"
+            android:required="true"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA"/>
-	<uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- The following two permissions are not required to use
+         Google Maps Android API v2, but are recommended. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- GOOGLE + api -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -36,6 +49,14 @@
             android:name="com.application.takeacoffee.CoffeeMachineActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity android:name="com.facebook.LoginActivity"
+                  android:theme="@android:style/Theme.Translucent.NoTitleBar"
+                  android:label="@string/app_name" />
+        <meta-data
+                android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version" />
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/app_id" />
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAN2FjTl5Hb3kARRyxGkcFR0rc_fKxFga8" />
     </application>
 
 </manifest>

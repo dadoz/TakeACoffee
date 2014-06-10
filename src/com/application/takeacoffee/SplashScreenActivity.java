@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.view.View;
 import com.application.commons.Common;
 
+import java.util.Random;
+
 /**
  * Created by davide on 01/06/14.
  */
@@ -18,30 +20,17 @@ public class SplashScreenActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splashscreen_layout);
         Common.setCustomFont(getWindow().getDecorView(), getAssets());
+        final int[] colorArray = {R.color.light_green, R.color.light_yellow_lemon, R.color.light_violet};
+        View mainView = getWindow().getDecorView();
+        int value = new Random().nextInt(Integer.MAX_VALUE) + 1;
+        mainView.findViewById(R.id.splashScreenLayoutId)
+                .setBackgroundColor(getResources().getColor(colorArray[value % 3]));
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                View mainView = getWindow().getDecorView();
-
-                mainView.findViewById(R.id.splashScreenLayoutId)
-                        .setBackgroundColor(getResources().getColor(R.color.light_yellow_lemon));
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        View mainView = getWindow().getDecorView();
-
-                        mainView.findViewById(R.id.splashScreenLayoutId)
-                                .setBackgroundColor(getResources().getColor(R.color.light_violet));
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                startActivity(new Intent(SplashScreenActivity.this, CoffeeMachineActivity.class));
-                                finish();
-                            }
-                        }, SPLASH_TIMEOUT);
-                    }
-                }, SPLASH_TIMEOUT);
+                startActivity(new Intent(SplashScreenActivity.this, CoffeeMachineActivity.class));
+                finish();
             }
         }, SPLASH_TIMEOUT);
     }

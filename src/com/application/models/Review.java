@@ -66,4 +66,8 @@ public class Review {
     public String getProfilePicPath() {
         return this.profilePicPath;
     }
+
+    public long getTimestamp() {
+        return date.getTime();
+    }
 }

@@ -1,6 +1,5 @@
 package com.application.takeacoffee.fragments;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -18,12 +17,13 @@ import android.widget.*;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.CoffeeMachine;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
 
 import static com.application.commons.Common.setCustomFontByView;
-import static com.application.takeacoffee.fragments.NewUserFragment.getRoundedRectBitmap;
+import static com.application.takeacoffee.fragments.LoginFragment.getRoundedRectBitmap;
 
 /**
  * Created by davide on 3/13/14.
@@ -56,10 +56,16 @@ public class CoffeeMachineFragment extends Fragment {
         });
 
         //header stuff
-        setHeaderAction(coffeeMachineFragment);
+        setHeader();
         //set custom font
         Common.setCustomFont(coffeeMachineFragment, this.getActivity().getAssets());
         return coffeeMachineFragment;
+    }
+
+    private void setHeader() {
+        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+        CoffeeMachineActivity.setItemOnHeaderBarById(R.id.headerMapButtonId, getFragmentManager());
+        CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, getFragmentManager());
     }
 
     private void initView(View coffeeMachineFragment) {
@@ -67,7 +73,7 @@ public class CoffeeMachineFragment extends Fragment {
         TableRow tableRow = null;
 
         //setMap button available
-        mainActivityRef.findViewById(R.id.headerMapLayoutId).setVisibility(View.VISIBLE);
+        mainActivityRef.findViewById(R.id.headerMapButtonId).setVisibility(View.VISIBLE);
 
         if (coffeeMachineList != null && coffeeMachineList.size() != 0) {
             for (final CoffeeMachine coffeeMachineObj : coffeeMachineList) {
@@ -117,12 +123,6 @@ public class CoffeeMachineFragment extends Fragment {
                         .setText(coffeeMachineObj.getName());
                 ((TextView) coffeeMachineTemplate.findViewById(R.id.coffeeMachineNameTextId))
                         .setTextColor(getResources().getColor(R.color.light_black));
-                //coffee machine update
-                ((TextView) coffeeMachineTemplate.findViewById(R.id.coffeeMachineLastUpdateTextId))
-                        .setText("Last update: 01.02.14");
-                setCustomFontByView(getActivity().getAssets(), coffeeMachineTemplate.findViewById(
-                        R.id.coffeeMachineLastUpdateTextId), false);
-
 
                 //TODO refactor please
                 String iconPath = (coffeeMachineObj.getIconPath());
@@ -143,7 +143,7 @@ public class CoffeeMachineFragment extends Fragment {
                     pieChartList = getPieChartData();
 
                     Bitmap bmpAbove = getRoundedBitmapByPicPath(picResource);
-                    Bitmap bmpBelow = NewUserFragment.getRoundedBitmap(Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE,
+                    Bitmap bmpBelow = com.application.takeacoffee.fragments.LoginFragment.getRoundedBitmap(Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE,
                             getResources().getColor(R.color.light_black));
                     Bitmap coffeeMachineBmp = Common.overlayBitmaps(bmpBelow, bmpAbove);
                     coffeePic.setImageBitmap(coffeeMachineBmp);
@@ -175,22 +175,6 @@ public class CoffeeMachineFragment extends Fragment {
             }
         });
 
-    }
-
-    private void setHeaderAction(final View coffeeMachineFragment) {
-        mainActivityRef.findViewById(R.id.headerMapLayoutId).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-/*                View mapContainerLayout = coffeeMachineFragment.findViewById(R.id.mapContainerLayoutId);
-                View coffeeMachineTableLayout = coffeeMachineFragment.findViewById(R.id.coffeeMachineTableLayoutId);
-                mapContainerLayout.setVisibility(View.VISIBLE);
-                coffeeMachineTableLayout.setVisibility(View.GONE);*/
-                MapFragment mapFragment = new MapFragment();
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.coffeeMachineContainerLayoutId,
-                                mapFragment).addToBackStack("back").commit();
-            }
-        });
     }
 
     private boolean getCoffeeMachineReviewById(String coffeMachineId){

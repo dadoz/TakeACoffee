@@ -29,6 +29,29 @@
                 android:layout_marginRight="@dimen/small_padding"
                 android:src="@drawable/add_icon"/>-->
     </RelativeLayout>
+    <LinearLayout
+            android:id="@+id/prevReviewsButtonId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/small_padding"
+            android:gravity="center_horizontal"
+            android:background="@drawable/border_bottom"
+            android:orientation="horizontal">
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:textSize="@dimen/title_text_size"
+                android:text="Latest weeks"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/small_padding"
+                android:layout_gravity="bottom"
+                android:textSize="@dimen/text_big_22"
+                android:text="01.01.12 - 01.02.12"/>
+    </LinearLayout>
+
     <ListView
             android:id="@+id/reviewsContainerListViewId"
             android:layout_width="match_parent"

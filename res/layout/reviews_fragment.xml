@@ -10,7 +10,7 @@
             android:orientation="vertical" >
 
         <!--COLLAPSED TAB TODAY-->
-        <LinearLayout
+<!--        <LinearLayout
                 android:visibility="gone"
                 android:id="@+id/todayReviewsCollapsedButtonId"
                 android:layout_width="match_parent"
@@ -32,7 +32,7 @@
                     android:textSize="@dimen/text_small"
                     android:textColor="@color/dark_grey"
                     android:text="Tap to get reviews"/>
-        </LinearLayout>
+        </LinearLayout>-->
         <!--CONTENT BOX TODAY fragment-->
         <LinearLayout
                 android:id="@+id/todayReviewsContainerId"
@@ -43,10 +43,18 @@
                     android:id="@+id/todayReviewsPagerId"
                     android:layout_width="match_parent"
                     android:background="@color/light_grey"
-                    android:layout_height="@dimen/choice_review_pager_size" />
+                    android:layout_height="fill_parent" />
         </LinearLayout>
+        <!-- VIEWPAGER DOES NOT SUPPORT WRAPCONTENT-->
+<!--        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="@dimen/text_medium_20"
+                android:text="slide or tap on img to read all review"/>-->
+
         <!--COLLAPSED TAB PREVIOUS-->
-        <LinearLayout
+<!--        <LinearLayout
                 android:id="@+id/prevReviewsCollapsedButtonId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,9 +74,9 @@
                     android:textSize="@dimen/text_small"
                     android:textColor="@color/dark_grey"
                     android:text="Tap to get reviews"/>
-        </LinearLayout>
+        </LinearLayout>-->
         <!--CONTENT BOX PREV fragment-->
-        <LinearLayout
+<!--        <LinearLayout
                 android:id="@+id/previousReviewsContainerId"
                 android:visibility="gone"
                 android:layout_width="match_parent"
@@ -79,6 +87,6 @@
                 android:layout_width="match_parent"
                 android:background="@color/light_grey"
                 android:layout_height="@dimen/choice_review_pager_size" />
-        </LinearLayout>
+        </LinearLayout>-->
     </LinearLayout>
 </LinearLayout>

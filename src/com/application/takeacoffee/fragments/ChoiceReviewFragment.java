@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.application.models.Review;
 import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import static com.application.takeacoffee.fragments.ReviewsFragment.getReviewData;
 
@@ -67,18 +69,153 @@ public class ChoiceReviewFragment extends Fragment{
     }
 
     public void setReviewView(String coffeeMachineId, int choiceReviewPosition) {
-        ArrayList<Review> reviewListTemp = getReviewData(coffeeMachineId, coffeeMachineApplication,
-                Common.parseStatusFromPageNumber(choiceReviewPosition));
+        Common.ReviewStatusEnum reviewStatus = Common.parseStatusFromPageNumber(choiceReviewPosition);
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, 0);
+        long todayTimestamp = (cal.getTime()).getTime();
+        cal.add(Calendar.DATE, -1);
+        long yesterdayTimestamp = (cal.getTime()).getTime();
+//        cal.add(Calendar.WEEK_OF_MONTH, -1);
+//        long prevWeekTimestamp = (cal.getTime()).getTime();
 
-        ((TextView) choiceReviewView.findViewById(R.id.choiceReviewHeaderTitleTextId)).setText("Today");
+        final ArrayList<Review> prevReviewList = ReviewsFragment.getReviewDataByTimestamp(coffeeMachineId,
+                coffeeMachineApplication, reviewStatus, Common.DATE_NOT_SET, yesterdayTimestamp);
+        final ArrayList<Review> todayReviewList = ReviewsFragment.getReviewDataByTimestamp(coffeeMachineId,
+                coffeeMachineApplication, reviewStatus, yesterdayTimestamp, todayTimestamp);
+
+
+        int choiceReviewListStatus = -1;
+
+        if(prevReviewList == null || prevReviewList.size() == 0  &&
+                (todayReviewList != null && todayReviewList.size() != 0)) {
+            //no one review for this coffeeMachine - status - previous - no one review for this coffeeMachine - status - today
+            choiceReviewListStatus = 1;
+        }
+        if((prevReviewList != null && prevReviewList.size() != 0)  &&
+                (todayReviewList == null || todayReviewList.size() == 0)) {
+            //no one review for this coffeeMachine - status - previous - no one review for this coffeeMachine - status - today
+            choiceReviewListStatus = 0;
+        }
+
+        if((prevReviewList != null && prevReviewList.size() != 0)  &&
+                (todayReviewList != null && todayReviewList.size() != 0)) {
+            choiceReviewListStatus = 2;
+        }
+
+        switch (choiceReviewListStatus) {
+            case 0:
+                //today = 0 rather than previous > 0
+                setReviewViewPrevious(prevReviewList, choiceReviewPosition);
+                break;
+            case 1:
+                //today > 0 previous = 0
+                setReviewViewTodayAndPrevious(todayReviewList, choiceReviewPosition, false, -1);
+                break;
+            case 2:
+                //today > 0 and prev > 0
+                setReviewViewTodayAndPrevious(todayReviewList, choiceReviewPosition, true, prevReviewList.size());
+                break;
+            case -1:
+                Log.e(TAG, "bug choiceReviewListStatus failed to be assert");
+        }
+    }
+
+    public void setReviewViewPrevious(ArrayList<Review> reviewList, int choiceReviewPosition) {
+//        choiceReviewView.findViewById(R.id.choiceReviewHeaderTodayId);//to be customized
+        choiceReviewView.findViewById(R.id.choiceReviewLatestContainerId).setVisibility(View.GONE);//to be customized
+        choiceReviewView.findViewById(R.id.choiceReviewLatestContainerNotSetId).setVisibility(View.VISIBLE);//to be customized
+        choiceReviewView.findViewById(R.id.choiceReviewHeaderPreviousId).setVisibility(View.VISIBLE);// to be shown
+
+
+        View footerChoiceReviewView = choiceReviewView.findViewById(R.id.footerChoiceReviewLayoutId);
+        footerChoiceReviewView.findViewById(R.id.footerChoiceReviewAddReviewButtonId)
+                .setOnClickListener(new AddReviewAction(mainActivityRef.getSupportFragmentManager(), choiceReviewPosition));
+
+
+        ((TextView) choiceReviewView.findViewById(R.id.choiceReviewLatestPreviousTimestampTextView))
+                .setText(reviewList.get(reviewList.size() - 1)
+                        .getFormattedTimestamp().split(" ")[1]);
+        choiceReviewView.findViewById(R.id.choiceReviewButtonId)
+                .setOnClickListener(new ReviewListButtonListener(reviewList.size() == 0,
+                        Common.parseStatusFromPageNumber(choiceReviewPosition)));
+        ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
+                .setText(String.valueOf(reviewList.size()));
+
+        switch (Common.parseStatusFromPageNumber(choiceReviewPosition)) {
+            case GOOD:
+                choiceReviewView.findViewById(R.id.choiceReviewHeaderPreviousId).setBackgroundColor(getResources()
+                        .getColor(R.color.light_green_soft));
+                choiceReviewView.findViewById(R.id.choiceReviewHeaderTodayId).setBackgroundColor(getResources()
+                        .getColor(R.color.light_green));
+                choiceReviewView.findViewById(R.id.choiceReviewMainContentId).setBackgroundColor(getResources()
+                        .getColor(R.color.light_green_soft));
+                footerChoiceReviewView.setBackgroundColor(getResources()
+                        .getColor(R.color.light_green_soft));
+                ((TextView) footerChoiceReviewView.findViewById(R.id.footerChoiceReviewTextId))
+                        .setText(Common.GOOD_STATUS_STRING);
+/*                        ((ImageView)choiceReviewView.findViewById(R.id.choiceReviewButtonId))
+                                .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/
+                break;
+            case NOTSOBAD:
+                choiceReviewView.findViewById(R.id.choiceReviewHeaderPreviousId).setBackgroundColor(getResources()
+                        .getColor(R.color.light_yellow_lemon_soft));
+                choiceReviewView.findViewById(R.id.choiceReviewHeaderTodayId).setBackgroundColor(getResources()
+                        .getColor(R.color.light_yellow_lemon));
+                choiceReviewView.findViewById(R.id.choiceReviewMainContentId).setBackgroundColor(getResources()
+                        .getColor(R.color.light_yellow_lemon_soft));
+                ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
+                        .setTextColor(getResources().getColor(R.color.light_black));
+                footerChoiceReviewView.setBackgroundColor(getResources()
+                        .getColor(R.color.light_yellow_lemon_soft));
+                ((TextView) footerChoiceReviewView.findViewById(R.id.footerChoiceReviewTextId))
+                        .setText(Common.NOTSOBAD_STATUS_STRING);
+                ((TextView) choiceReviewView.findViewById(R.id.choiceReviewLatestTimestampTextView))
+                        .setTextColor(getResources().getColor(R.color.dark_black));
+
+/*                        ((ImageView)choiceReviewView.findViewById(R.id.choiceReviewButtonId))
+                                .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/
+                break;
+            case WORST:
+                choiceReviewView.findViewById(R.id.choiceReviewHeaderPreviousId).setBackgroundColor(getResources()
+                        .getColor(R.color.light_violet_soft));
+                choiceReviewView.findViewById(R.id.choiceReviewHeaderTodayId).setBackgroundColor(getResources()
+                        .getColor(R.color.light_violet));
+                choiceReviewView.findViewById(R.id.choiceReviewMainContentId).setBackgroundColor(getResources()
+                        .getColor(R.color.light_violet_soft));
+                footerChoiceReviewView.setBackgroundColor(getResources()
+                        .getColor(R.color.light_violet_soft));
+                ((TextView) footerChoiceReviewView.findViewById(R.id.footerChoiceReviewTextId))
+                        .setText(Common.TERRIBLE_STATUS_STRING);
+
+/*                        ((ImageView)choiceReviewView.findViewById(R.id.choiceReviewButtonId))
+                                .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/
+                break;
+        }
+
+
+    }
+
+    public void setReviewViewTodayAndPrevious(ArrayList<Review> reviewList, int choiceReviewPosition, boolean hasPrevious, int previousReviewCount) {
+//        choiceReviewView.findViewById(R.id.choiceReviewHeaderTodayId);//to be customized
+        choiceReviewView.findViewById(R.id.choiceReviewLatestContainerId).setVisibility(View.VISIBLE);//to be customized
+        choiceReviewView.findViewById(R.id.choiceReviewLatestContainerNotSetId).setVisibility(View.GONE);//to be customized
+        choiceReviewView.findViewById(R.id.choiceReviewHeaderPreviousId).setVisibility(View.GONE);// to be shown
+        choiceReviewView.findViewById(R.id.choiceReviewLatestReviewBottomBoxId).setVisibility(View.GONE);// to be shown
+
+        if(hasPrevious) {
+            choiceReviewView.findViewById(R.id.choiceReviewLatestReviewBottomBoxId).setVisibility(View.VISIBLE);// to be shown
+            ((TextView) choiceReviewView.findViewById(R.id.choiceReviewLatestReviewBottomCounterId))
+                    .setText(String.valueOf(previousReviewCount));// to be shown
+        }
+/*        ((TextView) choiceReviewView.findViewById(R.id.choiceReviewHeaderTitleTextId)).setText("Today");
         if(!isTodayReview) {
             ((TextView) choiceReviewView.findViewById(R.id.choiceReviewHeaderTitleTextId)).setText("Latest weeks");
-        }
+        }*/
 
         View footerChoiceReviewView = choiceReviewView.findViewById(R.id.footerChoiceReviewLayoutId);
         //check if empty review list
 
-        if(reviewListTemp == null || reviewListTemp.size() == 0) {
+        if(reviewList == null || reviewList.size() == 0) {
             ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
                     .setText("0");
             choiceReviewView.findViewById(R.id.choiceReviewButtonId)
@@ -90,13 +227,13 @@ public class ChoiceReviewFragment extends Fragment{
                     });
         } else {
             ((TextView) choiceReviewView.findViewById(R.id.choiceReviewLatestTimestampTextView))
-                    .setText(reviewListTemp.get(reviewListTemp.size() - 1)
+                    .setText(reviewList.get(reviewList.size() - 1)
                             .getFormattedTimestamp().split(" ")[1]);
             choiceReviewView.findViewById(R.id.choiceReviewButtonId)
-                    .setOnClickListener(new ReviewListButtonListener(reviewListTemp.size() == 0,
+                    .setOnClickListener(new ReviewListButtonListener(reviewList.size() == 0,
                             Common.parseStatusFromPageNumber(choiceReviewPosition)));
             ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
-                    .setText(String.valueOf(reviewListTemp.size()));
+                    .setText(String.valueOf(reviewList.size()));
         }
 
         footerChoiceReviewView.findViewById(R.id.footerChoiceReviewAddReviewButtonId)
@@ -104,24 +241,28 @@ public class ChoiceReviewFragment extends Fragment{
 
         switch (Common.parseStatusFromPageNumber(choiceReviewPosition)) {
             case GOOD:
-                choiceReviewView.setBackgroundColor(getResources()
+                choiceReviewView.findViewById(R.id.choiceReviewHeaderTodayId).setBackgroundColor(getResources()
+                        .getColor(R.color.light_green));
+                choiceReviewView.findViewById(R.id.choiceReviewMainContentId).setBackgroundColor(getResources()
                         .getColor(R.color.light_green));
                 footerChoiceReviewView.setBackgroundColor(getResources()
                         .getColor(R.color.light_green_soft));
                 ((TextView) footerChoiceReviewView.findViewById(R.id.footerChoiceReviewTextId))
-                        .setText("Good");
+                        .setText(Common.GOOD_STATUS_STRING);
 /*                        ((ImageView)choiceReviewView.findViewById(R.id.choiceReviewButtonId))
                                 .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/
                 break;
             case NOTSOBAD:
-                choiceReviewView.setBackgroundColor(getResources()
+                choiceReviewView.findViewById(R.id.choiceReviewHeaderTodayId).setBackgroundColor(getResources()
+                        .getColor(R.color.light_yellow_lemon));
+                choiceReviewView.findViewById(R.id.choiceReviewMainContentId).setBackgroundColor(getResources()
                         .getColor(R.color.light_yellow_lemon));
                 ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
                         .setTextColor(getResources().getColor(R.color.light_black));
                 footerChoiceReviewView.setBackgroundColor(getResources()
                         .getColor(R.color.light_yellow_lemon_soft));
                 ((TextView) footerChoiceReviewView.findViewById(R.id.footerChoiceReviewTextId))
-                        .setText("Not so bad");
+                        .setText(Common.NOTSOBAD_STATUS_STRING);
                 ((TextView) choiceReviewView.findViewById(R.id.choiceReviewLatestTimestampTextView))
                         .setTextColor(getResources().getColor(R.color.dark_black));
 
@@ -129,12 +270,14 @@ public class ChoiceReviewFragment extends Fragment{
                                 .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/
                 break;
             case WORST:
-                choiceReviewView.setBackgroundColor(getResources()
+                choiceReviewView.findViewById(R.id.choiceReviewHeaderTodayId).setBackgroundColor(getResources()
+                        .getColor(R.color.light_violet));
+                choiceReviewView.findViewById(R.id.choiceReviewMainContentId).setBackgroundColor(getResources()
                         .getColor(R.color.light_violet));
                 footerChoiceReviewView.setBackgroundColor(getResources()
                         .getColor(R.color.light_violet_soft));
                 ((TextView) footerChoiceReviewView.findViewById(R.id.footerChoiceReviewTextId))
-                        .setText("Worst");
+                        .setText(Common.TERRIBLE_STATUS_STRING);
 
 /*                        ((ImageView)choiceReviewView.findViewById(R.id.choiceReviewButtonId))
                                 .setImageDrawable(getResources().getDrawable(R.drawable.coffe_cup_icon));*/

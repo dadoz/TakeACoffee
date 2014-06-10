@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.application.adapters.AddReviewPagerAdapter;
 import com.application.commons.Common;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 /**
@@ -35,31 +36,21 @@ public class AddReviewContainerFragment extends Fragment {
         args = new Bundle();
         args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
 
-        View headerTabReviewLayout = mainActivityRef.findViewById(R.id.headerTabReviewLayoutId);
+//        View headerTabReviewLayout = mainActivityRef.findViewById(R.id.headerTabReviewLayoutId);
 
-        setAddReviewPager(coffeeMachineId, (ViewGroup) headerTabReviewLayout);
-        setAddReviewHeader();
+        setAddReviewPager(coffeeMachineId);
+        setHeader();
 
         Common.setCustomFont(addReviewContainerView, getActivity().getAssets());
         return addReviewContainerView;
     }
 
-    public void setAddReviewHeader() {
-        View headerMapLayout = mainActivityRef.findViewById(R.id.headerMapLayoutId);
-        headerMapLayout.setVisibility(View.GONE);
-/*        ViewGroup headerTabReviewLayout = (ViewGroup) mainActivityRef.findViewById(R.id.headerTabReviewLayoutId);
-        headerTabReviewLayout.setVisibility(View.VISIBLE);
-        for (int i = 0; i < Common.NUM_PAGES; i++) {
-            headerTabReviewLayout.getChildAt(i)
-                    .setBackgroundColor(mainActivityRef.getResources()
-                            .getColor(R.color.light_grey));
-        }
-        headerTabReviewLayout.getChildAt(INIT_POS_ADDREVIEW_TAB)
-                .setBackgroundColor(mainActivityRef.getResources()
-                        .getColor(R.color.light_green));*/
+    public void setHeader() {
+        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+        CoffeeMachineActivity.setItemOnHeaderBarById(R.id.headerMapLabelId, null);
     }
 
-    public void setAddReviewPager(String coffeeMachineId, final ViewGroup headerTabReviewLayout) {
+    public void setAddReviewPager(String coffeeMachineId) {
         pager = (ViewPager) addReviewContainerView.findViewById(R.id.pager);
         pager.setAdapter(new AddReviewPagerAdapter(getChildFragmentManager(), coffeeMachineId));
         pager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {

@@ -9,5 +9,8 @@
     <string name="terrible_review_status">Terrible</string>
     <string name="notsobad_review_status">Not so bad</string>
     <string name="good_review_status">Good</string>
+    <string name="app_id">269437213077030</string>
+    <string name="progress_message">trying login with google +</string>
+    <!-- 5ae2f9b105c3f01a179241038a28f992-->
 
 </resources>
