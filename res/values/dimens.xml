@@ -26,12 +26,15 @@
     <dimen name="medium_icon_size">60dp</dimen>
     <dimen name="large_icon_size">80dp</dimen>
     <dimen name="huge_icon_size">100dp</dimen>
-    <dimen name="extra_huge_icon_size">160dp</dimen>
+    <dimen name="extra_huge_icon_size">140dp</dimen>
     <dimen name="big_content_size">200dp</dimen>
     <dimen name="extra_small_icon_size">20dip</dimen>
     <dimen name="text_big_30">30dp</dimen>
     <dimen name="choice_review_pager_size">288dip</dimen>
     <dimen name="text_big_38">38dp</dimen>
     <dimen name="title_width">280dip</dimen>
+    <dimen name="text_huge_48">48sp</dimen>
+    <dimen name="header_medium_size">60dip</dimen>
+    <dimen name="medium_button_size">75dip</dimen>
 
 </resources>

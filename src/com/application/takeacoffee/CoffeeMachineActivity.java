@@ -1,10 +1,14 @@
 package com.application.takeacoffee;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -14,6 +18,8 @@ import android.widget.Toast;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.takeacoffee.fragments.*;
+
+import java.util.List;
 
 public class CoffeeMachineActivity extends FragmentActivity {
     private static final String TAG = "MainActivity";
@@ -141,6 +147,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
 
 
     //set header bar methods
+
     public static void hideAllItemsOnHeaderBar() {
         ViewGroup headerBar = (ViewGroup) mainActivityRef.findViewById(R.id.headerBarLayoutId);
         for (int i = 0; i < headerBar.getChildCount(); i ++) {
@@ -148,9 +155,11 @@ public class CoffeeMachineActivity extends FragmentActivity {
         }
     }
 
-    public static void setItemOnHeaderBarById(int id, final FragmentManager fragmentManager) {
+    public static void setItemOnHeaderBarById(int id, final FragmentManager fragmentManager, String coffeeMachineName) {
+//        mainActivityRef.findViewById(R.id.subHeaderBarLayoutId).setVisibility(View.GONE);
         View view = mainActivityRef.findViewById(id);
         view.setVisibility(View.VISIBLE);
+
 
         switch (id) {
             case R.id.headerMapButtonId :
@@ -176,13 +185,117 @@ public class CoffeeMachineActivity extends FragmentActivity {
                     }
                 });
                 break;
+            case R.id.coffeeMachineSettingsMapHeaderLayoutId:
+                if (coffeeMachineName != null) {
+                    ((TextView) view.findViewById(R.id.coffeeMachineNameReviewTextId))
+                            .setText(coffeeMachineName);
+
+                    view.findViewById(R.id.reviewsMachineMapButtonId)
+                            .setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    MapFragment mapFragment = new MapFragment();
+                                    fragmentManager.beginTransaction()
+                                            .replace(R.id.coffeeMachineContainerLayoutId,
+                                                    mapFragment).addToBackStack("back").commit();
+                                }
+                            });
+                    break;
+                }
+
         }
     }
+
+    public static void addItemOnHeaderBarById(int layoutId, View containerView,
+                                              String coffeeMachineName, boolean hideHeaderBar, final FragmentManager fragmentManager) {
+  //      mainActivityRef.findViewById(R.id.subHeaderBarLayoutId).setVisibility(View.VISIBLE);
+        mainActivityRef.findViewById(R.id.headerBarLayoutId).setVisibility(hideHeaderBar ? View.GONE : View.VISIBLE);
+
+        LayoutInflater lf = (LayoutInflater) mainActivityRef.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = lf.inflate(layoutId, null);
+        if(view != null) {
+            Common.setCustomFont(view, mainActivityRef.getAssets());
+            if(containerView == null) {
+    //            containerView = mainActivityRef.findViewById(R.id.subHeaderBarLayoutId);
+            }
+            ((ViewGroup) containerView).removeAllViews();
+            ((ViewGroup) containerView).addView(view);
+
+            switch (layoutId) {
+                case R.layout.review_header_template:
+                    if (coffeeMachineName != null) {
+                        ((TextView) view.findViewById(R.id.coffeeMachineNameReviewTextId))
+                                .setText(coffeeMachineName);
+
+                        view.findViewById(R.id.reviewsMachineMapButtonId)
+                                .setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        MapFragment mapFragment = new MapFragment();
+                                        fragmentManager.beginTransaction()
+                                                .replace(R.id.coffeeMachineContainerLayoutId,
+                                                        mapFragment).addToBackStack("back").commit();
+                                    }
+                                });
+                        break;
+                    }
+            }
+        } else {
+            Log.e(TAG, "error - template you want to inflate in headerBar is not valid");
+        }
+    }
+
+    public static void setHeaderBarVisibile(boolean visibile) {
+        mainActivityRef.findViewById(R.id.headerBarLayoutId).setVisibility(visibile ? View.VISIBLE : View.GONE);
+    }
+
+    public static void setHeaderByFragmentId(int fragmentId, FragmentManager fragmentManager, String coffeeMachineId) {
+        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+
+        switch (fragmentId) {
+            case 0:
+                CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.headerMapButtonId, fragmentManager, null);
+                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, fragmentManager, null);
+                break;
+            case 1:
+//                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, fragmentManager);
+                String coffeeMachineName = coffeeMachineApplication.coffeeMachineData
+                        .getCoffeMachineById(coffeeMachineId).getName();
+                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.coffeeMachineSettingsMapHeaderLayoutId,
+                        fragmentManager, coffeeMachineName);
+/*                CoffeeMachineActivity.addItemOnHeaderBarById(R.layout.review_header_template,
+                        null, coffeeMachineName,
+                        false, fragmentManager);*/
+                break;
+            case 2:
+                mainActivityRef.findViewById(R.id.headerBarLayoutId).setVisibility(View.VISIBLE);
+                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.headerMapLabelId, null, null);
+                break;
+            case 3:
+                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, fragmentManager, null);
+        }
+
+    }
+
+/*
+    public android.os.Handler handler = new android.os.Handler() {
+        Message msg;
+        @Override
+        public void handleMessage(Message msg) {
+            this.msg = msg;
+            super.handleMessage(msg);
+        }
+
+        public Message getMessage() {
+            return this.msg;
+        }
+    };*/
 
     @Override
     public void onBackPressed() {
         //check get back action from LoginFragment
-        final LoginFragment fragment = (LoginFragment) getSupportFragmentManager()
+/*        final LoginFragment fragment = (LoginFragment) getSupportFragmentManager()
                 .findFragmentByTag(Common.NEW_USER_FRAGMENT_TAG);
         if (fragment != null) {
             if (fragment.isVisible()) {
@@ -193,10 +306,10 @@ public class CoffeeMachineActivity extends FragmentActivity {
                     }
                 });
             }
-        }
+        }*/
 
         //check get back action from addReview
-        final AddReviewFragment addReviewfragment = (AddReviewFragment) getSupportFragmentManager()
+/*        final AddReviewFragment addReviewfragment = (AddReviewFragment) getSupportFragmentManager()
                 .findFragmentByTag(Common.ADD_REVIEW_FRAGMENT_TAG);
         if (addReviewfragment != null) {
             if (addReviewfragment.isVisible()) {
@@ -214,7 +327,15 @@ public class CoffeeMachineActivity extends FragmentActivity {
                 }
             }
         }
-
+*/
+/*        if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            List<Fragment> fragm = getSupportFragmentManager().getFragments();
+            for(Fragment f : fragm) {
+                Log.e(TAG, "id fragment" + f.getId());
+            }
+            Fragment lastFragment = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
+            Log.e(TAG, "id fragment" + lastFragment.getId());
+        }*/
         //check get back action from coffeeMachine
 /*
         final CoffeeMachineFragment coffeeMachineFragment = (CoffeeMachineFragment)getSupportFragmentManager().findFragmentByTag(Common.COFFEE_MACHINE_FRAGMENT_TAG);

@@ -11,6 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
+import com.application.models.Review;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
 
 public class Common {
 	public static final String SHAREDPREF_REGISTERED_USERNAME = "SHAREDPREF_REGISTERED_USERNAME";
@@ -36,7 +41,7 @@ public class Common {
     public static String SET_MORE_TEXT_ON_REVIEW = "SET_MORE_TEXT_ON_REVIEW";
     public static final String ARG_PAGE = "page";
     public static final long DATE_NOT_SET = -99;
-
+    public static final String PROFILE_PIC_SIZE = "300";
 
     public static final String NEW_USER_FRAGMENT_TAG = "NEW_USER_FRAGMENT_TAG";
     public static final String ADD_REVIEW_FRAGMENT_TAG = "ADD_REVIEW_FRAGMENT";
@@ -170,4 +175,93 @@ public class Common {
     }
 
 
+    public static String saveImageInStorage(Bitmap profileImage, File customDir) {
+        File profilePicFile = new File(customDir, Common.PROFILE_PIC_FILE_NAME); //Getting a file within the dir.
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(profilePicFile);
+            profileImage.compress(Bitmap.CompressFormat.PNG, 90, out);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try{
+                out.close();
+            } catch(Throwable ignore) {
+                return null;
+            }
+        }
+//        Log.e(TAG, profilePicFile.getAbsolutePath());
+
+        return profilePicFile.getAbsolutePath();
+    }
+    public static Bitmap getRoundedRectBitmap(Bitmap bitmap, int size) {
+        Bitmap result = null;
+        try {
+            result = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(result);
+
+            int color = 0xff424242;
+            Paint paint = new Paint();
+
+            paint.setAntiAlias(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(color);
+            canvas.drawCircle(size / 2, size / 2, size / 2, paint);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(bitmap, 0, 0, paint);
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (OutOfMemoryError o) {
+            o.printStackTrace();
+        }
+        return result;
+    }
+
+
+    public static Bitmap getRoundedBitmap(int size, int color) {
+        Bitmap bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        try {
+            Canvas canvas = new Canvas(bmp);
+
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(color);
+            canvas.drawCircle(size/2, size/2, size/2, paint);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(bmp, 0, 0, paint);
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (OutOfMemoryError o) {
+            o.printStackTrace();
+        }
+        return bmp;
+    }
+
+    public static class ReviewListTimestamp {
+        private final long fromTimestamp;
+        private final long toTimestamp;
+        private final ArrayList<Review> reviewsList;
+
+        public ReviewListTimestamp(long fromTimestamp, long toTimestamp, ArrayList<Review> reviewsList) {
+            this.fromTimestamp = fromTimestamp;
+            this.toTimestamp = toTimestamp;
+            this.reviewsList = reviewsList;
+        }
+
+        public long getFromTimestamp() {
+            return fromTimestamp;
+        }
+
+        public long getToTimestamp() {
+            return toTimestamp;
+        }
+
+        public ArrayList<Review> getReviewsList() {
+            return reviewsList;
+        }
+    }
 }

@@ -52,8 +52,7 @@ public class MapFragment extends Fragment {
         }
     }
     private void setHeader() {
-        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
-        CoffeeMachineActivity.setItemOnHeaderBarById(R.id.headerMapLabelId, null);
+        CoffeeMachineActivity.setHeaderByFragmentId(2, getFragmentManager(), null);
     }
 
     public void onDestroyView() {

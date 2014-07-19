@@ -14,6 +14,7 @@ import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
 import com.application.models.Review;
 import com.application.models.User;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
@@ -33,13 +34,17 @@ public class EditReviewFragment extends Fragment{
 
         String reviewId = getArguments().getString(Common.REVIEW_ID);
         String coffeeMachineId = getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
+//        int pageNumber = getArguments().getInt(Common.ARG_PAGE);
         //get data from application
         coffeeMachineApplication = (CoffeeMachineDataStorageApplication) this.getActivity().getApplication();
         reviewsList = coffeeMachineApplication.coffeeMachineData.getReviewListByCoffeMachineId(coffeeMachineId);
 
+        setHeader();
+        Common.ReviewStatusEnum reviewStatus = Common.ReviewStatusEnum.valueOf(
+                (String) this.getArguments().get(Common.REVIEW_STATUS_KEY));
+        initView(reviewId, reviewStatus, editReviewView); //test
 
         Common.setCustomFont(editReviewView, getActivity().getAssets());
-        initView(reviewId, editReviewView); //test
         return editReviewView;
     }
 
@@ -52,19 +57,47 @@ public class EditReviewFragment extends Fragment{
         return null;
     }
 
-    private void initView(String reviewId, final View editReviewView) {
-        User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+    public void setHeader() {
+        CoffeeMachineActivity.setHeaderByFragmentId(3, getFragmentManager(), null);
+    }
+
+    private void initView(String reviewId, Common.ReviewStatusEnum reviewStatus, final View editReviewView) {
+        //User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
 
         final Review review = getReviewById(reviewsList, reviewId);
         if(review != null) {
 
             //set review data
-            if(user != null) {
+/*            if(user != null) {
                 ((TextView) editReviewView.findViewById(R.id.reviewEditUsernameTextId)).setText(user.getUsername());
                 Common.drawProfilePictureByPath((ImageView) editReviewView
                         .findViewById(R.id.profilePicReviewEditTemplateId), user.getProfilePicturePath(),
                         getResources().getDrawable(R.drawable.user_icon));
+            }*/
+            switch (reviewStatus) {
+                case GOOD:
+                    editReviewView.findViewById(R.id.editReviewTextLayoutId)
+                            .setBackgroundColor(getResources().getColor(R.color.light_green_soft));
+                    break;
+                case NOTSOBAD:
+                    editReviewView.findViewById(R.id.editReviewTextLayoutId)
+                            .setBackgroundColor(getResources().getColor(R.color.light_yellow_lemon_soft));
+                    break;
+                case WORST:
+                    editReviewView.findViewById(R.id.editReviewTextLayoutId)
+                            .setBackgroundColor(getResources().getColor(R.color.light_violet_soft));
+                    break;
             }
+
+            (editReviewView.findViewById(R.id.editReviewUndoImageId)).setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Common.hideKeyboard(mainActivityRef, ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)));
+                            mainActivityRef.onBackPressed();
+                        }
+                    }
+            );
             ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)).setText(review.getComment());
 
             editReviewView.findViewById(R.id.saveReviewButtonId).setOnClickListener(new View.OnClickListener() {

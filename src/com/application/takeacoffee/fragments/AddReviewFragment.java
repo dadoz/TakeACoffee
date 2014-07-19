@@ -3,17 +3,22 @@ package com.application.takeacoffee.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeMachineDataStorageApplication;
+import com.application.listener.SwipePageAction;
 import com.application.models.User;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
+import static com.application.takeacoffee.fragments.ChoiceReviewFragment.*;
 import static com.application.takeacoffee.fragments.ChoiceReviewFragment.createReviewsListView;
 
 
@@ -26,9 +31,10 @@ public class AddReviewFragment extends Fragment {
 
     private static FragmentActivity mainActivityRef;
 
-    private View addReviewView, addReviewButton;
+    private View addReviewView, addReviewButton, addReviewCustomTextButton;
     private boolean addReviewFromListView;
     private Bundle args;
+    private int pagePosition;
 
     private static String reviewText = "Review for this machine - auto generated";
 
@@ -48,6 +54,8 @@ public class AddReviewFragment extends Fragment {
         mainActivityRef = getActivity();
         addReviewView = inflater.inflate(R.layout.add_review_fragment_alternative, container, false);
         addReviewButton = addReviewView.findViewById(R.id.addReviewButtonId);
+        addReviewCustomTextButton = addReviewView.findViewById(R.id.addReviewCustomTextButtonId);
+
 
         //get data from application
         coffeeMachineApplication = ((CoffeeMachineDataStorageApplication) this.getActivity()
@@ -61,8 +69,9 @@ public class AddReviewFragment extends Fragment {
         if(obj == null) {
             obj = new Boolean(false);
         }
-        int pageNumber = this.getArguments().getInt(Common.ARG_PAGE);
+        pagePosition = this.getArguments().getInt(Common.ARG_PAGE);
 
+        setHeader(coffeeMachineId);
 
         addReviewFromListView = obj.booleanValue();
         boolean isPostAction = false;
@@ -70,41 +79,81 @@ public class AddReviewFragment extends Fragment {
         isPostAction = true;
         (addReviewView.findViewById(R.id.addMoreTextOnReviewButtonId)).setOnClickListener(new AddMoreTextAction(isPostAction));
 
-        Common.ReviewStatusEnum reviewStatus = Common.parseStatusFromPageNumber(pageNumber);
+        Common.ReviewStatusEnum reviewStatus = Common.parseStatusFromPageNumber(pagePosition);
+
         initView(coffeeMachineId, reviewStatus);
         Common.setCustomFont(addReviewView, getActivity().getAssets());
         return addReviewView;
     }
 
+    public void setHeader(String coffeeMachineId) {
+//        CoffeeMachineActivity.setHeaderBarVisibile(false);
+/*        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+        mainActivityRef.findViewById(R.id.headerBarLayoutId).setVisibility(View.GONE);
+
+        String coffeeMachineName = coffeeMachineApplication.coffeeMachineData
+                .getCoffeMachineById(coffeeMachineId).getName();
+        CoffeeMachineActivity.addItemOnHeaderBarById(R.layout.review_header_template,
+                null, coffeeMachineName,
+                false, getFragmentManager());*/
+
+    }
+
     private void initView(final String coffeeMachineId, final Common.ReviewStatusEnum reviewStatus) {
+//        View pageSwipeButton = mainActivityRef.findViewById(R.id.addReviewSwipeButtonId); //to be shown
+        Log.d(TAG, "page" + pagePosition);
+//        pageSwipeButton.setOnClickListener(new SwipePageAction(pagePosition, mainActivityRef));
+
         //replace view
         switch (reviewStatus) {
             case GOOD:
                 hideMoreTextHeader();
-                addReviewView.findViewById(R.id.headerAddReviewLayoutId).setBackgroundColor(
-                        mainActivityRef.getResources().getColor(R.color.light_green_soft));
+
+                addReviewView.findViewById(R.id.headerAddMoreTextLayoutId).setBackgroundColor(mainActivityRef
+                        .getResources().getColor(R.color.light_green_soft));
+                addReviewView.findViewById(R.id.headerAddReviewLayoutId).setBackgroundColor(mainActivityRef
+                        .getResources().getColor(R.color.light_green_soft));
                 ((TextView)((ViewGroup)addReviewView.findViewById(R.id.headerAddReviewLayoutId)).getChildAt(0))
                         .setText(Common.GOOD_STATUS_STRING);
 
-                addReviewView.setBackgroundColor(mainActivityRef.getResources().getColor(R.color.light_green));
+//                addReviewView.setBackgroundColor(mainActivityRef.getResources().getColor(R.color.light_green));
+                addReviewView.findViewById(R.id.mainAddReviewLayoutId).setBackgroundColor(mainActivityRef
+                        .getResources().getColor(R.color.light_green));
+                ((TextView) addReviewView.findViewById(R.id.reviewDescriptionTextId)).setText(
+                        "It seems that this coffee's really good!\nI'd suggest you to take here some drink as well.");
                 break;
             case NOTSOBAD:
                 hideMoreTextHeader();
-                addReviewView.findViewById(R.id.headerAddReviewLayoutId).setBackgroundColor(
-                        mainActivityRef.getResources().getColor(R.color.light_yellow_lemon_soft));
+                addReviewView.findViewById(R.id.headerAddMoreTextLayoutId).setBackgroundColor(mainActivityRef
+                        .getResources().getColor(R.color.light_yellow_lemon_soft));
+                addReviewView.findViewById(R.id.headerAddReviewLayoutId).setBackgroundColor(mainActivityRef
+                        .getResources().getColor(R.color.light_yellow_lemon_soft));
                 ((TextView)((ViewGroup)addReviewView.findViewById(R.id.headerAddReviewLayoutId)).getChildAt(0))
                         .setText(Common.NOTSOBAD_STATUS_STRING);
-                addReviewView.setBackgroundColor(mainActivityRef.getResources().getColor(R.color.light_yellow_lemon));
-                ((TextView) addReviewView.findViewById(R.id.reviewTextIconTextViewId)).setTextColor(
-                        mainActivityRef.getResources().getColor(R.color.dark_black));
+//                addReviewView.setBackgroundColor(mainActivityRef.getResources().getColor(R.color.light_yellow_lemon));
+                addReviewView.findViewById(R.id.mainAddReviewLayoutId).setBackgroundColor(mainActivityRef
+                        .getResources().getColor(R.color.light_yellow_lemon));
+
+                ((TextView) addReviewView.findViewById(R.id.reviewDescriptionTextId)).setText(
+                        "It's not so good as I was imaging to be.\nI guess you should try to change machine to take some good drink.");
+
+                //((TextView) addReviewView.findViewById(R.id.reviewTextIconTextViewId)).setTextColor(
+                  //      mainActivityRef.getResources().getColor(R.color.dark_black));
                 break;
             case WORST:
                 hideMoreTextHeader();
-                addReviewView.findViewById(R.id.headerAddReviewLayoutId).setBackgroundColor(
-                        mainActivityRef.getResources().getColor(R.color.light_violet_soft));
+                addReviewView.findViewById(R.id.headerAddMoreTextLayoutId).setBackgroundColor(mainActivityRef
+                        .getResources().getColor(R.color.light_violet_soft));
+                addReviewView.findViewById(R.id.headerAddReviewLayoutId).setBackgroundColor(mainActivityRef
+                        .getResources().getColor(R.color.light_violet_soft));
                 ((TextView)((ViewGroup)addReviewView.findViewById(R.id.headerAddReviewLayoutId)).getChildAt(0))
                         .setText(Common.TERRIBLE_STATUS_STRING);
-                addReviewView.setBackgroundColor(mainActivityRef.getResources().getColor(R.color.light_violet));
+//                addReviewView.setBackgroundColor(mainActivityRef.getResources().getColor(R.color.light_violet));
+                addReviewView.findViewById(R.id.mainAddReviewLayoutId).setBackgroundColor(mainActivityRef
+                        .getResources().getColor(R.color.light_violet));
+                ((TextView) addReviewView.findViewById(R.id.reviewDescriptionTextId)).setText(
+                        "Ouch terrible drinks!\nYou must change machine 'cos drinks here are so awful!");
+
                 break;
         }
 
@@ -113,7 +162,16 @@ public class AddReviewFragment extends Fragment {
             public void onClick(View view) {
                 //set MORE text
                 addReview(coffeeMachineId, reviewStatus,
-                        (addReviewView.findViewById(R.id.reviewTextIconTextViewId)).getTag() != null);
+                        (addReviewView.findViewById(R.id.reviewViewContainerLayoutId)).getTag() != null);
+            }
+        });
+
+        addReviewCustomTextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //set MORE text
+                addReview(coffeeMachineId, reviewStatus,
+                        (addReviewView.findViewById(R.id.reviewViewContainerLayoutId)).getTag() != null);
             }
         });
 
@@ -141,11 +199,13 @@ public class AddReviewFragment extends Fragment {
         }
 
         if(reviewWithText) {
-            reviewText = ((TextView)addReviewView.findViewById(R.id.reviewTextIconTextViewId)).getText().toString();
+            reviewText = ((TextView)addReviewView.findViewById(R.id.reviewEditTextId)).getText().toString();
             if(reviewText.equals(new String("")))  {
                 Common.displayError("you must insert your text review!", mainActivityRef);
                 return;
             }
+            Common.hideKeyboard(mainActivityRef, ((EditText) addReviewView.findViewById(R.id.reviewEditTextId)
+                    .findViewById(R.id.reviewEditTextId)));
         }
 
         coffeeMachineApplication.coffeeMachineData.addReviewByCoffeeMachineId(coffeeMachineId,
@@ -155,7 +215,8 @@ public class AddReviewFragment extends Fragment {
 
         if(!addReviewFromListView) {
             mainActivityRef.getSupportFragmentManager().popBackStack();
-            createReviewsListView(mainActivityRef.getSupportFragmentManager(), reviewStatus, args);
+            boolean isTodayReview = true;
+            createReviewsListView(mainActivityRef.getSupportFragmentManager(), reviewStatus, args, isTodayReview);
         }
     }
 
@@ -168,57 +229,53 @@ public class AddReviewFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-//            final ViewGroup parent = (ViewGroup)view.getParent().getParent();
+//            final LinearLayout addReviewIconView = (LinearLayout)(parent).getChildAt(0);
+//            final View addTextOnReviewView1 = (parent).getChildAt(1);
+//            final View addTextOnReviewHeaderView = parentHeader.getChildAt(1);
+
             final ViewGroup parent = (ViewGroup)addReviewView.findViewById(R.id.reviewViewContainerLayoutId);
-            final ViewGroup parentHeader = (ViewGroup)addReviewView.findViewById(R.id.headerAddReviewLayoutId).getParent();
-            final LinearLayout addReviewIconView = (LinearLayout)(parent).getChildAt(0);
-            final LinearLayout addTextOnReviewView = (LinearLayout)(parentHeader).getChildAt(1);
+            final View addReviewDescriptionLayout = addReviewView.findViewById(R.id.addReviewDescriptionLayoutId);
+            final View addReviewCustomTextLayout = addReviewView.findViewById(R.id.addReviewCustomTextLayoutId);
+            final ViewGroup headerAddReviewLayout = (ViewGroup)addReviewView.findViewById(R.id.headerAddReviewLayoutId);
+            final ViewGroup headerAddMoreTextLayout = (ViewGroup)addReviewView.findViewById(R.id.headerAddMoreTextLayoutId);
 
-            if(addTextOnReviewView.getVisibility() == View.GONE) {
-//                addReviewIconView.setVisibility(View.GONE);
-                addTextOnReviewView.setVisibility(View.VISIBLE);
-                addReviewView.findViewById(R.id.addReviewButtonId).setVisibility(View.GONE);
-/*
-                (addTextOnReviewView.findViewById(R.id.addMoreTextOnReviewButtonId))
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                String reviewText = ((EditText) addTextOnReviewView.findViewById(R.id.reviewEditTextId)).getText().toString();
+            //final View addTextOnReviewHeaderView = parentHeader.getChildAt(1);
 
-                                addReviewIconView.setVisibility(View.VISIBLE);
-                                ((TextView)addReviewIconView.findViewById(R.id.reviewTextIconTextViewId)).setText(reviewText);
-                                (addReviewIconView.findViewById(R.id.reviewTextIconTextViewId)).setTag(Common.SET_MORE_TEXT_ON_REVIEW);
-                                addTextOnReviewView.setVisibility(View.GONE);
-                                addReviewView.findViewById(R.id.addReviewButtonId).setVisibility(View.VISIBLE);
-                                Common.hideKeyboard(mainActivityRef, ((EditText) addTextOnReviewView.findViewById(R.id.reviewEditTextId)));
-                            }
-                        });*/
+            final View addReviewButton = addReviewView.findViewById(R.id.addReviewButtonId);
+            final View addReviewCustomTextButton = addReviewView.findViewById(R.id.addReviewCustomTextButtonId);
 
-            } else if(addTextOnReviewView.getVisibility() == View.VISIBLE) {
-                if(isPostAction) {
-                    if(((EditText) addTextOnReviewView.findViewById(R.id.reviewEditTextId))
-                            .getText().toString().trim().equals("")) {
-                        Common.displayError("you must type some review at least", mainActivityRef);
-                        return;
-                    }
-                    ((TextView) addReviewIconView.findViewById(R.id.reviewTextIconTextViewId))
-                            .setText(((EditText) addTextOnReviewView.findViewById(R.id.reviewEditTextId))
-                                    .getText().toString());
-                    (addReviewIconView.findViewById(R.id.reviewTextIconTextViewId)).setTag(Common.SET_MORE_TEXT_ON_REVIEW);
-                }
+            if(headerAddReviewLayout.getVisibility() == View.VISIBLE) {
 
-                ((EditText) addTextOnReviewView.findViewById(R.id.reviewEditTextId)).setText("");
-                Common.hideKeyboard(mainActivityRef, ((EditText) addTextOnReviewView.findViewById(R.id.reviewEditTextId)));
-                addReviewView.findViewById(R.id.addReviewButtonId).setVisibility(View.VISIBLE);
-                addTextOnReviewView.setVisibility(View.GONE);
-                addReviewView.findViewById(R.id.addReviewButtonId).setVisibility(View.VISIBLE);
+                headerAddReviewLayout.setVisibility(View.GONE);
+                headerAddMoreTextLayout.setVisibility(View.VISIBLE);
+                addReviewCustomTextLayout.setVisibility(View.VISIBLE);
+
+                addReviewDescriptionLayout.setVisibility(View.GONE);
+                addReviewView.setBackgroundColor(getResources().getColor(R.color.light_grey));
+                (parent).setTag(Common.SET_MORE_TEXT_ON_REVIEW);
+
+                addReviewButton.setVisibility(View.GONE);
+                addReviewCustomTextButton.setVisibility(View.VISIBLE);
+
+            } else {
+
+                headerAddReviewLayout.setVisibility(View.VISIBLE);
+                headerAddMoreTextLayout.setVisibility(View.GONE);
+                addReviewButton.setVisibility(View.VISIBLE);
+                addReviewCustomTextButton.setVisibility(View.GONE);
+
+                parent.setTag(null);
+                ((EditText) addReviewCustomTextLayout.findViewById(R.id.reviewEditTextId)).setText("");
+                Common.hideKeyboard(mainActivityRef, ((EditText) addReviewCustomTextLayout.findViewById(R.id.reviewEditTextId)));
+                addReviewCustomTextLayout.setVisibility(View.GONE);
+                addReviewDescriptionLayout.setVisibility(View.VISIBLE);
 
             }
         }
     }
 
     public void hideMoreTextHeader() {
-        View addMoreTextView = addReviewView.findViewById(R.id.addMoreTextLayoutId);
+        View addMoreTextView = addReviewView.findViewById(R.id.headerAddMoreTextLayoutId);
         View headerAddReviewView = addReviewView.findViewById(R.id.headerAddReviewLayoutId);
         if(addMoreTextView.getVisibility() == View.VISIBLE) {
             addMoreTextView.setVisibility(View.GONE);

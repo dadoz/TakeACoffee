@@ -8,8 +8,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.graphics.*;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
+import android.os.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -26,23 +25,24 @@ import com.application.takeacoffee.R;
 import com.facebook.SessionState;
 import com.facebook.*;
 import com.facebook.model.GraphUser;
-import com.facebook.widget.LoginButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
 
 /**
  * Created by davide on 01/04/14.
  */
-public class LoginFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LoginFragment extends Fragment implements View.OnClickListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
     private static final int PHOTO_CODE = 100;
     private static final String TAG = "LoginFragment";
 
@@ -58,20 +58,18 @@ public class LoginFragment extends Fragment implements GoogleApiClient.Connectio
     //FACEBOOK uiLifecycle
     private UiLifecycleHelper uiHelper;
 
-    /* Request code used to invoke sign in user interactions. */
-    private static final int RC_SIGN_IN = 0;
-
-    /* Client used to interact with Google APIs. */
+    //GOOGLE PLUS
+    private static final int REQUEST_CODE_RESOLVE_ERR = 1;
+    // ...
     private GoogleApiClient mGoogleApiClient;
+    private ConnectionResult mConnectionResult;
+    private ProgressDialog mConnectionProgressDialog;
 
-    /* A flag indicating that a PendingIntent is in progress and prevents
-     * us from starting further intents.
-     */
-    private boolean mIntentInProgress;
-
+    private Bundle savedInstance;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstance){
         mainActivityRef = this.getActivity();
+        this.savedInstance = savedInstance;
 
         coffeeMachineApplication = (CoffeeMachineDataStorageApplication)this.getActivity().getApplication();
 
@@ -107,90 +105,21 @@ public class LoginFragment extends Fragment implements GoogleApiClient.Connectio
 
         //unbind loggedUserButtonId action
         mainActivityRef.findViewById(R.id.loggedUserButtonId).setOnClickListener(null);
-        loginView.findViewById(R.id.saveUserButtonId).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //check and save
-                String username = usernameEditText.getText().toString();
-                Log.e(TAG, "u clicked save - " + username + " -");
-                if (username == null || username.matches("")) {
-                    Common.displayError("no username set - please insert your one", view.getContext());
-                    return;
-                }
-                //rebind loggedButtonId
-                mainActivityRef.findViewById(R.id.loggedUserButtonId).setOnClickListener(
-                        new LoggedUserButtonAction(mainActivityRef.getSupportFragmentManager()));
-
-                //hide keyboard
-                InputMethodManager imm = (InputMethodManager) mainActivityRef.getSystemService(
-                        Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
-
-                updateUserBox(username);
-                sharedPref.edit().putString(Common.SHAREDPREF_REGISTERED_USERNAME, username).commit();
-                User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
-                if (user == null) {
-                    coffeeMachineApplication.coffeeMachineData.initRegisteredUserByUsername(username);
-                } else {
-                    user.setUsername(username);
-                }
-
-//                Log.e(TAG, getFragmentManager().getBackStackEntryCount() + " frag size");
-                if(getFragmentManager().getBackStackEntryCount() > 0) {
-                    getFragmentManager().popBackStack();
-                } else {
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.coffeeMachineContainerLayoutId, new CoffeeMachineFragment())
-                            .commit();
-                }
-            }
-        });
-
-
-        initView();
-        Common.setCustomFont(loginView , getActivity().getAssets());
+        loginView.findViewById(R.id.saveUserButtonId).setOnClickListener(this);
 
 
         /**FB INTEGRATION**/
-        View fbLoginButton = loginView.findViewById(R.id.facebookLoginButtonId);
-        fbLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment currentFragment = getFragmentManager().getFragments().get(
-                                getFragmentManager().getFragments().size() - 1);
-                uiHelper.onCreate(savedInstance);
-                Session session = Session.getActiveSession();
-                if (session!= null && !session.isOpened() && !session.isClosed()) {
-                    session.openForRead(new Session.OpenRequest(currentFragment)
-                            .setCallback(callback));
-                } else {
-                    Session.openActiveSession(getActivity(), currentFragment, true, callback);
-                }
-            }
-        });
-
-        View googlePlusLoginButton = loginView.findViewById(R.id.googlePlusLoginButtonId);
-        googlePlusLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mGoogleApiClient.connect();
-            }
-        });
+        loginView.findViewById(R.id.facebookLoginButtonId).setOnClickListener(this);
+        /**GOOGLEPLUS INTEGRATION**/
+        loginView.findViewById(R.id.googlePlusLoginButtonId).setOnClickListener(this);
 
         setHeader();
+        Common.setCustomFont(loginView, getActivity().getAssets());
         return loginView ;
     }
 
     public void setHeader() {
         CoffeeMachineActivity.hideAllItemsOnHeaderBar();
-    }
-
-    private void initView() {
-        loginView.findViewById(R.id.facebookLoginButtonId).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-           }
-        });
     }
 
     public void updateUserBox(String username) {
@@ -218,35 +147,11 @@ public class LoginFragment extends Fragment implements GoogleApiClient.Connectio
         startActivityForResult(photoPickerIntent, PHOTO_CODE);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        uiHelper.onActivityResult(requestCode, resultCode, data);
-
-        switch(requestCode) {
-            case PHOTO_CODE:
-                if(resultCode == Activity.RESULT_OK) {
-                    try {
-                        Uri selectedImage = data.getData();
-                        InputStream imageStream = null;
-                        imageStream = getActivity().getContentResolver().openInputStream(selectedImage);
-                        Bitmap pickedImage = BitmapFactory.decodeStream(imageStream);
-                        Log.d(TAG, "I got image as profilePic");
-                        ImageView profilePic = (ImageView)this.getActivity().findViewById(R.id.profilePicImageViewId);
-                        setAndsaveProfilePictureByPicture(pickedImage, profilePic);
-                    } catch (FileNotFoundException e) {
-                        Toast.makeText(this.getActivity().getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
-                    }
-                }
-        }
-    }
-
     public void setAndsaveProfilePictureByPicture(Bitmap pickedImage, ImageView profilePicView) {
-        Bitmap profileImage = getRoundedRectBitmap(pickedImage, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
+        Bitmap profileImage = Common.getRoundedRectBitmap(pickedImage, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
 
         //store image in storage and get back URL
-        String profileImagePath = saveImageInStorage(profileImage);
+        String profileImagePath = Common.saveImageInStorage(profileImage, customDir);
         if(profileImagePath == null) {
             Log.e(TAG, "image not stored in storage");
         } else {
@@ -265,72 +170,12 @@ public class LoginFragment extends Fragment implements GoogleApiClient.Connectio
 
         profilePicView.setImageBitmap(profileImage);
 
-    }
-    public static String saveImageInStorage(Bitmap profileImage) {
-        File profilePicFile = new File(customDir, Common.PROFILE_PIC_FILE_NAME); //Getting a file within the dir.
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(profilePicFile);
-            profileImage.compress(Bitmap.CompressFormat.PNG, 90, out);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            try{
-                out.close();
-            } catch(Throwable ignore) {
-                return null;
-            }
+        if(mConnectionProgressDialog != null) {
+            mConnectionProgressDialog.dismiss();
         }
-//        Log.e(TAG, profilePicFile.getAbsolutePath());
-
-        return profilePicFile.getAbsolutePath();
-    }
-    public static Bitmap getRoundedRectBitmap(Bitmap bitmap, int size) {
-        Bitmap result = null;
-        try {
-            result = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(result);
-
-            int color = 0xff424242;
-            Paint paint = new Paint();
-
-            paint.setAntiAlias(true);
-            canvas.drawARGB(0, 0, 0, 0);
-            paint.setColor(color);
-            canvas.drawCircle(size / 2, size / 2, size / 2, paint);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            canvas.drawBitmap(bitmap, 0, 0, paint);
-
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        } catch (OutOfMemoryError o) {
-            o.printStackTrace();
-        }
-        return result;
     }
 
-
-    public static Bitmap getRoundedBitmap(int size, int color) {
-        Bitmap bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-        try {
-            Canvas canvas = new Canvas(bmp);
-
-            Paint paint = new Paint();
-            paint.setAntiAlias(true);
-            canvas.drawARGB(0, 0, 0, 0);
-            paint.setColor(color);
-            canvas.drawCircle(size/2, size/2, size/2, paint);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            canvas.drawBitmap(bmp, 0, 0, paint);
-
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        } catch (OutOfMemoryError o) {
-            o.printStackTrace();
-        }
-        return bmp;
-    }
+    /*
     public static Bitmap getPieChartBitmap(int size, ArrayList<PieChart> pieChartList) {
         Bitmap bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         try {
@@ -362,36 +207,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.Connectio
         }
         return bmp;
     }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.e(TAG, "connection succeded");
-        Common.displayError("connection succeded", getActivity());
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e(TAG, "connection failed");
-        Common.displayError("connection failed", getActivity());
-/*
-        if (!mIntentInProgress && connectionResult.hasResolution()) {
-            try {
-                mIntentInProgress = true;
-                getActivity().startIntentSenderForResult(connectionResult.getIntentSender(),
-                        RC_SIGN_IN, null, 0, 0, 0);
-            } catch (IntentSender.SendIntentException e) {
-                // The intent was canceled before it was sent.  Return to the default
-                // state and attempt to connect to get an updated ConnectionResult.
-                mIntentInProgress = false;
-                mGoogleApiClient.connect();
-            }
-        }*/
-    }
+*/
 
     public class LoggedUserButtonAction implements View.OnClickListener {
         android.support.v4.app.FragmentManager fragmentManager;
@@ -414,11 +230,11 @@ public class LoginFragment extends Fragment implements GoogleApiClient.Connectio
 
     private void onSessionStateChange(final Session session, SessionState state, Exception exception) {
         final ProgressDialog pd = new ProgressDialog(getActivity());
-        pd.setMessage("loading");
+        pd.setMessage("Signing in...");
 
         Log.e(TAG, "status fb closed: " + state.isClosed() + " - open: " + state.isOpened());
             if (state.isOpened()) {
-                Log.i(TAG, "Logged in...");
+                Log.i(TAG, "Logged in... Facebook");
                 pd.show();
 
                 //get fb userId
@@ -513,8 +329,6 @@ public class LoginFragment extends Fragment implements GoogleApiClient.Connectio
 
             return profilePicture;
         }
-
-
     }
 
     private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -524,21 +338,133 @@ public class LoginFragment extends Fragment implements GoogleApiClient.Connectio
         }
     };
 
+    /***** GOOGLE PLUS *****/
+
+    private void googlePlusOnCreate() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(Plus.API, Plus.PlusOptions.builder().build())
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        // Progress bar to be displayed if the connection failure is not resolved.
+        mConnectionProgressDialog = new ProgressDialog(getActivity());
+        mConnectionProgressDialog.setMessage("Signing in...");
+
+    }
+
+
+    /**
+     * Fetching user's information name, email, profile pic
+     * */
+    private void getProfileInformation() {
+        try {
+            if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+                Person currentPerson = Plus.PeopleApi
+                        .getCurrentPerson(mGoogleApiClient);
+                String personName = currentPerson.getName().getGivenName();
+                String personPhotoUrl = currentPerson.getImage().getUrl();
+                String personGooglePlusProfile = currentPerson.getUrl();
+                String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+
+                Log.e(TAG, "Name: " + personName + ", plusProfile: "
+                        + personGooglePlusProfile + ", email: " + email
+                        + ", Image: " + personPhotoUrl);
+
+//                txtName.setText(personName);
+//                txtEmail.setText(email);
+
+                ((EditText) loginView.findViewById(R.id.usernameNewUserEditTextId)).setText(personName);
+
+
+                // by default the profile url gives 50x50 px image only
+                // we can replace the value with whatever dimension we want by
+                // replacing sz=X
+                personPhotoUrl = personPhotoUrl.substring(0,
+                        personPhotoUrl.length() - 2)
+                        + Common.PROFILE_PIC_SIZE;
+
+                ImageView imgProfilePic = (ImageView) loginView.findViewById(R.id.profilePicImageViewId);
+                new LoadProfileImage(imgProfilePic).execute(personPhotoUrl);
+
+            } else {
+                Toast.makeText(getActivity(),
+                        "Person information is null", Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            mConnectionProgressDialog.dismiss();
+        }
+    }
+
+    /**
+     * Background Async task to load user profile picture from url
+     * */
+    private class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public LoadProfileImage(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            setAndsaveProfilePictureByPicture(result, bmImage);
+            if(mGoogleApiClient != null) {
+                if (mGoogleApiClient.isConnected()) {
+                    mGoogleApiClient.disconnect();
+                }
+            }
+//            bmImage.setImageBitmap(result);
+        }
+    }
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.i(TAG, "Login successful - google plus");
+//        mConnectionProgressDialog.dismiss();
+        getProfileInformation();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        if (mConnectionProgressDialog.isShowing()) {
+            if (connectionResult.hasResolution()) {
+                try {
+                    connectionResult.startResolutionForResult(getActivity(), REQUEST_CODE_RESOLVE_ERR);
+                } catch (IntentSender.SendIntentException e) {
+                    mGoogleApiClient.connect();
+                }
+            }
+        }
+        mConnectionResult = connectionResult;
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         uiHelper = new UiLifecycleHelper(getActivity(), callback);
-
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Plus.API)
-                .addScope(Plus.SCOPE_PLUS_LOGIN)
-                .build();
-
-
+        googlePlusOnCreate();
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -555,16 +481,123 @@ public class LoginFragment extends Fragment implements GoogleApiClient.Connectio
     public void onDestroy() {
         super.onDestroy();
         uiHelper.onDestroy();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
+        if(mGoogleApiClient != null) {
+            if (mGoogleApiClient.isConnected()) {
+                mGoogleApiClient.disconnect();
+                //mGoogleApiClient.connect();
+            }
         }
-
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         uiHelper.onSaveInstanceState(outState);
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.googlePlusLoginButtonId) {
+            if(mGoogleApiClient != null) {
+                mGoogleApiClient.connect();
+                if(!mGoogleApiClient.isConnected()) {
+                    if (mConnectionResult == null) {
+                        mConnectionProgressDialog.show();
+                    } else {
+                        try {
+                            mConnectionResult.startResolutionForResult(getActivity(), REQUEST_CODE_RESOLVE_ERR);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Try connecting again.
+                            mConnectionResult = null;
+                            mGoogleApiClient.connect();
+                        }
+                    }
+                }
+            }
+        } else if (view.getId() == R.id.facebookLoginButtonId) {
+            Fragment currentFragment = getFragmentManager().getFragments().get(
+                    getFragmentManager().getFragments().size() - 1);
+            uiHelper.onCreate(savedInstance);
+            Session session = Session.getActiveSession();
+            if (session!= null && !session.isOpened() && !session.isClosed()) {
+                session.openForRead(new Session.OpenRequest(currentFragment)
+                        .setCallback(callback));
+            } else {
+                Session.openActiveSession(getActivity(), currentFragment, true, callback);
+            }
+
+        } else if (view.getId() == R.id.saveUserButtonId) {
+            //check and save
+            final EditText usernameEditText = (EditText) loginView.findViewById(R.id.usernameNewUserEditTextId);
+            String username = usernameEditText.getText().toString();
+            Log.e(TAG, "u clicked save - " + username + " -");
+            if (username == null || username.matches("")) {
+                Common.displayError("no username set - please insert your one", view.getContext());
+                return;
+            }
+            //rebind loggedButtonId
+            mainActivityRef.findViewById(R.id.loggedUserButtonId).setOnClickListener(
+                    new LoggedUserButtonAction(mainActivityRef.getSupportFragmentManager()));
+
+            //hide keyboard
+            InputMethodManager imm = (InputMethodManager) mainActivityRef.getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
+
+            updateUserBox(username);
+            sharedPref.edit().putString(Common.SHAREDPREF_REGISTERED_USERNAME, username).commit();
+            User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+            if (user == null) {
+                coffeeMachineApplication.coffeeMachineData.initRegisteredUserByUsername(username);
+            } else {
+                user.setUsername(username);
+            }
+
+//                Log.e(TAG, getFragmentManager().getBackStackEntryCount() + " frag size");
+            if(getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack();
+            } else {
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.coffeeMachineContainerLayoutId, new CoffeeMachineFragment())
+                        .commit();
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        uiHelper.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode) {
+            case PHOTO_CODE:
+                if(resultCode == Activity.RESULT_OK) {
+                    try {
+                        Uri selectedImage = data.getData();
+                        InputStream imageStream = null;
+                        imageStream = getActivity().getContentResolver().openInputStream(selectedImage);
+                        Bitmap pickedImage = BitmapFactory.decodeStream(imageStream);
+                        Log.d(TAG, "I got image as profilePic");
+                        ImageView profilePic = (ImageView)this.getActivity().findViewById(R.id.profilePicImageViewId);
+                        setAndsaveProfilePictureByPicture(pickedImage, profilePic);
+                    } catch (FileNotFoundException e) {
+                        Toast.makeText(this.getActivity().getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            case REQUEST_CODE_RESOLVE_ERR:
+                Log.i(TAG, "requestCode == REQUEST_CODE_RESOLVE_ERR. responseCode = " + resultCode);
+                if(resultCode == Activity.RESULT_OK) {
+                    if(mGoogleApiClient != null) {
+                        if (!mGoogleApiClient.isConnecting()) {
+                            mGoogleApiClient.connect();
+                        }
+                    }
+                }
+                break;
+        }
     }
 
 }

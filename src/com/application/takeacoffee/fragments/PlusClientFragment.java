@@ -19,6 +19,7 @@ import java.util.Arrays;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
@@ -195,34 +196,40 @@ public final class PlusClientFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Retain instance to avoid reconnecting on rotate.  This means that onDestroy and onCreate
-        // will not be called on configuration changes.
-        setRetainInstance(true);
-        mHandler = new PlusClientFragmentHandler();
+        try {
 
-        // Create the PlusClient.
-        PlusClient.Builder plusClientBuilder =
-                new PlusClient.Builder(getActivity().getApplicationContext(), this, this);
-        String[] visibleActivities = getArguments().getStringArray(ARG_VISIBLE_ACTIVITIES);
-        String[] scopes = getArguments().getStringArray(ARG_SCOPES);
+            // Retain instance to avoid reconnecting on rotate.  This means that onDestroy and onCreate
+            // will not be called on configuration changes.
+            setRetainInstance(true);
+            mHandler = new PlusClientFragmentHandler();
 
-        plusClientBuilder.setScopes(scopes);
+            Context context = getActivity().getApplicationContext();
+            // Create the PlusClient.
+            PlusClient.Builder plusClientBuilder =
+                    new PlusClient.Builder(context, this, this);
+            String[] visibleActivities = getArguments().getStringArray(ARG_VISIBLE_ACTIVITIES);
+            String[] scopes = getArguments().getStringArray(ARG_SCOPES);
 
-        if (visibleActivities != null && visibleActivities.length > 0) {
-            plusClientBuilder.setActions(visibleActivities);
+            plusClientBuilder.setScopes(scopes);
+
+            if (visibleActivities != null && visibleActivities.length > 0) {
+                plusClientBuilder.setActions(visibleActivities);
+            }
+            mPlusClient = plusClientBuilder.build();
+
+
+            if (savedInstanceState == null) {
+                mRequestCode = INVALID_REQUEST_CODE;
+            } else {
+                mRequestCode = savedInstanceState.getInt(STATE_REQUEST_CODE, INVALID_REQUEST_CODE);
+            }
+
+            // Attempt to connect.
+            mPlusClient.connect();
+            mIsConnecting = true;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        mPlusClient = plusClientBuilder.build();
-
-
-        if (savedInstanceState == null) {
-            mRequestCode = INVALID_REQUEST_CODE;
-        } else {
-            mRequestCode = savedInstanceState.getInt(STATE_REQUEST_CODE, INVALID_REQUEST_CODE);
-        }
-
-        // Attempt to connect.
-        mPlusClient.connect();
-        mIsConnecting = true;
     }
 
     /**

@@ -29,28 +29,33 @@
                 android:layout_marginRight="@dimen/small_padding"
                 android:src="@drawable/add_icon"/>-->
     </RelativeLayout>
-    <LinearLayout
+    <RelativeLayout
             android:id="@+id/prevReviewsButtonId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/small_padding"
-            android:gravity="center_horizontal"
-            android:background="@drawable/border_bottom"
-            android:orientation="horizontal">
+            android:padding="@dimen/small_padding"
+            android:background="@color/light_black">
+        <TextView
+                android:id="@+id/prevReviewLabelId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/light_grey"
+                android:textSize="@dimen/text_big_30"
+                android:text="Reviews"/>
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:textSize="@dimen/title_text_size"
-                android:text="Latest weeks"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/small_padding"
-                android:layout_gravity="bottom"
-                android:textSize="@dimen/text_big_22"
-                android:text="01.01.12 - 01.02.12"/>
-    </LinearLayout>
+                android:layout_below="@+id/prevReviewLabelId"
+                android:textSize="@dimen/text_medium_20"
+                android:textColor="@color/light_grey"
+                android:text="from 01.01.12 - 01.02.12"/>
+        <ImageView
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/left_arrow_white"/>
+    </RelativeLayout>
 
     <ListView
             android:id="@+id/reviewsContainerListViewId"

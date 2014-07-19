@@ -7,154 +7,238 @@
         android:layout_height="fill_parent">
 
     <RelativeLayout
+            android:id="@+id/mainAddReviewContainerId"
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
-        <RelativeLayout
-                android:id="@+id/headerAddReviewLayoutId"
-                android:layout_alignParentTop="true"
-                android:layout_width="match_parent"
+
+
+        <LinearLayout
+                android:id="@+id/headerContainerLayoutId"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/small_padding">
-            <TextView
-                    android:layout_width="wrap_content"
+                android:orientation="vertical">
+            <!--<RelativeLayout
+                    android:id="@+id/addReviewFooterLayoutId"
+                    android:layout_alignParentTop="true"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_big_24"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/small_padding"
-                    android:text="review status"/>
-            <LinearLayout
-                    android:id="@+id/addMoreTextOnReviewButtonId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_alignParentRight="true">
-                <ImageView
-                        android:layout_width="@dimen/small_icon_size"
-                        android:layout_height="@dimen/small_icon_size"
-                        android:layout_gravity="center"
-                        android:src="@drawable/edit_icon_2"/>
-                <!--<TextView
+                    android:background="@color/light_grey">
+                <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_small"
-                        android:text="Add text"/>-->
-            </LinearLayout>
-        </RelativeLayout>
+                        android:layout_marginLeft="@dimen/small_padding"
+                        android:paddingTop="@dimen/small_padding"
+                        android:paddingBottom="@dimen/small_padding"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true">
+                    <TextView
+                            android:id="@+id/addReviewFooterTextId"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_big_24"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="@dimen/small_padding"
+                            android:text="review status"/>
 
-        <!-- add more review template -->
-        <LinearLayout
-                android:id="@+id/addMoreTextLayoutId"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/medium_icon_size"
-                android:visibility="visible"
-                android:background="@color/light_grey"
+                </LinearLayout>
+                <LinearLayout
+                        android:id="@+id/addReviewSwipeButtonId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/medium_button_size"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/border_left_light_grey"
+                        android:layout_alignParentRight="true"
+                        android:paddingLeft="@dimen/small_padding"
+                        android:paddingRight="@dimen/small_padding">
+                    <ImageView
+                            android:layout_width="@dimen/small_icon_size"
+                            android:layout_height="@dimen/small_icon_size"
+                            android:src="@drawable/left_arrow" />
+                </LinearLayout>
 
-                android:orientation="horizontal">
-            <LinearLayout
-                    android:id="@+id/addReviewUndoImageId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent">
-                <ImageView
-                        android:layout_width="@dimen/extra_small_icon_size"
-                        android:layout_height="@dimen/extra_small_icon_size"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="@dimen/small_padding"
-                        android:src="@drawable/undo_icon"/>
-            </LinearLayout>
-            <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:orientation="horizontal">
-                <EditText
-                        android:id="@+id/reviewEditTextId"
-                        android:layout_weight="1"
-                        android:layout_height="fill_parent"
-                        android:layout_width="fill_parent"
-                        android:textSize="@dimen/text_big_22"
-                        android:textColor="@color/light_black"
-                        android:background="@color/light_grey"
-                        android:lines="2"
-                        android:hint="write post" />
+            </RelativeLayout>-->
+
+            <RelativeLayout
+                    android:id="@+id/headerAddReviewLayoutId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/small_padding">
                 <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:background="@drawable/border_left"
-                        android:textColor="@color/dark_black"
-                        android:gravity="center"
-                        android:paddingLeft="@dimen/medium_padding"
-                        android:paddingRight="@dimen/medium_padding"
-                        android:textSize="@dimen/text_big_22"
-                        android:text="post"/>
-            </LinearLayout>
-        </LinearLayout>
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_big_24"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/small_padding"
+                        android:text="review status"/>
+                <LinearLayout
+                        android:id="@+id/addMoreTextOnReviewButtonId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_alignParentRight="true">
+                    <ImageView
+                            android:layout_width="@dimen/small_icon_size"
+                            android:layout_height="@dimen/small_icon_size"
+                            android:layout_gravity="center"
+                            android:src="@drawable/edit_icon_2"/>
+                    <!--<TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_small"
+                            android:text="Add text"/>-->
+                </LinearLayout>
+            </RelativeLayout>
 
+            <RelativeLayout
+                    android:id="@+id/headerAddMoreTextLayoutId"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_big_24"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/small_padding"
+                        android:text="Add more text on review"/>
+                <LinearLayout
+                        android:id="@+id/addReviewUndoImageId"
+                        android:layout_alignParentRight="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    <ImageView
+                            android:layout_width="@dimen/small_icon_size"
+                            android:layout_height="@dimen/small_icon_size"
+                            android:padding="@dimen/small_padding_5"
+                            android:layout_gravity="center_vertical"
+                            android:layout_margin="@dimen/small_padding"
+                            android:src="@drawable/undo_icon"/>
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
     <!--Main content view -->
     <LinearLayout
             android:id="@+id/mainAddReviewLayoutId"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="@dimen/medium_padding"
-            android:layout_below="@id/headerAddReviewLayoutId">
+            android:layout_below="@id/headerContainerLayoutId">
         <ScrollView
                 android:id="@+id/containerAddReviewId"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
+
+            <!-- review with button -->
             <LinearLayout
                     android:id="@+id/reviewViewContainerLayoutId"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:orientation="vertical">
                 <LinearLayout
+                        android:id="@+id/addReviewDescriptionLayoutId"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/small_padding"
+                        android:paddingRight="@dimen/small_padding"
+                        android:paddingBottom="@dimen/big_padding"
+                        android:paddingTop="@dimen/big_padding"
+                        android:visibility="visible"
                         android:orientation="vertical">
-                    <ImageView
-                            android:layout_gravity="center"
-                            android:id="@+id/addReviewIconImageId"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/coffe_cup_icon"/>
                     <TextView
+                            android:id="@+id/reviewDescriptionTextId"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="@dimen/huge_padding"
-                            android:layout_marginLeft="@dimen/huge_padding"
                             android:textColor="@color/light_black"
                             android:textSize="@dimen/text_big_30"
-                            android:text="Review:"/>
+                            android:text="description" />
+
+
+                    <!--                    <ImageView
+                                                android:layout_gravity="center"
+                                                android:id="@+id/addReviewIconImageId"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:src="@drawable/coffe_cup_icon"/>
+                                        <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginRight="@dimen/huge_padding"
+                                                android:layout_marginLeft="@dimen/huge_padding"
+                                                android:textColor="@color/light_black"
+                                                android:textSize="@dimen/text_big_30"
+                                                android:text="Review:"/>
+                                        <TextView
+                                                android:id="@+id/reviewTextIconTextViewId"
+                                                android:layout_marginBottom="@dimen/huge_padding"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:textColor="@color/white"
+                                                android:textSize="@dimen/text_big_38"
+                                                android:layout_marginRight="@dimen/huge_padding"
+                                                android:layout_marginLeft="@dimen/huge_padding"
+                                                android:text=" - " />-->
+                    </LinearLayout>
+                    <!--add text on review -->
+                    <LinearLayout
+                            android:id="@+id/addReviewCustomTextLayoutId"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+                        <EditText
+                                android:id="@+id/reviewEditTextId"
+                                android:paddingLeft="@dimen/small_padding"
+                                android:paddingRight="@dimen/small_padding"
+                                android:paddingTop="@dimen/small_padding"
+                                android:paddingBottom="@dimen/button_height"
+                                android:gravity="top"
+                                android:minLines="8"
+                                android:layout_width="fill_parent"
+                                android:textSize="@dimen/text_big_26"
+                                android:layout_height="wrap_content"
+                                android:background="@color/light_grey"
+
+                                android:hint="type your review">
+                                <requestFocus/>
+
+                        </EditText>
+                    </LinearLayout>
+
+                <!-- bottom button -->
+                <LinearLayout
+                        android:id="@+id/addReviewButtonId"
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:gravity="center"
+                        android:background="@color/dark_black"
+                        android:padding="@dimen/small_padding"
+                        android:orientation="vertical">
+
                     <TextView
-                            android:id="@+id/reviewTextIconTextViewId"
-                            android:layout_marginBottom="@dimen/huge_padding"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/text_big_38"
-                            android:layout_marginRight="@dimen/huge_padding"
-                            android:layout_marginLeft="@dimen/huge_padding"
-                            android:text=" - " />
-    <!--                <EditText
-                            android:id="@+id/reviewEditTextId"
-                            android:textSize="@dimen/header_text_size"
-                            android:textColor="@color/light_black"
-                            android:layout_height="wrap_content"
-                            android:layout_width="fill_parent"
-                            android:layout_marginLeft="@dimen/huge_padding"
-                            android:layout_marginRight="@dimen/huge_padding"
-                            android:lines="1"
-                            android:hint="write post" />
-    -->
-                    </LinearLayout>
+                            android:textColor="@color/light_grey"
+                            android:textSize="@dimen/text_big_24"
+                            android:text="add review"
+                            />
                 </LinearLayout>
+
+
+            </LinearLayout>
+
             </ScrollView>
+
+
+
         </LinearLayout>
         <!-- bottom button -->
         <LinearLayout
-                android:id="@+id/addReviewButtonId"
+                android:visibility="gone"
+                android:id="@+id/addReviewCustomTextButtonId"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/button_height"
                 android:gravity="center"
@@ -171,5 +255,6 @@
                     android:text="add review"
                     />
         </LinearLayout>
+
     </RelativeLayout>
 </LinearLayout>

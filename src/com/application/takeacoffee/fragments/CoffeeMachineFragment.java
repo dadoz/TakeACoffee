@@ -23,7 +23,6 @@ import com.application.takeacoffee.R;
 import java.util.ArrayList;
 
 import static com.application.commons.Common.setCustomFontByView;
-import static com.application.takeacoffee.fragments.LoginFragment.getRoundedRectBitmap;
 
 /**
  * Created by davide on 3/13/14.
@@ -63,9 +62,7 @@ public class CoffeeMachineFragment extends Fragment {
     }
 
     private void setHeader() {
-        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
-        CoffeeMachineActivity.setItemOnHeaderBarById(R.id.headerMapButtonId, getFragmentManager());
-        CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, getFragmentManager());
+        CoffeeMachineActivity.setHeaderByFragmentId(0, getFragmentManager(), null);
     }
 
     private void initView(View coffeeMachineFragment) {
@@ -143,7 +140,7 @@ public class CoffeeMachineFragment extends Fragment {
                     pieChartList = getPieChartData();
 
                     Bitmap bmpAbove = getRoundedBitmapByPicPath(picResource);
-                    Bitmap bmpBelow = com.application.takeacoffee.fragments.LoginFragment.getRoundedBitmap(Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE,
+                    Bitmap bmpBelow = Common.getRoundedBitmap(Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE,
                             getResources().getColor(R.color.light_black));
                     Bitmap coffeeMachineBmp = Common.overlayBitmaps(bmpBelow, bmpAbove);
                     coffeePic.setImageBitmap(coffeeMachineBmp);
@@ -182,7 +179,7 @@ public class CoffeeMachineFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString(Common.COFFE_MACHINE_ID_KEY, coffeMachineId);
 
-        ReviewsFragment reviewsFrag = new ReviewsFragment();
+        ChoiceReviewContainerFragment reviewsFrag = new ChoiceReviewContainerFragment();
         reviewsFrag.setArguments(args);
 
         getFragmentManager().beginTransaction()
@@ -220,7 +217,7 @@ public class CoffeeMachineFragment extends Fragment {
     public static Bitmap getRoundedBitmapByPicPath(int pictureName) {
         try {
             Bitmap bitmap = BitmapFactory.decodeResource(mainActivityRef.getResources(), pictureName);
-            Bitmap roundedBitmap = getRoundedRectBitmap(bitmap, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
+            Bitmap roundedBitmap =Common.getRoundedRectBitmap(bitmap, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
 
             return roundedBitmap;
         } catch(Exception e) {
