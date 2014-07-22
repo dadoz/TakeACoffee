@@ -66,12 +66,12 @@ public class CoffeeMachineActivity extends FragmentActivity {
             if (username.compareTo(Common.EMPTY_VALUE) != 0) {
                 Log.e(TAG, "this is my username" + username);
                 coffeeMachineApplication = (CoffeeMachineDataStorageApplication) mainActivityRef.getApplication();
-                coffeeMachineApplication.coffeeMachineData.initRegisteredUserByUsername(username);
+                coffeeMachineApplication.initRegisteredUserByUsername(username);
                 String profilePicPath = sharedPref.getString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, Common.EMPTY_VALUE);
                 if (profilePicPath == Common.EMPTY_VALUE) {
                     profilePicPath = null;
                 }
-                coffeeMachineApplication.coffeeMachineData.getRegisteredUser().setProfilePicturePath(profilePicPath);
+                coffeeMachineApplication.getRegisteredUser().setProfilePicturePath(profilePicPath);
 
                 return true;
             } else {
@@ -101,7 +101,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
 
     public static void setLoggedUserView(View mainView) {
         ((TextView) mainView.findViewById(R.id.loggedUserTextId)).setText(
-                coffeeMachineApplication.coffeeMachineData.getRegisteredUser().getUsername());
+                coffeeMachineApplication.getRegisteredUser().getUsername());
 
         LinearLayout loggedUserButton = (LinearLayout) mainView.findViewById(R.id.loggedUserButtonId);
 //        loggedUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
@@ -114,7 +114,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
         });
 
         Common.drawProfilePictureByPath((ImageView) mainView.findViewById(R.id.loggedUserImageViewId),
-                coffeeMachineApplication.coffeeMachineData.getRegisteredUser()
+                coffeeMachineApplication.getRegisteredUser()
                         .getProfilePicturePath(), mainActivityRef.getResources()
                         .getDrawable(R.drawable.user_icon)
         );
@@ -260,8 +260,8 @@ public class CoffeeMachineActivity extends FragmentActivity {
                 break;
             case 1:
 //                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, fragmentManager);
-                String coffeeMachineName = coffeeMachineApplication.coffeeMachineData
-                        .getCoffeMachineById(coffeeMachineId).getName();
+                String coffeeMachineName = coffeeMachineApplication
+                        .getCoffeeMachineById(coffeeMachineId).getName();
                 CoffeeMachineActivity.setItemOnHeaderBarById(R.id.coffeeMachineSettingsMapHeaderLayoutId,
                         fragmentManager, coffeeMachineName);
 /*                CoffeeMachineActivity.addItemOnHeaderBarById(R.layout.review_header_template,

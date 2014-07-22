@@ -10,8 +10,8 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/small_padding"
             android:gravity="center_vertical|center_horizontal"
-            android:textColor="@color/light_black"
-            android:background="@color/middle_grey"
+            android:textColor="@color/light_grey"
+            android:background="@color/dark_black"
             android:text="Sorry - no one review!"
             android:textSize="@dimen/header_button_text"/>
 

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
     <RelativeLayout
             android:id="@+id/choiceReviewLatestReviewBottomBoxId"
+            android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
-            android:visibility="gone"
-            android:background="@color/middle_grey"
+            android:visibility="visible"
+            android:background="@color/light_green_soft"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/small_padding"
@@ -21,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/title_text_size"
-                android:text="LATEST WEEKS"/>
+                android:text="PREV"/>
 
         <LinearLayout
                 android:layout_alignParentRight="true"
@@ -31,11 +32,12 @@
                 android:layout_height="wrap_content">
 
             <TextView
+                    android:visibility="gone"
                     android:id="@+id/choiceReviewLatestReviewBottomCounterId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/header_text_size"
-                    android:text="NO REVIEWS"
+                    android:text="EMPTY"
                     />
             <ImageView
                     android:id="@+id/choiceReviewLeftArrowId"
@@ -45,9 +47,13 @@
         </LinearLayout>
     </RelativeLayout>
 
-        <RelativeLayout
-                android:id="@+id/choiceReviewHeaderTodayId"
-                android:layout_width="wrap_content"
+    <!-- prev header bar -->
+    <!--    <RelativeLayout
+            android:id="@+id/choiceReviewHeaderTodayId"
+                android:visibility="gone"
+                android:layout_alignParentTop="true"
+                android:background="@color/light_green_soft"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/small_padding"
@@ -61,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/title_text_size"
                     android:text="TODAY"/>
-            <LinearLayout
+                <LinearLayout
                     android:id="@+id/choiceReviewLatestContainerId"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
@@ -84,38 +90,9 @@
                         android:text=" - "
                         />
             </LinearLayout>
-            <LinearLayout
-                    android:id="@+id/choiceReviewLatestContainerNotSetId"
-                    android:visibility="gone"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_big_30"
-                        android:textColor="@color/light_black"
-                        android:paddingLeft="@dimen/small_padding"
-                        android:text="NO REVIEW"
-                        />
-            </LinearLayout>
-
-        </RelativeLayout>
-
-
-    <RelativeLayout
-            android:id="@+id/choiceReviewHeaderPreviousId"
-            android:visibility="visible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/light_green"
-            android:paddingLeft="@dimen/small_padding"
-            android:paddingRight="@dimen/small_padding"
-            android:paddingBottom="@dimen/small_padding">
         <LinearLayout
+                android:id="@+id/choiceReviewLatestContainerNotSetId"
+                android:visibility="gone"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:orientation="horizontal"
@@ -124,73 +101,86 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_small_16"
-                    android:text="latest at:"
-                    />
-            <TextView
-                    android:id="@+id/choiceReviewLatestPreviousTimestampTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:textSize="@dimen/text_big_30"
-                    android:textColor="@color/white"
+                    android:textColor="@color/light_black"
                     android:paddingLeft="@dimen/small_padding"
-                    android:text=" - "
+                    android:text="NO REVIEW"
                     />
         </LinearLayout>
+    </RelativeLayout>-->
 
-        <TextView
-                android:layout_centerHorizontal="true"
+    <!--main content-->
+    <LinearLayout
+            android:id="@+id/choiceReviewPageContainerId"
+            android:layout_below="@+id/choiceReviewLatestReviewBottomBoxId"
+            android:layout_marginBottom="@dimen/medium_button_size"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/light_green"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/choiceReviewHeaderTodayId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/title_text_size"
-                android:text="LATEST WEEKS"/>
-
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/small_padding"
+                android:paddingRight="@dimen/small_padding"
+                android:paddingBottom="@dimen/small_padding">
+                <TextView
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/title_text_size"
+                        android:text="TODAY"/>
+                <LinearLayout
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_small_16"
+                            android:text="latest at:"
+                            />
+                    <TextView
+                            android:id="@+id/choiceReviewLatestTimestampTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_big_30"
+                            android:textColor="@color/white"
+                            android:paddingLeft="@dimen/small_padding"
+                            android:text=" - "
+                            />
+                </LinearLayout>
         </RelativeLayout>
+
         <LinearLayout
             android:id="@+id/choiceReviewMainContentId"
             android:layout_width="fill_parent"
-            android:layout_height="210dip"
-            android:background="@color/light_green"
+            android:layout_height="fill_parent"
             android:orientation="horizontal">
 
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-                <!--<LinearLayout
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:visibility="gone"
-                    android:orientation="vertical">
-                    <ImageView
-                        android:id="@+id/badReviewButtonId"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/extra_huge_icon_size"
-                        android:src="@drawable/coffe_cup_icon_empty"
-                        />
-                </LinearLayout>-->
-                <LinearLayout
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:orientation="vertical">
-                    <ImageView
+                    android:layout_height="match_parent"
+                    android:gravity="bottom">
+                <ImageView
                         android:id="@+id/choiceReviewButtonId"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/extra_huge_icon_size"
                         android:layout_marginBottom="@dimen/medium_padding"
                         android:src="@drawable/coffe_cup_icon"
                         />
-                </LinearLayout>
-        </LinearLayout>
-        <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:gravity="bottom"
-                android:layout_height="match_parent">
+            </LinearLayout>
+
             <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_width="fill_parent"
+                    android:gravity="bottom"
+                    android:layout_height="match_parent">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -203,34 +193,19 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/light_grey"
                         android:textSize="@dimen/huge_icon_size"
-                        android:text="x"
-                        />
-            </LinearLayout>
-            <LinearLayout
-                    android:orientation="horizontal"
-                    android:visibility="gone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="last review at "
-                        />
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_big_30"
-                        android:textColor="@color/light_grey"
-                        android:text="13:54"
+                        android:text="0"
                         />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
+    <!--bottom bar-->
     <RelativeLayout
             android:id="@+id/footerChoiceReviewLayoutId"
+            android:layout_alignParentBottom="true"
+            android:background="@color/light_green_soft"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/medium_button_size">
         <LinearLayout
                 android:id="@+id/footerChoiceReviewAddReviewButtonId"
                 android:layout_width="wrap_content"
@@ -255,12 +230,6 @@
                     android:text="review status"/>
 
         </LinearLayout>
-
-<!--        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_small"
-                android:text="Add text"/>-->
         <LinearLayout
                 android:id="@+id/reviewsMachineSwipeButtonId"
                 android:layout_width="wrap_content"
@@ -275,6 +244,6 @@
                     android:layout_height="@dimen/small_icon_size"
                     android:src="@drawable/left_arrow" />
         </LinearLayout>
-
     </RelativeLayout>
-</LinearLayout>
+
+</RelativeLayout>

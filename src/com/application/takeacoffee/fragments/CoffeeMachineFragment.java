@@ -45,7 +45,7 @@ public class CoffeeMachineFragment extends Fragment {
 
         //get data from application
         coffeeMachineList = ((CoffeeMachineDataStorageApplication) getActivity().getApplication())
-                .coffeeMachineData.getCoffeeMachineList();
+                .getCoffeeMachineList();
 
         getActivity().runOnUiThread(new Runnable() {
             @Override

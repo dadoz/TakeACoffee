@@ -192,7 +192,7 @@ public class AddReviewFragment extends Fragment {
                 break;
         }
         //add data to list
-        User loggedUser = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+        User loggedUser = coffeeMachineApplication.getRegisteredUser();
         if(loggedUser == null) {
             Common.displayError("You must be logged in before add review!", mainActivityRef);
             return;
@@ -208,9 +208,10 @@ public class AddReviewFragment extends Fragment {
                     .findViewById(R.id.reviewEditTextId)));
         }
 
-        coffeeMachineApplication.coffeeMachineData.addReviewByCoffeeMachineId(coffeeMachineId,
+        String reviewListId = coffeeMachineApplication.getReviewListIdByCoffeeMachine(coffeeMachineId);
+        coffeeMachineApplication.addReviewByParams(reviewListId ,
                 loggedUser.getId(), loggedUser.getUsername(), reviewText,
-                coffeeMachineApplication.coffeeMachineData.getRegisteredUser().getProfilePicturePath(),
+                coffeeMachineApplication.getRegisteredUser().getProfilePicturePath(),
                 reviewStatus);
 
         if(!addReviewFromListView) {

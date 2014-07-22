@@ -83,7 +83,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
 
         final EditText usernameEditText = (EditText) loginView.findViewById(R.id.usernameNewUserEditTextId);
 
-        User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+        User user = coffeeMachineApplication.getRegisteredUser();
 
         ImageView profilePic = (ImageView) loginView .findViewById(R.id.profilePicImageViewId);
         if(user != null) {
@@ -128,7 +128,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 
-        User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+        User user = coffeeMachineApplication.getRegisteredUser();
         if(user != null && user.getProfilePicturePath() != null) {
             bitmap = BitmapFactory.decodeFile(user.getProfilePicturePath(), options);
         } else {
@@ -157,12 +157,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         } else {
             //store url in application
             Log.d(TAG, "[PROFILE PIC] path file - " + profileImagePath);
-            User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+            User user = coffeeMachineApplication.getRegisteredUser();
 
             if(user != null) {
                 user.setProfilePicturePath(profileImagePath);
             } else {
-                coffeeMachineApplication.coffeeMachineData.initRegisteredUserByProfilePicturePath(profileImagePath);
+                coffeeMachineApplication.initRegisteredUserByProfilePicturePath(profileImagePath);
             }
 //                            coffeeMachineApplication.coffeeMachineData.setProfilePicturePath(profileImagePath);
             sharedPref.edit().putString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, profileImagePath).commit();
@@ -547,9 +547,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
 
             updateUserBox(username);
             sharedPref.edit().putString(Common.SHAREDPREF_REGISTERED_USERNAME, username).commit();
-            User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+            User user = coffeeMachineApplication.getRegisteredUser();
             if (user == null) {
-                coffeeMachineApplication.coffeeMachineData.initRegisteredUserByUsername(username);
+                coffeeMachineApplication.initRegisteredUserByUsername(username);
             } else {
                 user.setUsername(username);
             }

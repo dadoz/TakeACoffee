@@ -37,7 +37,9 @@ public class EditReviewFragment extends Fragment{
 //        int pageNumber = getArguments().getInt(Common.ARG_PAGE);
         //get data from application
         coffeeMachineApplication = (CoffeeMachineDataStorageApplication) this.getActivity().getApplication();
-        reviewsList = coffeeMachineApplication.coffeeMachineData.getReviewListByCoffeMachineId(coffeeMachineId);
+        String reviewListId = coffeeMachineApplication
+                .getReviewListIdByCoffeeMachine(coffeeMachineId);
+        reviewsList = coffeeMachineApplication.getReviewListById(reviewListId);
 
         setHeader();
         Common.ReviewStatusEnum reviewStatus = Common.ReviewStatusEnum.valueOf(

@@ -214,8 +214,10 @@ public class ChoiceReviewContainerFragment extends Fragment {
                                                   Common.ReviewStatusEnum reviewStatus) {
         if(coffeeMachineId != null) {
             //check if coffeMachineId exist -
-            ArrayList<Review> reviewList = coffeeMachineApplication.coffeeMachineData.
-                    getReviewListByCoffeMachineId(coffeeMachineId);
+            String reviewListId = coffeeMachineApplication
+                    .getReviewListIdByCoffeeMachine(coffeeMachineId);
+            ArrayList<Review> reviewList = coffeeMachineApplication.
+                    getReviewListById(reviewListId);
             if(reviewList == null || reviewList.size() == 0) {
                 Log.e(TAG,"error - no one coffeeMachine owned by this ID");
                 return null;
@@ -248,8 +250,10 @@ public class ChoiceReviewContainerFragment extends Fragment {
                                                                              long fromTimestamp, long toTimestamp) {
         if(coffeeMachineId != null) {
             //check if coffeMachineId exist -
-            ArrayList<Review> reviewList = coffeeMachineApplication.coffeeMachineData.
-                    getReviewListByCoffeMachineId(coffeeMachineId);
+            String reviewListId = coffeeMachineApplication
+                    .getReviewListIdByCoffeeMachine(coffeeMachineId);
+            ArrayList<Review> reviewList = coffeeMachineApplication.
+                    getReviewListById(reviewListId);
             if(reviewList == null || reviewList.size() == 0) {
                 Log.e(TAG,"error - no one coffeeMachine owned by this ID");
                 return null;

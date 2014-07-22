@@ -7,16 +7,19 @@ public class CoffeeMachine {
     private String iconPath;
 	private String name;
 	private String address;
-    public ArrayList<Review> reviewsList;
+//    public ArrayList<Review> reviewsList;
+    private String coffeeMachineReviewListId;
 
-	public CoffeeMachine(String id, final String name, String address , String iconPath,ArrayList<Review> reviewsList){
+	public CoffeeMachine(String id, final String name, String address , String iconPath,
+                         String coffeeMachineReviewListId){
 
         //this.id = getUniqueID();
         this.iconPath = iconPath;
         this.id = id;
 		this.name = name;
 		this.address = address;
-        this.reviewsList = reviewsList;
+//        this.reviewsList = reviewsList;
+        this.coffeeMachineReviewListId = coffeeMachineReviewListId;
 	}
 
 	public String getName() {
@@ -36,20 +39,22 @@ public class CoffeeMachine {
         return this.id;
     }
 
-    public void addReviewObj(Review reviewObj) {
+/*    public void addReviewObj(Review reviewObj) {
         if(reviewsList == null) {
             reviewsList = new ArrayList<Review>();
         }
         reviewsList.add(reviewObj);
     }
+*/
 
-
-    public void setReviewList(ArrayList<Review> list) {
-        this.reviewsList = list;
+//    public void setReviewList(ArrayList<Review> list) {
+    public void setReviewListId(String id) {
+//        this.reviewsList = list;
+        this.coffeeMachineReviewListId = id;
     }
 
-    public ArrayList<Review> getReviewList(){
-        return this.reviewsList;
+    public String getReviewListId(){
+        return this.coffeeMachineReviewListId ;
     }
 //    private String getUniqueID(){
 //        java.util.Date date= new java.util.Date();
