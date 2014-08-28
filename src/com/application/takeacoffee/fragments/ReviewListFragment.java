@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -14,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.application.commons.Common;
-import com.application.datastorage.CoffeeMachineDataStorageApplication;
+import com.application.datastorage.DataStorageSingleton;
 import com.application.models.Review;
 import com.application.models.User;
 import com.application.takeacoffee.CoffeeMachineActivity;
@@ -28,13 +30,12 @@ import java.util.Calendar;
  */
 public class ReviewListFragment extends Fragment {
     private static final String TAG = "ReviewListFragment";
-    private static CoffeeMachineDataStorageApplication coffeeMachineApplication;
+    private static DataStorageSingleton coffeeApp;
     private static FragmentActivity mainActivityRef = null;
 
     private Common.ReviewStatusEnum reviewStatus;
     private View reviewListView;
-    private String coffeeMachineId;
-    private boolean isTodayReview;
+    private long coffeeMachineId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
@@ -42,53 +43,36 @@ public class ReviewListFragment extends Fragment {
         reviewListView = inflater.inflate(R.layout.review_list_fragment, container, false);
         View emptyView = inflater.inflate(R.layout.empty_data_status_layout, container, false);
 
-        //get data from
-        coffeeMachineApplication = (CoffeeMachineDataStorageApplication) this.getActivity().getApplication();
+        coffeeApp = DataStorageSingleton.getInstance(getActivity().getApplicationContext());
 
-        //get args from fragment
-        coffeeMachineId = (String)this.getArguments().get(Common.COFFE_MACHINE_ID_KEY);
-        isTodayReview = ((Boolean) this.getArguments().get(Common.IS_TODAY_REVIEW_KEY)).booleanValue();
+        coffeeMachineId = this.getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
+        reviewStatus = Common.ReviewStatusEnum.valueOf(this.getArguments().
+                getString(Common.REVIEW_STATUS_KEY));
+        long fromTimestamp = this.getArguments().
+                getLong(Common.FROM_TIMESTAMP_KEY);
+        long toTimestamp = this.getArguments().
+                getLong(Common.TO_TIMESTAMP_KEY);
 
-        reviewStatus = Common.ReviewStatusEnum.valueOf(
-                (String)this.getArguments().get(Common.REVIEW_STATUS_KEY));
-        ArrayList<Review> reviewList = null;
-        Calendar cal = Calendar.getInstance();
-        Common.ReviewListTimestamp reviewListObj = null;
-
-        long fromTimestamp;
-        long  toTimestamp;
-        if(isTodayReview) {
-            cal.add(Calendar.DATE, -1);
-            fromTimestamp = (cal.getTime()).getTime(); //yesterdayTimestamp
-            toTimestamp = Common.DATE_NOT_SET;
-            Log.e(TAG, "today review");
-        } else {
-            cal.add(Calendar.DATE, -1);
-            toTimestamp = (cal.getTime()).getTime();//yesterdayTimestamp
-            cal.add(Calendar.MONTH, -1); // 1 MONTH BACK
-//            fromTimestamp = (cal.getTime()).getTime(); //prevMonthTimestamp
-            fromTimestamp = Common.DATE_NOT_SET;
-        }
-
-        reviewList = ChoiceReviewContainerFragment.getReviewDataByTimestamp(coffeeMachineId, coffeeMachineApplication,
+        ArrayList<Review> reviewList = coffeeApp.getReviewListByTimestamp(coffeeMachineId,
                 reviewStatus, fromTimestamp, toTimestamp);
-        reviewListObj = new Common.ReviewListTimestamp(fromTimestamp,
+        Common.ReviewListTimestamp reviewListObj = new Common.ReviewListTimestamp(fromTimestamp,
                 toTimestamp, reviewList);
+        //end of refactor
 
-        if(reviewList == null || reviewListObj == null) {
-            Log.d(TAG,"this is the getReviewData EMPTY");
+        if(reviewList == null) {
+            Log.d(TAG,"this is the getReviewData EMPTY"); //THIS SHOULDNT BE DISPLAYED
             Common.setCustomFont(emptyView, this.getActivity().getAssets());
             return emptyView;
         }
 
         ListView listView = (ListView)reviewListView.findViewById(R.id.reviewsContainerListViewId);
-        setDataWithListView(listView, reviewListObj, coffeeMachineId);
 
+        setDataWithListView(listView, reviewListObj, coffeeMachineId);
         setReviewListHeader(coffeeMachineId, (reviewListView
                 .findViewById(R.id.reviewStatusTextViewId)), null, true);
-
         setHeader();
         setPreviousReviewsButtonAction();
+
         Common.setCustomFont(reviewListView, getActivity().getAssets());
         return reviewListView;
     }
@@ -103,6 +87,7 @@ public class ReviewListFragment extends Fragment {
         final ReviewListerAdapter adapter = (ReviewListerAdapter)listView.getAdapter();
         final View prevReviewsButtonId = reviewListView.findViewById(R.id.prevReviewsButtonId);
 
+        //TODO REFACTOR it
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(adapter.getFromTimestamp());
         cal.add(Calendar.DATE, -1);
@@ -111,14 +96,13 @@ public class ReviewListFragment extends Fragment {
 //        long prevMonthFromTimestamp = (cal.getTime()).getTime();
         long prevMonthFromTimestamp = Common.DATE_NOT_SET;
 
-        final ArrayList<Review> prevReviewList = ChoiceReviewContainerFragment.getReviewDataByTimestamp(coffeeMachineId,
-                coffeeMachineApplication, reviewStatus, prevMonthFromTimestamp, dayBeforeFromTimestamp);
+        final ArrayList<Review> prevReviewList = coffeeApp.getReviewListByTimestamp(coffeeMachineId,
+                reviewStatus, prevMonthFromTimestamp, dayBeforeFromTimestamp);
         if(prevReviewList == null) {
             Log.e(TAG, "previous review list is empty");
             prevReviewsButtonId.setVisibility(View.GONE);
             return;
         }
-
 
         prevReviewsButtonId.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,21 +123,21 @@ public class ReviewListFragment extends Fragment {
 
     }
 
-    private void setReviewListHeader(final String coffeeMachineId, final View reviewStatusText,
+    private void setReviewListHeader(final long coffeeMachineId, final View reviewStatusText,
                                  final View reviewStatusAddImageView, boolean setTextLabel) {
         setReviewListHeaderBackgroundLabel(reviewStatusText, setTextLabel);
 
-        if(reviewStatusAddImageView != null) {
+/*        if(reviewStatusAddImageView != null) {
             reviewStatusAddImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.e(TAG, "add review on " + reviewStatus);
                     Bundle args = new Bundle();
-                    args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+                    args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
                     args.putBoolean(Common.ADD_REVIEW_FROM_LISTVIEW, true);
                 }
             });
-        }
+        }*/
     }
 
     public void setReviewListHeaderBackgroundLabel(final View reviewStatusText, boolean setLabel) {
@@ -182,7 +166,7 @@ public class ReviewListFragment extends Fragment {
     }
 
     public void setDataWithListView(ListView listView, Common.ReviewListTimestamp reviewListObj,
-                                    final String coffeeMachineId) {
+                                    final long coffeeMachineId) {
         ReviewListerAdapter reviewListenerAdapter = new ReviewListerAdapter(mainActivityRef, R.layout.review_template,
                 reviewListObj, coffeeMachineId);
         reviewListenerAdapter.notifyDataSetChanged();
@@ -204,7 +188,7 @@ public class ReviewListFragment extends Fragment {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(final AdapterView<?> adapterView, View view, int position, long id) {
-                User user = coffeeMachineApplication.getRegisteredUser();
+                //User user = coffeeApp.getRegisteredUser();
                 Review reviewObj = (Review) adapterView.getItemAtPosition(position);
 
                 final View mainItemView =  view.findViewById(R.id.mainItemViewId);
@@ -212,7 +196,8 @@ public class ReviewListFragment extends Fragment {
 
                 //check my post and add action
                 if (mainItemView.getVisibility() == View.VISIBLE &&
-                        reviewObj.getUserId() == user.getId()) {
+                        coffeeApp.isRegisteredUser() &&
+                        reviewObj.getUserId() == coffeeApp.getRegisteredUserId()) {
                     try {
                         Common.vibrate(getActivity(), Common.VIBRATE_TIME);
 
@@ -243,13 +228,13 @@ public class ReviewListFragment extends Fragment {
         });
     }
 
-    private static boolean getEditReviewFragment(String reviewId, String coffeeMachineId,
+    private static boolean getEditReviewFragment(long reviewId, long coffeeMachineId,
                                                  Common.ReviewStatusEnum reviewStatus,
                                                  FragmentManager fragmentManager) {
         //change fragment
         Bundle args = new Bundle();
-        args.putString(Common.REVIEW_ID, reviewId);
-        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putLong(Common.REVIEW_ID, reviewId);
+        args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
         args.putString(Common.REVIEW_STATUS_KEY, reviewStatus.name());
 
         EditReviewFragment reviewsFrag = new EditReviewFragment();
@@ -264,8 +249,9 @@ public class ReviewListFragment extends Fragment {
         return true;
     }
 
-    public static void alertDialogDeleteReview(final String coffeeMachineId, final ReviewListerAdapter reviewListerAdapter,
-                                        final Review reviewSelectedItem) {
+    public static void alertDialogDeleteReview(final long coffeeMachineId,
+                                               final ReviewListerAdapter reviewListerAdapter,
+                                               final Review reviewSelectedItem) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mainActivityRef);
         dialogBuilder.setTitle("Delete Review");
         dialogBuilder.setMessage("Are you sure you want to delete your review?");
@@ -273,10 +259,7 @@ public class ReviewListFragment extends Fragment {
         dialogBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                String reviewListId = coffeeMachineApplication
-                        .getReviewListIdByCoffeeMachine(coffeeMachineId);
-                coffeeMachineApplication
-                        .removeReviewById(reviewListId, reviewSelectedItem);
+                coffeeApp.removeReviewById(coffeeMachineId, reviewSelectedItem);
                 (reviewListerAdapter).remove(reviewSelectedItem);
                 reviewListerAdapter.setSelectedItemIndex(Common.ITEM_NOT_SELECTED);
                 (reviewListerAdapter).notifyDataSetChanged();
@@ -300,9 +283,9 @@ public class ReviewListFragment extends Fragment {
         private ArrayList<Review> reviewList;
         public int selectedItemIndex = Common.ITEM_NOT_SELECTED;
 
-        public String coffeeMachineId;
+        public long coffeeMachineId;
         public ReviewListerAdapter(Context context, int resource, Common.ReviewListTimestamp reviewListObj,
-                                   String coffeeMachineId) {
+                                   long coffeeMachineId) {
             super(context, resource, reviewListObj.getReviewsList());
             this.reviewList = reviewListObj.getReviewsList();
             this.fromTimestamp = reviewListObj.getFromTimestamp();
@@ -316,21 +299,27 @@ public class ReviewListFragment extends Fragment {
 
         public View getView(final int position, View convertView, ViewGroup parent) {
             Review reviewObj = reviewList.get(position);
-            User user = coffeeMachineApplication.getRegisteredUser();
+            //User user = coffeeApp.getRegisteredUser();
 
             LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View rowView = inflater.inflate(R.layout.review_template, parent, false);
             View mainItemView = rowView.findViewById(R.id.mainItemViewId);
             View extraMenuItemView = rowView.findViewById(R.id.extraMenuItemViewId);
 
+            User userOnReview = coffeeApp.getUserById(reviewObj.getUserId());
             //set data to template
-            ((TextView)rowView.findViewById(R.id.reviewUsernameTextId)).setText(reviewObj.getUsername());
+            ((TextView)rowView.findViewById(R.id.reviewUsernameTextId)).setText(
+                    userOnReview.getUsername());
             ((TextView)rowView.findViewById(R.id.reviewDateTextId)).setText(reviewObj.getFormattedTimestamp());
             ((TextView)rowView.findViewById(R.id.reviewCommentTextId)).setText(reviewObj.getComment());
 
             //set profile pic
-            Common.drawProfilePictureByPath((ImageView) rowView.findViewById(R.id.profilePicReviewTemplateId),
-                    reviewObj.getProfilePicPath(), getResources().getDrawable(R.drawable.user_icon));
+            //TODO please remove this shit -
+            if(userOnReview.getProfilePicturePath() != null) {
+                Bitmap bitmap = Common.getRoundedBitmapByFile(userOnReview.getProfilePicturePath(),
+                        BitmapFactory.decodeResource(mainActivityRef.getResources(), R.drawable.user_icon));
+                ((ImageView) rowView.findViewById(R.id.profilePicReviewTemplateId)).setImageBitmap(bitmap);
+            }
 
             //set background color
 /*            if(position % 2 != 0) {
@@ -341,11 +330,11 @@ public class ReviewListFragment extends Fragment {
             extraMenuItemView.setVisibility(View.GONE);
 
             //OVERRIDE data to get loggedUser data
-            if(user != null && reviewObj.getUserId().equals(user.getId())) {
-                ((TextView)rowView.findViewById(R.id.reviewUsernameTextId)).setText(user.getUsername());
-                Common.drawProfilePictureByPath((ImageView) rowView.findViewById(
-                                R.id.profilePicReviewTemplateId), user.getProfilePicturePath(),
-                        getResources().getDrawable(R.drawable.user_icon));
+            if(coffeeApp.isRegisteredUser() && (reviewObj.getUserId() == coffeeApp.getRegisteredUserId())) {
+                ((TextView)rowView.findViewById(R.id.reviewUsernameTextId)).setText(coffeeApp.getRegisteredUsername());
+                Bitmap bitmap = Common.getRoundedBitmapByFile(coffeeApp.getRegisteredProfilePicturePath(),
+                        BitmapFactory.decodeResource( mainActivityRef.getResources(), R.drawable.user_icon));
+                ((ImageView) rowView.findViewById(R.id.profilePicReviewTemplateId)).setImageBitmap(bitmap);
 
                 if(selectedItemIndex == position) {
                     //set extra menu visibility
@@ -414,69 +403,4 @@ public class ReviewListFragment extends Fragment {
         }
 
    }
-
-/*
-    public static void addReviewByReviewList(final String coffeeMachineId, Common.ReviewStatusEnum reviewStatus,
-                                             AdapterView<?> adapterView) {
-        String reviewText = "Review for this machine - auto generated";
-
-        //add data to list
-        User loggedUser = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
-        if(loggedUser == null) {
-            Common.displayError("You must be logged in before add review!", mainActivityRef);
-            return;
-        }
-
-        Review review = coffeeMachineApplication.coffeeMachineData.addReviewByCoffeeMachineId(coffeeMachineId,
-                loggedUser.getId(), loggedUser.getUsername(), reviewText,
-                loggedUser.getProfilePicturePath(), reviewStatus);
-
-        if(review != null) {
-            ((ReviewListerAdapter)adapterView.getAdapter()).add(review);
-            ((ReviewListerAdapter)adapterView.getAdapter()).notifyDataSetChanged();
-        }
-    }
-*/
-
-/*
-    private static void initExtraMenuAction(final ReviewListerAdapter reviewListerAdapter, final Review review,
-                                     final LinearLayout extraMenuItemView, final LinearLayout mainItemView,
-                                     final String coffeeMachineId,
-                                     final FragmentManager fragmentManager) {
-        extraMenuItemView.findViewById(R.id.modifyReviewEditLayoutId)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        getEditReviewFragment(review.getId(), coffeeMachineId, fragmentManager);
-                    }
-                });
-        extraMenuItemView.findViewById(R.id.modifyReviewDeleteLayoutId)
-                .setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //DELETE ACTION
-                alertDialogDeleteReview(coffeeMachineId, reviewListerAdapter, review);
-//                Common.displayError("delete item", mainActivityRef);
-            }
-        });
-        extraMenuItemView.findViewById(R.id.modifyReviewBackImageViewId)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mainItemView.setVisibility(View.VISIBLE);
-                        extraMenuItemView.setVisibility(View.GONE);
-                        //adapterView.setTag(null);
-                        reviewListerAdapter.setSelectedItemIndex(Common.ITEM_NOT_SELECTED);
-                    }
-                });
-
-/*        (extraMenuItemView.findViewById(R.id.modifyReviewChangeTypeLayoutId)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //CHANGE TYPE ACTION
-                choiceTypeOfReviewDialog(modifyReviewView, coffeeMachineId);
-//                (modifyReviewView, reviewList, coffeeMachineId);
-            }
-        });
-    }*/
 }

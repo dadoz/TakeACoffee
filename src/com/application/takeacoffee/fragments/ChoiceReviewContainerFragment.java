@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -16,26 +14,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import com.application.adapters.ChoiceReviewPagerAdapter;
 import com.application.commons.Common;
-import com.application.datastorage.CoffeeMachineDataStorageApplication;
+import com.application.datastorage.DataStorageSingleton;
 import com.application.models.Review;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 
 import java.util.ArrayList;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 /**
  * Created by davide on 3/16/14.
  */
 public class ChoiceReviewContainerFragment extends Fragment {
     private static final String TAG = "ChoiceReviewContainerFragment";
-    private CoffeeMachineDataStorageApplication coffeeMachineApplication;
+    private DataStorageSingleton coffeeApp;
     private Bundle args;
     private static FragmentActivity mainActivityRef;
     private View reviewsLayoutView;
@@ -46,27 +40,20 @@ public class ChoiceReviewContainerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mainActivityRef = getActivity();
-
         //get data from application
-        coffeeMachineApplication = ((CoffeeMachineDataStorageApplication) this.getActivity()
-                .getApplication());
+        coffeeApp = DataStorageSingleton.getInstance(getActivity().getApplicationContext());
 
-        //get args from fragment
-        String coffeeMachineId = (String)this.getArguments().get(Common.COFFE_MACHINE_ID_KEY);
-
-        //change fragment
+        //fragment bundle //TODO refactor it
+        long coffeeMachineId = this.getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
         args = new Bundle();
-        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
 
         return initView(inflater, container, coffeeMachineId);
     }
 
-    public View initView(LayoutInflater inflater, ViewGroup container, String coffeeMachineId) {
-
-        //mainActivityRef.findViewById(R.id.reviewsMachineMapContainerId).setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.ALIGN_PARENT_RIGHT));
-
-        //check empty listview
-        ArrayList<Review> reviewList = getReviewData(coffeeMachineId, coffeeMachineApplication,
+    public View initView(LayoutInflater inflater, ViewGroup container, long coffeeMachineId) {
+      //check empty listview
+        ArrayList<Review> reviewList = coffeeApp.getReviewListByStatus(coffeeMachineId,
                 Common.ReviewStatusEnum.NOTSET);
         if(reviewList == null) {
             //EMPTY listview
@@ -74,7 +61,6 @@ public class ChoiceReviewContainerFragment extends Fragment {
 
             //set review header (coffee machine name)
             setHeader(coffeeMachineId);
-
 
             //add review button
             emptyView.findViewById(R.id.addReviewImageViewId2)
@@ -88,13 +74,10 @@ public class ChoiceReviewContainerFragment extends Fragment {
                             mainActivityRef.getSupportFragmentManager().beginTransaction()
                                     .replace(R.id.coffeeMachineContainerLayoutId, addReviewContainerFragment)
                                     .addToBackStack("back").commit();
-
                         }
                     });
             Common.setCustomFont(emptyView, this.getActivity().getAssets());
-//            Log.e(TAG, "u must not jump her bastard");
             return emptyView;
-            //set custom font
         } else {
             //data are stored in reviewList
             reviewsLayoutView = inflater.inflate(R.layout.reviews_fragment, container, false);
@@ -145,13 +128,13 @@ public class ChoiceReviewContainerFragment extends Fragment {
 
     }
 */
-    public void setHeader(String coffeeMachineId) {
+    public void setHeader(long coffeeMachineId) {
         CoffeeMachineActivity.setHeaderByFragmentId(1, getFragmentManager(), coffeeMachineId);
         mainActivityRef.findViewById(R.id.addReviewSwipeButtonId).setVisibility(View.INVISIBLE);
 
     }
 
-    public void setReviewPager(final String coffeeMachineId) {
+    public void setReviewPager(final long coffeeMachineId) {
         //boolean isTodayReview = false;
         mPager = (ViewPager) reviewsLayoutView.findViewById(R.id.reviewsPagerId);
         mPagerAdapter = new ChoiceReviewPagerAdapter(getChildFragmentManager(), coffeeMachineId);
@@ -182,7 +165,7 @@ public class ChoiceReviewContainerFragment extends Fragment {
     }
 /*  public void setHeaderReview(final String coffeeMachineId, View view) {
         //SMTHING WRONG - TODO REFACTOR IT
-        String coffeeMachineName = coffeeMachineApplication.coffeeMachineData
+        String coffeeMachineName = coffeeApp.coffeeMachineData
                 .getCoffeMachineById(coffeeMachineId).getName();
         if(coffeeMachineName != null) {
             ((TextView) view.findViewById(R.id.coffeeMachineNameReviewTextId))
@@ -199,96 +182,6 @@ public class ChoiceReviewContainerFragment extends Fragment {
                     }
                 });
     }*/
-
-/*    public void addReviewAction(FragmentManager fragmentManager) {
-        AddReviewContainerFragment addReviewContainerFragment = new AddReviewContainerFragment();
-        addReviewContainerFragment.setArguments(args);
-
-        fragmentManager.beginTransaction()
-                .replace(R.id.coffeeMachineContainerLayoutId, addReviewContainerFragment)
-                .addToBackStack("back").commit();
-    }*/
-
-    public static ArrayList<Review> getReviewData(String coffeeMachineId,
-                                                  CoffeeMachineDataStorageApplication coffeeMachineApplication,
-                                                  Common.ReviewStatusEnum reviewStatus) {
-        if(coffeeMachineId != null) {
-            //check if coffeMachineId exist -
-            String reviewListId = coffeeMachineApplication
-                    .getReviewListIdByCoffeeMachine(coffeeMachineId);
-            ArrayList<Review> reviewList = coffeeMachineApplication.
-                    getReviewListById(reviewListId);
-            if(reviewList == null || reviewList.size() == 0) {
-                Log.e(TAG,"error - no one coffeeMachine owned by this ID");
-                return null;
-            }
-
-            if(reviewStatus != Common.ReviewStatusEnum.NOTSET) {
-                ArrayList<Review> reviewListSortedByStatus = new ArrayList<Review>();
-                //TODO to be refactored
-                for(Review review : reviewList) {
-                    if(reviewStatus == review.getStatus()) {
-                        reviewListSortedByStatus.add(review);
-                    }
-                }
-                if(reviewListSortedByStatus.size() == 0) {
-                    return null;
-                }
-                return reviewListSortedByStatus;
-            }
-            return reviewList;
-
-        }
-        Log.e(TAG, "error - no coffeMachineId found");
-        return null;
-    }
-
-
-    public static ArrayList<Review> getReviewDataByTimestamp(String coffeeMachineId,
-                                                                             CoffeeMachineDataStorageApplication coffeeMachineApplication,
-                                                                             Common.ReviewStatusEnum reviewStatus,
-                                                                             long fromTimestamp, long toTimestamp) {
-        if(coffeeMachineId != null) {
-            //check if coffeMachineId exist -
-            String reviewListId = coffeeMachineApplication
-                    .getReviewListIdByCoffeeMachine(coffeeMachineId);
-            ArrayList<Review> reviewList = coffeeMachineApplication.
-                    getReviewListById(reviewListId);
-            if(reviewList == null || reviewList.size() == 0) {
-                Log.e(TAG,"error - no one coffeeMachine owned by this ID");
-                return null;
-            }
-
-            if(reviewStatus != Common.ReviewStatusEnum.NOTSET) {
-                ArrayList<Review> reviewListSortedByStatus = new ArrayList<Review>();
-                //TODO to be refactored
-                for(Review review : reviewList) {
-                    if(toTimestamp != Common.DATE_NOT_SET) {
-                        if(reviewStatus == review.getStatus() &&
-                                review.getTimestamp() > fromTimestamp &&
-                                review.getTimestamp() < toTimestamp) {
-                            reviewListSortedByStatus.add(review);
-                        }
-                    } else {
-                        if(reviewStatus == review.getStatus() &&
-                                review.getTimestamp() > fromTimestamp) {
-                            reviewListSortedByStatus.add(review);
-                        }
-                    }
-
-                }
-                if(reviewListSortedByStatus.size() == 0) {
-                    return null;
-                }
-                return reviewListSortedByStatus;
-            }
-            return reviewList;
-
-        }
-        Log.e(TAG, "error - no coffeMachineId found");
-        return null;
-    }
-
 
 }
 

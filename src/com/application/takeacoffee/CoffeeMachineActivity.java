@@ -1,10 +1,11 @@
 package com.application.takeacoffee;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.*;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -16,70 +17,98 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.application.commons.Common;
-import com.application.datastorage.CoffeeMachineDataStorageApplication;
+import com.application.datastorage.DataStorageSingleton;
+import com.application.models.User;
 import com.application.takeacoffee.fragments.*;
 
-import java.util.List;
-
 public class CoffeeMachineActivity extends FragmentActivity {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "CoffeeMachineActivity";
 
-    private static CoffeeMachineDataStorageApplication coffeeMachineApplication;
+    private static DataStorageSingleton coffeeApp;
     private static FragmentActivity mainActivityRef;
+    private SharedPreferences sharedPref;
+    public static BroadcastReceiver broadcastReceiver;
+
+    //broadcast receiver to check internet
+    public void checkInternetConnectionListener() {
+        if(broadcastReceiver == null) {
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Bundle extras = intent.getExtras();
+                    NetworkInfo info = extras.getParcelable("networkInfo");
+
+                    NetworkInfo.State state = info.getState();
+                    if(state == NetworkInfo.State.CONNECTED) {
+                        Common.displayError("HEY u're connected", context);
+                    }
+                    if(state == NetworkInfo.State.DISCONNECTED) {
+                        Common.displayError("HEY u're offline", context);
+                    }
+                }
+            };
+        }
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.coffe_machine_layout);
-
-        mainActivityRef = this;
         Common.setCustomFont(findViewById(R.id.scrollViewContainerId),
                 this.getAssets());
+        mainActivityRef = this;
 
-        //ACTION BAR
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        SharedPreferences sharedPref = mainActivityRef.getPreferences(0);
+        sharedPref = mainActivityRef.getSharedPreferences(Common.SHARED_PREF, Context.MODE_PRIVATE);
         if(sharedPref.getBoolean(Common.FIRST_INIT_VIEW, true)) {
             firstInitView();
             return;
         }
 
         initView(savedInstanceState, mainActivityRef.getWindow().getDecorView());
+        checkInternetConnectionListener();
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        coffeeApp.destroy();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try{
+            unregisterReceiver(broadcastReceiver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+
     private void firstInitView() {
-        SharedPreferences sharedPref = mainActivityRef.getPreferences(0);
         sharedPref.edit().putBoolean(Common.FIRST_INIT_VIEW, false).commit();
 
         LoadingFragment loadingFragment = new LoadingFragment();
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.coffeeMachineContainerLayoutId, loadingFragment, Common.COFFEE_MACHINE_FRAGMENT_TAG)
                 .commit();
-    }
-
-    private static boolean initDataApplication() {
-        SharedPreferences sharedPref = mainActivityRef.getPreferences(0);
-        if (sharedPref != null) {
-            String username = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USERNAME, Common.EMPTY_VALUE);
-            if (username.compareTo(Common.EMPTY_VALUE) != 0) {
-                Log.e(TAG, "this is my username" + username);
-                coffeeMachineApplication = (CoffeeMachineDataStorageApplication) mainActivityRef.getApplication();
-                coffeeMachineApplication.initRegisteredUserByUsername(username);
-                String profilePicPath = sharedPref.getString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, Common.EMPTY_VALUE);
-                if (profilePicPath == Common.EMPTY_VALUE) {
-                    profilePicPath = null;
-                }
-                coffeeMachineApplication.getRegisteredUser().setProfilePicturePath(profilePicPath);
-
-                return true;
-            } else {
-                Log.e(TAG, "no username set");
-                return false;
-            }
-        }
-        return false;
     }
 
     public static boolean initView(Bundle savedInstanceState, View mainView) {
@@ -99,9 +128,29 @@ public class CoffeeMachineActivity extends FragmentActivity {
         return loggedUser;
     }
 
+    private static boolean initDataApplication() {
+        SharedPreferences sharedPref = mainActivityRef.getSharedPreferences("SHARED_PREF_COFFEE_MACHINE", Context.MODE_PRIVATE);
+        coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
+        if(sharedPref != null) {
+            String username = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USERNAME, null);
+            String profilePicPath = sharedPref.getString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, null);
+            long userId = sharedPref.getLong(Common.SHAREDPREF_REGISTERED_USER_ID,
+                    Common.EMPTY_LONG_VALUE);
+                if(userId != Common.EMPTY_LONG_VALUE) {
+                    Log.e(TAG, "this is my username" + username);
+                coffeeApp.setRegisteredUser(userId, profilePicPath, username); //TODO check empty value
+                return true;
+            } else {
+                Log.e(TAG, "no username set");
+                return false;
+            }
+        }
+        return false;
+    }
+
     public static void setLoggedUserView(View mainView) {
         ((TextView) mainView.findViewById(R.id.loggedUserTextId)).setText(
-                coffeeMachineApplication.getRegisteredUser().getUsername());
+                coffeeApp.getRegisteredUsername());
 
         LinearLayout loggedUserButton = (LinearLayout) mainView.findViewById(R.id.loggedUserButtonId);
 //        loggedUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
@@ -112,12 +161,9 @@ public class CoffeeMachineActivity extends FragmentActivity {
                 addChangeUserFragment(mainActivityRef.getSupportFragmentManager());
             }
         });
-
-        Common.drawProfilePictureByPath((ImageView) mainView.findViewById(R.id.loggedUserImageViewId),
-                coffeeMachineApplication.getRegisteredUser()
-                        .getProfilePicturePath(), mainActivityRef.getResources()
-                        .getDrawable(R.drawable.user_icon)
-        );
+        Bitmap bitmap = Common.getRoundedBitmapByFile(coffeeApp.getRegisteredProfilePicturePath(),
+                BitmapFactory.decodeResource( mainActivityRef.getResources(), R.drawable.user_icon));
+        ((ImageView) mainView.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
     }
 
     public static void setNotLoggedUserView(View mainView) {
@@ -144,7 +190,6 @@ public class CoffeeMachineActivity extends FragmentActivity {
                 .addToBackStack("back")
                 .commit();
     }
-
 
     //set header bar methods
 
@@ -202,10 +247,44 @@ public class CoffeeMachineActivity extends FragmentActivity {
                             });
                     break;
                 }
-
         }
     }
 
+    public static void setHeaderByFragmentId(int fragmentId, FragmentManager fragmentManager, long coffeeMachineId) {
+        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+
+        switch (fragmentId) {
+            case 0:
+                CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.headerMapButtonId, fragmentManager, null);
+                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, fragmentManager, null);
+                break;
+            case 1:
+//                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, fragmentManager);
+                String coffeeMachineName = coffeeApp
+                        .getCoffeeMachineById(coffeeMachineId).getName();
+                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.coffeeMachineSettingsMapHeaderLayoutId,
+                        fragmentManager, coffeeMachineName);
+/*                CoffeeMachineActivity.addItemOnHeaderBarById(R.layout.review_header_template,
+                        null, coffeeMachineName,
+                        false, fragmentManager);*/
+                break;
+            case 2:
+                mainActivityRef.findViewById(R.id.headerBarLayoutId).setVisibility(View.VISIBLE);
+                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.headerMapLabelId, null, null);
+                break;
+            case 3:
+                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, fragmentManager, null);
+        }
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+/*
     public static void addItemOnHeaderBarById(int layoutId, View containerView,
                                               String coffeeMachineName, boolean hideHeaderBar, final FragmentManager fragmentManager) {
   //      mainActivityRef.findViewById(R.id.subHeaderBarLayoutId).setVisibility(View.VISIBLE);
@@ -248,111 +327,6 @@ public class CoffeeMachineActivity extends FragmentActivity {
     public static void setHeaderBarVisibile(boolean visibile) {
         mainActivityRef.findViewById(R.id.headerBarLayoutId).setVisibility(visibile ? View.VISIBLE : View.GONE);
     }
-
-    public static void setHeaderByFragmentId(int fragmentId, FragmentManager fragmentManager, String coffeeMachineId) {
-        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
-
-        switch (fragmentId) {
-            case 0:
-                CoffeeMachineActivity.hideAllItemsOnHeaderBar();
-                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.headerMapButtonId, fragmentManager, null);
-                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, fragmentManager, null);
-                break;
-            case 1:
-//                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, fragmentManager);
-                String coffeeMachineName = coffeeMachineApplication
-                        .getCoffeeMachineById(coffeeMachineId).getName();
-                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.coffeeMachineSettingsMapHeaderLayoutId,
-                        fragmentManager, coffeeMachineName);
-/*                CoffeeMachineActivity.addItemOnHeaderBarById(R.layout.review_header_template,
-                        null, coffeeMachineName,
-                        false, fragmentManager);*/
-                break;
-            case 2:
-                mainActivityRef.findViewById(R.id.headerBarLayoutId).setVisibility(View.VISIBLE);
-                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.headerMapLabelId, null, null);
-                break;
-            case 3:
-                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, fragmentManager, null);
-        }
-
-    }
-
-/*
-    public android.os.Handler handler = new android.os.Handler() {
-        Message msg;
-        @Override
-        public void handleMessage(Message msg) {
-            this.msg = msg;
-            super.handleMessage(msg);
-        }
-
-        public Message getMessage() {
-            return this.msg;
-        }
-    };*/
-
-    @Override
-    public void onBackPressed() {
-        //check get back action from LoginFragment
-/*        final LoginFragment fragment = (LoginFragment) getSupportFragmentManager()
-                .findFragmentByTag(Common.NEW_USER_FRAGMENT_TAG);
-        if (fragment != null) {
-            if (fragment.isVisible()) {
-                (findViewById(R.id.loggedUserButtonId)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        addChangeUserFragment(getSupportFragmentManager());
-                    }
-                });
-            }
-        }*/
-
-        //check get back action from addReview
-/*        final AddReviewFragment addReviewfragment = (AddReviewFragment) getSupportFragmentManager()
-                .findFragmentByTag(Common.ADD_REVIEW_FRAGMENT_TAG);
-        if (addReviewfragment != null) {
-            if (addReviewfragment.isVisible()) {
-                //headerAddReviewLayout TODO refactoring it
-                View addMoreTextView = addReviewfragment.getView()
-                        .findViewById(R.id.addMoreTextLayoutId);
-                View headerAddReviewView = addReviewfragment.getView()
-                        .findViewById(R.id.headerAddReviewLayoutId);
-                if (addMoreTextView.getVisibility() == View.VISIBLE) {
-                    addMoreTextView.setVisibility(View.GONE);
-                    headerAddReviewView.setVisibility(View.VISIBLE);
-                    addReviewfragment.getView().findViewById(R.id.addReviewButtonId)
-                            .setVisibility(View.VISIBLE);
-                    return;
-                }
-            }
-        }
 */
-/*        if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            List<Fragment> fragm = getSupportFragmentManager().getFragments();
-            for(Fragment f : fragm) {
-                Log.e(TAG, "id fragment" + f.getId());
-            }
-            Fragment lastFragment = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
-            Log.e(TAG, "id fragment" + lastFragment.getId());
-        }*/
-        //check get back action from coffeeMachine
-/*
-        final CoffeeMachineFragment coffeeMachineFragment = (CoffeeMachineFragment)getSupportFragmentManager().findFragmentByTag(Common.COFFEE_MACHINE_FRAGMENT_TAG);
-        if(coffeeMachineFragment != null) {
-            if(coffeeMachineFragment.isVisible()) {
-                View mapContainerLayout = coffeeMachineFragment.getView().findViewById(R.id.mapContainerLayoutId);
-                View coffeeMachineTableLayout = coffeeMachineFragment.getView().findViewById(R.id.coffeeMachineTableLayoutId);
-                if (mapContainerLayout.getVisibility() == View.VISIBLE) {
-                    mapContainerLayout.setVisibility(View.GONE);
-                    coffeeMachineTableLayout.setVisibility(View.VISIBLE);
-                    return;
-                }
-            }
-        }*/
-
-        super.onBackPressed();
-    }
-
 
 }

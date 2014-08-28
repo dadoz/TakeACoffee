@@ -11,8 +11,8 @@ import com.application.commons.Common;
  * sequence.
  */
 public class ChoiceReviewPagerAdapter extends FragmentStatePagerAdapter {
-    private String coffeeMachineId;
-    public ChoiceReviewPagerAdapter(FragmentManager fm, String coffeeMachineId) {
+    private long coffeeMachineId;
+    public ChoiceReviewPagerAdapter(FragmentManager fm, long coffeeMachineId) {
         super(fm);
         this.coffeeMachineId = coffeeMachineId;
     }

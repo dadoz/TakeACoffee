@@ -18,48 +18,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-            <!--<RelativeLayout
-                    android:id="@+id/addReviewFooterLayoutId"
-                    android:layout_alignParentTop="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/light_grey">
-                <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/small_padding"
-                        android:paddingTop="@dimen/small_padding"
-                        android:paddingBottom="@dimen/small_padding"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true">
-                    <TextView
-                            android:id="@+id/addReviewFooterTextId"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/text_big_24"
-                            android:layout_gravity="center"
-                            android:layout_marginLeft="@dimen/small_padding"
-                            android:text="review status"/>
-
-                </LinearLayout>
-                <LinearLayout
-                        android:id="@+id/addReviewSwipeButtonId"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/medium_button_size"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:background="@drawable/border_left_light_grey"
-                        android:layout_alignParentRight="true"
-                        android:paddingLeft="@dimen/small_padding"
-                        android:paddingRight="@dimen/small_padding">
-                    <ImageView
-                            android:layout_width="@dimen/small_icon_size"
-                            android:layout_height="@dimen/small_icon_size"
-                            android:src="@drawable/left_arrow" />
-                </LinearLayout>
-
-            </RelativeLayout>-->
-
             <RelativeLayout
                     android:id="@+id/headerAddReviewLayoutId"
                     android:layout_width="match_parent"
@@ -84,11 +42,6 @@
                             android:layout_height="@dimen/small_icon_size"
                             android:layout_gravity="center"
                             android:src="@drawable/edit_icon_2"/>
-                    <!--<TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/text_small"
-                            android:text="Add text"/>-->
                 </LinearLayout>
             </RelativeLayout>
 
@@ -124,13 +77,13 @@
     <LinearLayout
             android:id="@+id/mainAddReviewLayoutId"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:orientation="vertical"
             android:layout_below="@id/headerContainerLayoutId">
         <ScrollView
                 android:id="@+id/containerAddReviewId"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="fill_parent">
 
             <!-- review with button -->
             <LinearLayout
@@ -141,7 +94,7 @@
                 <LinearLayout
                         android:id="@+id/addReviewDescriptionLayoutId"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="fill_parent"
                         android:paddingLeft="@dimen/small_padding"
                         android:paddingRight="@dimen/small_padding"
                         android:paddingBottom="@dimen/big_padding"
@@ -156,31 +109,6 @@
                             android:textSize="@dimen/text_big_30"
                             android:text="description" />
 
-
-                    <!--                    <ImageView
-                                                android:layout_gravity="center"
-                                                android:id="@+id/addReviewIconImageId"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:src="@drawable/coffe_cup_icon"/>
-                                        <TextView
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:layout_marginRight="@dimen/huge_padding"
-                                                android:layout_marginLeft="@dimen/huge_padding"
-                                                android:textColor="@color/light_black"
-                                                android:textSize="@dimen/text_big_30"
-                                                android:text="Review:"/>
-                                        <TextView
-                                                android:id="@+id/reviewTextIconTextViewId"
-                                                android:layout_marginBottom="@dimen/huge_padding"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:textColor="@color/white"
-                                                android:textSize="@dimen/text_big_38"
-                                                android:layout_marginRight="@dimen/huge_padding"
-                                                android:layout_marginLeft="@dimen/huge_padding"
-                                                android:text=" - " />-->
                     </LinearLayout>
                     <!--add text on review -->
                     <LinearLayout
@@ -209,7 +137,7 @@
                     </LinearLayout>
 
                 <!-- bottom button -->
-                <LinearLayout
+<!--                <LinearLayout
                         android:id="@+id/addReviewButtonId"
                         android:layout_width="fill_parent"
                         android:layout_height="@dimen/button_height"
@@ -225,7 +153,7 @@
                             android:textSize="@dimen/text_big_24"
                             android:text="add review"
                             />
-                </LinearLayout>
+                </LinearLayout>-->
 
 
             </LinearLayout>
@@ -237,8 +165,7 @@
         </LinearLayout>
         <!-- bottom button -->
         <LinearLayout
-                android:visibility="gone"
-                android:id="@+id/addReviewCustomTextButtonId"
+                android:id="@+id/addReviewButtonId"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/button_height"
                 android:gravity="center"

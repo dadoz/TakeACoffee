@@ -1,13 +1,8 @@
 package com.application.takeacoffee.fragments;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -16,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.application.adapters.AddReviewPagerAdapter;
 import com.application.commons.Common;
-import com.application.datastorage.CoffeeMachineDataStorageApplication;
+import com.application.datastorage.DataStorageSingleton;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
@@ -29,7 +24,7 @@ public class AddReviewContainerFragment extends Fragment {
     private static PagerAdapter pagerAdapter;
     private Bundle args;
 
-    private static CoffeeMachineDataStorageApplication coffeeMachineApplication;
+    private static DataStorageSingleton coffeeApp;
 
 
     private static Activity mainActivityRef;
@@ -39,15 +34,14 @@ public class AddReviewContainerFragment extends Fragment {
         mainActivityRef = getActivity();
         addReviewContainerView = inflater.inflate(R.layout.add_review_container_fragment, container, false);
         //get args from fragment
-        String coffeeMachineId = (String)this.getArguments().get(Common.COFFE_MACHINE_ID_KEY);
+        long coffeeMachineId = this.getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
 
         //change fragment
         args = new Bundle();
-        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
 
         //get data from application
-        coffeeMachineApplication = ((CoffeeMachineDataStorageApplication) this.getActivity()
-                .getApplication());
+        coffeeApp = DataStorageSingleton.getInstance(getActivity().getApplicationContext());
 
         initView(coffeeMachineId);
 
@@ -55,7 +49,7 @@ public class AddReviewContainerFragment extends Fragment {
         return addReviewContainerView;
     }
 
-    public void initView(String coffeeMachineId) {
+    public void initView(long coffeeMachineId) {
 //        setSwipePagerOnMessage();
         setAddReviewPager(coffeeMachineId);
         setHeader(coffeeMachineId);
@@ -70,13 +64,13 @@ public class AddReviewContainerFragment extends Fragment {
         });
     }
 
-    public void setHeader(String coffeeMachineId) {
+    public void setHeader(long coffeeMachineId) {
         CoffeeMachineActivity.setHeaderByFragmentId(1, getFragmentManager(), coffeeMachineId);
         mainActivityRef.findViewById(R.id.addReviewSwipeButtonId).setVisibility(View.VISIBLE);
 
     }
 
-    public void setAddReviewPager(String coffeeMachineId) {
+    public void setAddReviewPager(long coffeeMachineId) {
         pager = (ViewPager) addReviewContainerView.findViewById(R.id.pager);
         pager.setAdapter(new AddReviewPagerAdapter(getChildFragmentManager(), coffeeMachineId));
 
@@ -87,7 +81,7 @@ public class AddReviewContainerFragment extends Fragment {
             }
         });*/
     }
-
+/*
     public void setSwipePagerOnMessage() {
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -109,7 +103,7 @@ public class AddReviewContainerFragment extends Fragment {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         localBroadcastManager.registerReceiver(broadcastReceiver, a);
 
-    }
+    }*/
 
     public void setSwipePageByPagePosition(int nextPagePosition) {
         if(nextPagePosition -1 == Common.NUM_PAGES - 1) {

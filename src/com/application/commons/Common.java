@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.*;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
@@ -15,11 +18,13 @@ import com.application.models.Review;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Common {
 	public static final String SHAREDPREF_REGISTERED_USERNAME = "SHAREDPREF_REGISTERED_USERNAME";
     public static final String SHAREDPREF_PROFILE_PIC_FILE_NAME = "SHAREDPREF_PROFILE_PIC_FILE_NAME";
+    public static final String SHAREDPREF_REGISTERED_USER_ID = "SHAREDPREF_REGISTERED_USER_ID";
     public static final String REVIEW_STATUS_KEY = "REVIEW_STATUS_ID";
     public static final String EMPTY_PIC_PATH = "EMPTY_PIC_PATH";
     public static final int VIBRATE_TIME = 15;
@@ -37,6 +42,13 @@ public class Common {
     public static final String ARG_REVIEW_PAGE = "REVIEW_PAGE";
     public static final String IS_TODAY_REVIEW_KEY = "IS_TODAY_REVIEW_KEY";
     public static final String FIRST_INIT_VIEW = "FIRST_INIT_VIEW";
+    public static final long LOCAL_USER_ID = -2;
+    public static final long EMPTY_LONG_VALUE = -1;
+    public static final String FROM_TIMESTAMP_KEY = "FROM_TIMESTAMP_KEY";
+    public static final String TO_TIMESTAMP_KEY = "TO_TIMESTAMP_KEY";
+    public static final String SHARED_PREF = "SHARED_PREF_COFFEE_MACHINE";
+    private static final long PROFILE_PIC_MIN_HEIGHT = 300;
+    private static final long PROFILE_PIC_MIN_WIDTH = 300;
     public static int ITEM_NOT_SELECTED = -1;
     public static String SET_MORE_TEXT_ON_REVIEW = "SET_MORE_TEXT_ON_REVIEW";
     public static final String ARG_PAGE = "page";
@@ -46,35 +58,7 @@ public class Common {
     public static final String NEW_USER_FRAGMENT_TAG = "NEW_USER_FRAGMENT_TAG";
     public static final String ADD_REVIEW_FRAGMENT_TAG = "ADD_REVIEW_FRAGMENT";
 
-    public static ReviewStatusEnum parseStatusFromPageNumber(int pageNumber) {
-        ReviewStatusEnum status;
-        switch (pageNumber) {
-            case 0:
-                status = ReviewStatusEnum.GOOD;
-                break;
-            case 1:
-                status = ReviewStatusEnum.NOTSOBAD;
-                break;
-            case 2:
-                status = ReviewStatusEnum.WORST;
-                break;
-            default:
-                status = ReviewStatusEnum.NOTSET;
-        }
-        return status;
-    }
-
-    public static ReviewStatusEnum parseStatusFromString(String reviewStatus) {
-        if(reviewStatus.equals("GOOD")) {
-            return ReviewStatusEnum.GOOD;
-        } else if(reviewStatus.equals("NOT_BAD")) {
-            return ReviewStatusEnum.NOTSOBAD;
-        } else if(reviewStatus.equals("WORST")) {
-            return ReviewStatusEnum.WORST;
-        }
-        Log.e(TAG, "status not set - sorry I'll not add this review");
-        return ReviewStatusEnum.NOTSET;
-    }
+    public static final String DATABASE_NAME = "takeacoffeedb";
 
     public enum ReviewStatusEnum {
         GOOD,
@@ -156,26 +140,11 @@ public class Common {
         return  bitmapOverlay;
     }
 
-    public static boolean drawProfilePictureByPath(ImageView v, String profilePicturePath, Drawable defaultIcon) {
-        try {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            if(profilePicturePath != null) {
-                Bitmap bitmap = BitmapFactory.decodeFile(profilePicturePath, options);
-                v.setImageBitmap(bitmap);
-            } else {
-                v.setImageDrawable(defaultIcon);
-            }
-            return true;
-        } catch(Exception e) {
-            Log.e(TAG, "cannot load profile picture - set the default one");
-//            e.printStackTrace();
-        }
-        return false;
-    }
-
-
     public static String saveImageInStorage(Bitmap profileImage, File customDir) {
+        if(profileImage == null) {
+            return null;
+        }
+
         File profilePicFile = new File(customDir, Common.PROFILE_PIC_FILE_NAME); //Getting a file within the dir.
         FileOutputStream out = null;
         try {
@@ -185,41 +154,90 @@ public class Common {
             e.printStackTrace();
             return null;
         } finally {
-            try{
-                out.close();
-            } catch(Throwable ignore) {
-                return null;
+            if(out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-//        Log.e(TAG, profilePicFile.getAbsolutePath());
-
         return profilePicFile.getAbsolutePath();
     }
+
     public static Bitmap getRoundedRectBitmap(Bitmap bitmap, int size) {
-        Bitmap result = null;
-        try {
-            result = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(result);
+        Bitmap result;
+        if(bitmap != null) {
+            try {
+                bitmap = getScaledBitmap(bitmap, size); //NOT CHECKING ERROR COS IF NOT RETURN NOT CHANGED BITMAP
+                result = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(result);
 
-            int color = 0xff424242;
-            Paint paint = new Paint();
+                int color = 0xff424242;
+                Paint paint = new Paint();
 
-            paint.setAntiAlias(true);
-            canvas.drawARGB(0, 0, 0, 0);
-            paint.setColor(color);
-            canvas.drawCircle(size / 2, size / 2, size / 2, paint);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            canvas.drawBitmap(bitmap, 0, 0, paint);
+                paint.setAntiAlias(true);
+                canvas.drawARGB(0, 0, 0, 0);
+                paint.setColor(color);
+                canvas.drawCircle(size / 2, size / 2, size / 2, paint);
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+                canvas.drawBitmap(bitmap, 0, 0, paint);
+                return result;
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            } catch (OutOfMemoryError o) {
+                o.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        } catch (OutOfMemoryError o) {
-            o.printStackTrace();
         }
-        return result;
+        return null;
     }
 
+    private static Bitmap getScaledBitmap(Bitmap bitmap, int size) {
+        //TODO set up in a function
+        if(bitmap != null && bitmap.getHeight() != size && bitmap.getWidth() != size) {
+            //resize bitmap to accord on size
+            float ratio;
+            float scaledWidth = -1;
+            float scaledHeight = -1;
+            if((bitmap.getHeight() < size)) {
+                ratio = (float) size / (float) bitmap.getHeight();
+                scaledHeight = size;
+                scaledWidth = (float) bitmap.getWidth() * ratio;
+            }
 
+            if((bitmap.getWidth() < size) &&
+                    scaledHeight != -1) {
+                ratio = (float)  size / (float) bitmap.getWidth();
+                scaledWidth = size;
+                scaledHeight = (float) bitmap.getWidth() * ratio;
+            }
+
+            if(scaledHeight == -1 && scaledWidth == -1) {
+                //scale on width even if they are same
+                if(bitmap.getWidth() <= bitmap.getHeight()) {
+                    ratio = (float)  size / (float) bitmap.getWidth();
+                    scaledWidth = size;
+                    scaledHeight = (float) bitmap.getHeight() * ratio;
+                } else if(bitmap.getWidth() > bitmap.getHeight()) {
+                    //scale on height
+                    ratio = (float) size / (float) bitmap.getHeight();
+                    scaledHeight = size;
+                    scaledWidth = (float) bitmap.getWidth() * ratio;
+                }
+            }
+
+//            Log.d(TAG, "h: " + scaledHeight + "w: " + scaledWidth);
+//            Log.d(TAG, "h: " + (int) scaledHeight + "w: " + (int) scaledWidth);
+            return Bitmap.createScaledBitmap(bitmap, (int) scaledWidth, (int) scaledHeight, false);
+        }
+
+        //return old bitmap
+        return bitmap;
+    }
+/*
     public static Bitmap getRoundedBitmap(int size, int color) {
         Bitmap bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         try {
@@ -229,16 +247,40 @@ public class Common {
             paint.setAntiAlias(true);
             canvas.drawARGB(0, 0, 0, 0);
             paint.setColor(color);
-            canvas.drawCircle(size/2, size/2, size/2, paint);
+            canvas.drawCircle(size/2, size/2, size/2, paint); //all right man :)
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
             canvas.drawBitmap(bmp, 0, 0, paint);
-
+            return bmp;
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (OutOfMemoryError o) {
             o.printStackTrace();
         }
-        return bmp;
+        return null;
+    }*/
+
+    public static Bitmap getRoundedBitmapByResource(int pictureName, Activity mainActivityRef) {
+        try {
+            Bitmap bitmap = BitmapFactory.decodeResource(mainActivityRef.getResources(), pictureName);
+            return Common.getRoundedRectBitmap(bitmap, Common.PROFILE_PIC_CIRCLE_MASK_SIZE); //TODO add check on null bitmap and ret default-icon
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Bitmap getRoundedBitmapByFile(String profilePicturePath, Bitmap defaultIcon) {
+        try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            Bitmap bitmap = BitmapFactory.decodeFile(profilePicturePath, options);
+            Bitmap roundedPic = Common.getRoundedRectBitmap(bitmap, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
+            return roundedPic != null ? roundedPic : defaultIcon;
+        } catch(Exception e) {
+            Log.e(TAG, "cannot load profile picture - set the default one");
+//            e.printStackTrace();
+        }
+        return defaultIcon;
     }
 
     public static class ReviewListTimestamp {
@@ -264,4 +306,17 @@ public class Common {
             return reviewsList;
         }
     }
+
+    public static boolean isConnected(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return networkInfo != null && networkInfo.getState() == NetworkInfo.State.CONNECTED;
+    }
+
+/*    public static boolean isConnected(Context context) {
+        return true;
+    }
+*/
 }

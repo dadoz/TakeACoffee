@@ -1,7 +1,6 @@
 package com.application.takeacoffee.fragments;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -15,10 +14,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.application.commons.Common;
-import com.application.datastorage.CoffeeMachineDataStorageApplication;
+import com.application.datastorage.DataStorageSingleton;
 import com.application.models.CoffeeMachine;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
+import com.application.takeacoffee.experimental.PieChart;
 
 import java.util.ArrayList;
 
@@ -29,24 +29,22 @@ import static com.application.commons.Common.setCustomFontByView;
  */
 public class CoffeeMachineFragment extends Fragment {
     private static final String TAG = "coffeeMachineFragment";
-    private ArrayList<CoffeeMachine> coffeeMachineList;
+//    private ArrayList<CoffeeMachine> coffeeMachineList;
     private ArrayList<PieChart> pieChartList;
     private Handler mHandler;
     private static FragmentActivity mainActivityRef;
     private static LinearLayout settingsLayout;
+    private DataStorageSingleton coffeeApp;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mHandler = new Handler();
         mainActivityRef = getActivity();
+        coffeeApp = DataStorageSingleton.getInstance(getActivity().getApplicationContext());
+
         //get views
         final View coffeeMachineFragment = inflater.inflate(R.layout.coffe_machine_fragment, container, false);
         settingsLayout = (LinearLayout)coffeeMachineFragment.findViewById(R.id.settingsLayoutId);
-
-        //get data from application
-        coffeeMachineList = ((CoffeeMachineDataStorageApplication) getActivity().getApplication())
-                .getCoffeeMachineList();
-
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -62,12 +60,14 @@ public class CoffeeMachineFragment extends Fragment {
     }
 
     private void setHeader() {
-        CoffeeMachineActivity.setHeaderByFragmentId(0, getFragmentManager(), null);
+        CoffeeMachineActivity.setHeaderByFragmentId(0, getFragmentManager(), -1);
     }
 
     private void initView(View coffeeMachineFragment) {
         int itemInTableRowCounter = 0;
         TableRow tableRow = null;
+        //get data from application
+        ArrayList<CoffeeMachine> coffeeMachineList = coffeeApp.getCoffeeMachineList();
 
         //setMap button available
         mainActivityRef.findViewById(R.id.headerMapButtonId).setVisibility(View.VISIBLE);
@@ -133,21 +133,21 @@ public class CoffeeMachineFragment extends Fragment {
                 } else if (iconPath.equals(new String("coffee4.jpg"))) {
                     picResource = R.drawable.coffee4;
                 }
-                ImageView coffeePic = (ImageView) coffeeMachineTemplate.findViewById(R.id.coffeeIconId);
+                ImageView coffeeIconImageView = (ImageView) coffeeMachineTemplate.findViewById(R.id.coffeeIconId);
 
                 try {
                     //make piechart
-                    pieChartList = getPieChartData();
+//                    pieChartList = getPieChartData();
 
-                    Bitmap bmpAbove = getRoundedBitmapByPicPath(picResource);
-                    Bitmap bmpBelow = Common.getRoundedBitmap(Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE,
-                            getResources().getColor(R.color.light_black));
-                    Bitmap coffeeMachineBmp = Common.overlayBitmaps(bmpBelow, bmpAbove);
-                    coffeePic.setImageBitmap(coffeeMachineBmp);
+                    Bitmap bmpAbove = Common.getRoundedBitmapByResource(picResource, mainActivityRef);
+//                    Bitmap bmpBelow = Common.getRoundedBitmap(Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE,
+//                            getResources().getColor(R.color.light_black));
+  //                  Bitmap coffeeMachineBmp = Common.overlayBitmaps(bmpBelow, bmpAbove);
+                    coffeeIconImageView.setImageBitmap(bmpAbove);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e(TAG, "failed to load profile pic from storage - load the guest one");
-                    coffeePic.setImageResource(R.drawable.coffe_cup_icon);
+                    coffeeIconImageView.setImageResource(R.drawable.coffe_cup_icon);
                 }
 
                 (coffeeMachineTemplate.findViewById(R.id.coffeeIconId)).setOnClickListener(new View.OnClickListener() {
@@ -174,10 +174,10 @@ public class CoffeeMachineFragment extends Fragment {
 
     }
 
-    private boolean getCoffeeMachineReviewById(String coffeMachineId){
+    private boolean getCoffeeMachineReviewById(long coffeeMachineId){
         //change fragment
         Bundle args = new Bundle();
-        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeMachineId);
+        args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
 
         ChoiceReviewContainerFragment reviewsFrag = new ChoiceReviewContainerFragment();
         reviewsFrag.setArguments(args);
@@ -192,6 +192,7 @@ public class CoffeeMachineFragment extends Fragment {
     }
 
 
+/*
     public ArrayList<PieChart> getPieChartData() {
         ArrayList<PieChart> pieChartList = new ArrayList<PieChart>();
 
@@ -211,19 +212,8 @@ public class CoffeeMachineFragment extends Fragment {
         }
 
         return pieChartList;
-    }
+    }*/
 
 
-    public static Bitmap getRoundedBitmapByPicPath(int pictureName) {
-        try {
-            Bitmap bitmap = BitmapFactory.decodeResource(mainActivityRef.getResources(), pictureName);
-            Bitmap roundedBitmap =Common.getRoundedRectBitmap(bitmap, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
-
-            return roundedBitmap;
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
 }

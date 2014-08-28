@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.application.commons.Common;
-import com.application.datastorage.CoffeeMachineDataStorageApplication;
+import com.application.datastorage.DataStorageSingleton;
 import com.application.models.User;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
@@ -46,12 +46,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
     private static final int PHOTO_CODE = 100;
     private static final String TAG = "LoginFragment";
 
-    private CoffeeMachineDataStorageApplication coffeeMachineApplication;
+    private DataStorageSingleton coffeeApp;
 
     private static File customDir;
 
     private FragmentActivity mainActivityRef;
-    private SharedPreferences sharedPref;
+//    private SharedPreferences sharedPref;
 
     private View loginView;
 
@@ -71,42 +71,39 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         mainActivityRef = this.getActivity();
         this.savedInstance = savedInstance;
 
-        coffeeMachineApplication = (CoffeeMachineDataStorageApplication)this.getActivity().getApplication();
+        coffeeApp = DataStorageSingleton.getInstance(getActivity().getApplicationContext());
 
-        customDir = this.getActivity()
-                .getApplication().getApplicationContext()
+        //TODO refactor it
+        customDir = this.getActivity().getApplication().getApplicationContext()
                 .getDir(Common.COFFEE_MACHINE_DIR, Context.MODE_PRIVATE); //Creating an internal dir;
-
-        sharedPref = mainActivityRef.getPreferences(0);
 
         loginView = inflater.inflate(R.layout.login_fragment, container, false);
 
         final EditText usernameEditText = (EditText) loginView.findViewById(R.id.usernameNewUserEditTextId);
 
-        User user = coffeeMachineApplication.getRegisteredUser();
-
-        ImageView profilePic = (ImageView) loginView .findViewById(R.id.profilePicImageViewId);
-        if(user != null) {
-            Common.drawProfilePictureByPath(profilePic, user.getProfilePicturePath(),
-                    getResources().getDrawable(R.drawable.user_icon));
-            Log.e(TAG, "failed to load profile pic from storage - load the guest one");
+        ImageView profilePicImageView = (ImageView)loginView.findViewById(R.id.profilePicImageViewId);
+        if(coffeeApp.isRegisteredUser()) {
+//            Common.drawProfilePictureByPath(profilePic, coffeeApp.getRegisteredProfilePicturePath(),
+//                    getResources().getDrawable(R.drawable.user_icon));
+            Bitmap bitmap = Common.getRoundedBitmapByFile(coffeeApp.getRegisteredProfilePicturePath(),
+                    BitmapFactory.decodeResource( mainActivityRef.getResources(), R.drawable.user_icon));
+            profilePicImageView.setImageBitmap(bitmap);
         }
 
-        profilePic.setOnClickListener(new View.OnClickListener() {
+        profilePicImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setProfilePic();
+                setProfilePictureByIntent();
             }
         });
         //set old username on editText
-        if (user != null) {
-            usernameEditText.setText(user.getUsername());
+        if(coffeeApp.isRegisteredUser()) {
+            usernameEditText.setText(coffeeApp.getRegisteredUsername());
         }
 
         //unbind loggedUserButtonId action
         mainActivityRef.findViewById(R.id.loggedUserButtonId).setOnClickListener(null);
         loginView.findViewById(R.id.saveUserButtonId).setOnClickListener(this);
-
 
         /**FB INTEGRATION**/
         loginView.findViewById(R.id.facebookLoginButtonId).setOnClickListener(this);
@@ -122,57 +119,57 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         CoffeeMachineActivity.hideAllItemsOnHeaderBar();
     }
 
-    public void updateUserBox(String username) {
+    public void setRegisteredUserHeader() {
         Bitmap bitmap;
         //set profile pic image
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 
-        User user = coffeeMachineApplication.getRegisteredUser();
-        if(user != null && user.getProfilePicturePath() != null) {
-            bitmap = BitmapFactory.decodeFile(user.getProfilePicturePath(), options);
-        } else {
+        if(! coffeeApp.isRegisteredUser()) {
             Log.e(TAG, "failed to load profile pic from storage - load the guest one");
+            //SET CUSTOM NAME
             bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.user_icon);
+            ((ImageView) mainActivityRef.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
+            return;
         }
 
-        ((ImageView)mainActivityRef.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
-        //set username
-        ((TextView)mainActivityRef.findViewById(R.id.loggedUserTextId)).setText(username);
+        if(coffeeApp.getRegisteredProfilePicturePath() != null) {
+            bitmap = BitmapFactory.decodeFile(coffeeApp.getRegisteredProfilePicturePath(), options);
+            ((ImageView) mainActivityRef.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
+        }
+
+        if(coffeeApp.getRegisteredUsername() != null) {
+            ((TextView) mainActivityRef.findViewById(R.id.loggedUserTextId)).setText(coffeeApp.getRegisteredUsername());
+        }
     }
 
-    public void setProfilePic() {
+    public boolean setProfilePicture(Bitmap pickedImage, ImageView profilePicView) {
+        if(mConnectionProgressDialog != null) {
+            mConnectionProgressDialog.dismiss(); //loading dialog
+        }
+
+        Bitmap profileImage = Common.getRoundedRectBitmap(pickedImage, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
+        String profileImagePath = Common.saveImageInStorage(profileImage, customDir); //store image in storage and get back URL
+
+        if(profileImagePath != null) {
+            Log.d(TAG, "[PROFILE PIC] path file - " + profileImagePath);
+            if(coffeeApp.setRegisteredUser(Common.EMPTY_LONG_VALUE, profileImagePath, null)) {
+                profilePicView.setImageBitmap(profileImage);
+                return true;
+            }
+            return false;
+        }
+
+        Common.displayError("Error to set your picture!", mainActivityRef);
+//        profilePicView.setImageBitmap(BitmapFactory.decodeResource( mainActivityRef.getResources(),
+//                R.drawable.user_icon)); //TODO replace with the one stored in registeredUser
+        return false;
+    }
+
+    public void setProfilePictureByIntent() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, PHOTO_CODE);
-    }
-
-    public void setAndsaveProfilePictureByPicture(Bitmap pickedImage, ImageView profilePicView) {
-        Bitmap profileImage = Common.getRoundedRectBitmap(pickedImage, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
-
-        //store image in storage and get back URL
-        String profileImagePath = Common.saveImageInStorage(profileImage, customDir);
-        if(profileImagePath == null) {
-            Log.e(TAG, "image not stored in storage");
-        } else {
-            //store url in application
-            Log.d(TAG, "[PROFILE PIC] path file - " + profileImagePath);
-            User user = coffeeMachineApplication.getRegisteredUser();
-
-            if(user != null) {
-                user.setProfilePicturePath(profileImagePath);
-            } else {
-                coffeeMachineApplication.initRegisteredUserByProfilePicturePath(profileImagePath);
-            }
-//                            coffeeMachineApplication.coffeeMachineData.setProfilePicturePath(profileImagePath);
-            sharedPref.edit().putString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, profileImagePath).commit();
-        }
-
-        profilePicView.setImageBitmap(profileImage);
-
-        if(mConnectionProgressDialog != null) {
-            mConnectionProgressDialog.dismiss();
-        }
     }
 
     /*
@@ -290,7 +287,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                                             URL profilePicURL = new URL(dataJSON.getString("url"));
                                             Bitmap profilePicture = new ProfilePictureAsyncTask().execute(profilePicURL).get();
                                             ImageView profilePicView = (ImageView) mainActivityRef.findViewById(R.id.profilePicImageViewId);
-                                            setAndsaveProfilePictureByPicture(profilePicture, profilePicView);
+                                            setProfilePicture(profilePicture, profilePicView);
                                             /***LOGOUT FROM FB**/
                                             session.close();
                                         } catch (JSONException e) {
@@ -381,8 +378,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                 // by default the profile url gives 50x50 px image only
                 // we can replace the value with whatever dimension we want by
                 // replacing sz=X
-                personPhotoUrl = personPhotoUrl.substring(0,
-                        personPhotoUrl.length() - 2)
+                personPhotoUrl = personPhotoUrl.substring(0, personPhotoUrl.length() - 2)
                         + Common.PROFILE_PIC_SIZE;
 
                 ImageView imgProfilePic = (ImageView) loginView.findViewById(R.id.profilePicImageViewId);
@@ -422,7 +418,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         }
 
         protected void onPostExecute(Bitmap result) {
-            setAndsaveProfilePictureByPicture(result, bmImage);
+            setProfilePicture(result, bmImage);
             if(mGoogleApiClient != null) {
                 if (mGoogleApiClient.isConnected()) {
                     mGoogleApiClient.disconnect();
@@ -531,7 +527,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
             //check and save
             final EditText usernameEditText = (EditText) loginView.findViewById(R.id.usernameNewUserEditTextId);
             String username = usernameEditText.getText().toString();
-            Log.e(TAG, "u clicked save - " + username + " -");
             if (username == null || username.matches("")) {
                 Common.displayError("no username set - please insert your one", view.getContext());
                 return;
@@ -545,16 +540,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                     Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
 
-            updateUserBox(username);
-            sharedPref.edit().putString(Common.SHAREDPREF_REGISTERED_USERNAME, username).commit();
-            User user = coffeeMachineApplication.getRegisteredUser();
-            if (user == null) {
-                coffeeMachineApplication.initRegisteredUserByUsername(username);
-            } else {
-                user.setUsername(username);
+            if(coffeeApp.setRegisteredUser(Common.EMPTY_LONG_VALUE, null, username)) {
+                setRegisteredUserHeader();
             }
 
-//                Log.e(TAG, getFragmentManager().getBackStackEntryCount() + " frag size");
             if(getFragmentManager().getBackStackEntryCount() > 0) {
                 getFragmentManager().popBackStack();
             } else {
@@ -562,6 +551,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                         .replace(R.id.coffeeMachineContainerLayoutId, new CoffeeMachineFragment())
                         .commit();
             }
+
+            Log.e(TAG, "u clicked save - " + username + " -");
         }
     }
 
@@ -580,7 +571,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                         Bitmap pickedImage = BitmapFactory.decodeStream(imageStream);
                         Log.d(TAG, "I got image as profilePic");
                         ImageView profilePic = (ImageView)this.getActivity().findViewById(R.id.profilePicImageViewId);
-                        setAndsaveProfilePictureByPicture(pickedImage, profilePic);
+                        setProfilePicture(pickedImage, profilePic);
                     } catch (FileNotFoundException e) {
                         Toast.makeText(this.getActivity().getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                         e.printStackTrace();

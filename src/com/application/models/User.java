@@ -1,11 +1,13 @@
 package com.application.models;
 
+import com.application.commons.Common;
+
 import java.util.ArrayList;
 
 public class User {
-	private String id;
+	private long id;
 	private String username;
-	private ArrayList<Review> reviewsList;
+//	private String reviewsListId;
     private String profilePicturePath;
 /*
 	public User(String id, String username, ArrayList<Review> reviewsList){
@@ -14,13 +16,13 @@ public class User {
 		this.reviewsList = reviewsList;
 	}
 */
-	public User(String id, String username, String profilePicturePath) {
+	public User(long id, String profilePicturePath, String username) {
 		this.id = id;
 		this.username = username;
         this.profilePicturePath = profilePicturePath;
 	}
 	
-	public String getId(){
+	public long getId(){
 		return this.id;
 	}
 
@@ -28,22 +30,29 @@ public class User {
 		return this.username;
 	}
 
-	public ArrayList<Review> getReviewList(){
+/*	public String getReviewList(){
 		return this.reviewsList;
 	}
 
-	public void setReviewList(ArrayList<Review> reviewsList){
-		this.reviewsList = reviewsList;
+	public void setReviewList(String reviewsListId){
+		this.reviewsListId = reviewsListId;
 	}
 	public void setUsername(String username){
 		this.username = username;
 	}
-
+*/
     public String getProfilePicturePath() {
         return this.profilePicturePath;
     }
     public void setProfilePicturePath(String profilePicturePath) {
+        if(profilePicturePath.equals(Common.EMPTY_PIC_PATH)) {
+            this.profilePicturePath = null;
+            return;
+        }
         this.profilePicturePath = profilePicturePath;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

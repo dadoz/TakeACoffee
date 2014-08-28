@@ -10,7 +10,6 @@
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:visibility="visible"
-            android:background="@color/light_green_soft"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/small_padding"
@@ -116,7 +115,7 @@
             android:layout_marginBottom="@dimen/medium_button_size"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@color/light_green"
+            android:background="@color/middle_grey"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -203,7 +202,6 @@
     <RelativeLayout
             android:id="@+id/footerChoiceReviewLayoutId"
             android:layout_alignParentBottom="true"
-            android:background="@color/light_green_soft"
             android:layout_width="match_parent"
             android:layout_height="@dimen/medium_button_size">
         <LinearLayout

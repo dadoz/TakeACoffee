@@ -1,4 +1,4 @@
-package com.application.takeacoffee.fragments;
+package com.application.takeacoffee.experimental;
 
 /**
  * Created by davide on 22/04/14.

@@ -8,12 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import com.application.commons.Common;
-import com.application.datastorage.CoffeeMachineDataStorageApplication;
+import com.application.datastorage.DataStorageSingleton;
 import com.application.models.Review;
-import com.application.models.User;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
@@ -25,48 +22,48 @@ import java.util.ArrayList;
 public class EditReviewFragment extends Fragment{
     private static Activity mainActivityRef;
     private ArrayList<Review> reviewsList;
-    private CoffeeMachineDataStorageApplication coffeeMachineApplication;
+    private DataStorageSingleton coffeeApp;
+    private View editReviewView;
     private static final String TAG = "EditReviewFragment";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mainActivityRef = getActivity();
-        View editReviewView = inflater.inflate(R.layout.edit_review_template, container, false);
+        coffeeApp = DataStorageSingleton.getInstance(getActivity().getApplicationContext());
+        editReviewView = inflater.inflate(R.layout.edit_review_template, container, false);
 
-        String reviewId = getArguments().getString(Common.REVIEW_ID);
-        String coffeeMachineId = getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
-//        int pageNumber = getArguments().getInt(Common.ARG_PAGE);
-        //get data from application
-        coffeeMachineApplication = (CoffeeMachineDataStorageApplication) this.getActivity().getApplication();
-        String reviewListId = coffeeMachineApplication
-                .getReviewListIdByCoffeeMachine(coffeeMachineId);
-        reviewsList = coffeeMachineApplication.getReviewListById(reviewListId);
+//        long reviewId = getArguments().getLong(Common.REVIEW_ID);
+//        long coffeeMachineId = getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
+//        reviewsList = coffeeApp.getReviewListByCoffeeMachineId(coffeeMachineId);
+        String reviewStatus = (String) this.getArguments().get(Common.REVIEW_STATUS_KEY);
+        long reviewId = getArguments().getLong(Common.REVIEW_ID);
+        long coffeeMachineId = getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
 
         setHeader();
-        Common.ReviewStatusEnum reviewStatus = Common.ReviewStatusEnum.valueOf(
-                (String) this.getArguments().get(Common.REVIEW_STATUS_KEY));
-        initView(reviewId, reviewStatus, editReviewView); //test
+        initView(coffeeMachineId, reviewId, reviewStatus); //test
 
         Common.setCustomFont(editReviewView, getActivity().getAssets());
         return editReviewView;
     }
 
-    private Review getReviewById(ArrayList<Review> reviewsList, String reviewId) {
+/*    private Review getReviewById(ArrayList<Review> reviewsList, long reviewId) {
         for(Review review:reviewsList) {
-            if(review.getId().equals(reviewId)) {
+            if(review.getId() == reviewId) {
                 return review;
             }
         }
         return null;
-    }
+    }*/
 
     public void setHeader() {
-        CoffeeMachineActivity.setHeaderByFragmentId(3, getFragmentManager(), null);
+        CoffeeMachineActivity.setHeaderByFragmentId(3, getFragmentManager(), -1);
     }
 
-    private void initView(String reviewId, Common.ReviewStatusEnum reviewStatus, final View editReviewView) {
-        //User user = coffeeMachineApplication.coffeeMachineData.getRegisteredUser();
+    private void initView(final long coffeeMachineId, long reviewId, String reviewStatus) {
+        //User user = coffeeApp.coffeeMachineData.getRegisteredUser();
+//        Common.ReviewStatusEnum reviewStatus = Common.ReviewStatusEnum.valueOf(reviewStatus);
 
-        final Review review = getReviewById(reviewsList, reviewId);
+//        final Review review = getReviewById(reviewsList, reviewId);
+        final Review review = coffeeApp.getReviewById(coffeeMachineId, reviewId);
         if(review != null) {
 
             //set review data
@@ -76,7 +73,7 @@ public class EditReviewFragment extends Fragment{
                         .findViewById(R.id.profilePicReviewEditTemplateId), user.getProfilePicturePath(),
                         getResources().getDrawable(R.drawable.user_icon));
             }*/
-            switch (reviewStatus) {
+            switch (Common.ReviewStatusEnum.valueOf(reviewStatus)) {
                 case GOOD:
                     editReviewView.findViewById(R.id.editReviewTextLayoutId)
                             .setBackgroundColor(getResources().getColor(R.color.light_green_soft));
@@ -103,14 +100,15 @@ public class EditReviewFragment extends Fragment{
             ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)).setText(review.getComment());
 
             editReviewView.findViewById(R.id.saveReviewButtonId).setOnClickListener(new View.OnClickListener() {
-
                 @Override
                 public void onClick(View view) {
                     Common.displayError("review saved", mainActivityRef);
                     String reviewCommentNew = ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)).getText().toString();
-                    review.setComment(reviewCommentNew);
+                    //review.setComment(reviewCommentNew);
                     Common.hideKeyboard(mainActivityRef, ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)));
                     getFragmentManager().popBackStack();
+
+                    coffeeApp.updateReviewById(coffeeMachineId, review.getId(), reviewCommentNew);
                 }
             });
         } else {

@@ -1,39 +1,44 @@
 package com.application.models;
 
+import android.util.Log;
 import com.application.commons.Common.ReviewStatusEnum;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 
 
 public class Review {
-	
-    private String id;
-	private String username;
+
+    private static final String TAG = "Review";
+    private long id;
 //    private boolean feedback;
 	private ReviewStatusEnum status;
     private String comment;
-    private Date date;
-    private String profilePicPath;
-    private String userId;
+    private long timestamp;
+    private long userId;
+    private long coffeeMachineId;
 
-	public Review(String id, String userId, final String username, String comment, ReviewStatusEnum status, String profilePicPath, Date date) {
+	public Review(long id, String comment, ReviewStatusEnum status,
+                  long timestamp, long userId, long coffeeMachineId) {
 
-        //this.id = getUniqueID();
         this.id = id;
         this.userId = userId;
-		this.username = username;
         this.status = status;
         this.comment = comment;
-        this.date = date;
-        this.profilePicPath = profilePicPath;
+        this.timestamp = timestamp;
+        this.coffeeMachineId = coffeeMachineId;
     }
 
-	public String getUsername() {
-		return username;
+	public long getCoffeeMachineId() {
+		return coffeeMachineId;
 	}
-	
-    public String getId(){
+
+    public void setCoffeeMachineId(long coffeeMachineId) {
+        this.coffeeMachineId = coffeeMachineId;
+    }
+
+    public long getId(){
         return this.id;
     }
 
@@ -41,33 +46,68 @@ public class Review {
         return this.comment;
     }
 
-    public String getUserId(){
+    public long getUserId(){
         return this.userId;
     }
 
     public void setComment(String value) {
         this.comment = value;
     }
-    public void setFeedback(ReviewStatusEnum value) {
-        this.status = value;
-    }
-
-    public Date getDate(){
-        return this.date;
-    }
 
     public String getFormattedTimestamp(){
-        return new SimpleDateFormat("dd-MM-yyyy HH:mm").format(this.date);
+        return new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date(timestamp));
     }
+
     public ReviewStatusEnum getStatus() {
         return this.status;
     }
 
-    public String getProfilePicPath() {
-        return this.profilePicPath;
-    }
 
     public long getTimestamp() {
-        return date.getTime();
+        return this.timestamp;
+    }
+
+    public static ReviewStatusEnum parseStatusFromPageNumber(int pageNumber) {
+        ReviewStatusEnum status;
+        switch (pageNumber) {
+            case 0:
+                status = ReviewStatusEnum.GOOD;
+                break;
+            case 1:
+                status = ReviewStatusEnum.NOTSOBAD;
+                break;
+            case 2:
+                status = ReviewStatusEnum.WORST;
+                break;
+            default:
+                status = ReviewStatusEnum.NOTSET;
+        }
+        return status;
+    }
+
+    public static ReviewStatusEnum parseStatus(String reviewStatus) {
+        if(reviewStatus.equals("GOOD")) {
+            return ReviewStatusEnum.GOOD;
+        } else if(reviewStatus.equals("NOTSOBAD")) {
+            return ReviewStatusEnum.NOTSOBAD;
+        } else if(reviewStatus.equals("WORST")) {
+            return ReviewStatusEnum.WORST;
+        }
+        Log.e(TAG, "status not set -");
+        return ReviewStatusEnum.NOTSET;
+    }
+    
+    public static Date parseDate(long timestamp) {
+        return new Date();
+    }
+
+    @Override
+    public String toString() {
+        return "id: " + this.id +
+            "userId: " + this.userId +
+            "status: " + this.status +
+            "comment: " + this.comment +
+            "timestamp: " + this.timestamp +
+            "coffeeMachineId: " + this.coffeeMachineId;
     }
 }
