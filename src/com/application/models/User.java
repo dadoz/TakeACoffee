@@ -44,6 +44,7 @@ public class User {
     public String getProfilePicturePath() {
         return this.profilePicturePath;
     }
+
     public void setProfilePicturePath(String profilePicturePath) {
         if(profilePicturePath.equals(Common.EMPTY_PIC_PATH)) {
             this.profilePicturePath = null;

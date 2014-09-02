@@ -140,12 +140,15 @@ public class Common {
         return  bitmapOverlay;
     }
 
-    public static String saveImageInStorage(Bitmap profileImage, File customDir) {
+    public static String saveImageInStorage(Bitmap profileImage, File customDir, String filename) {
         if(profileImage == null) {
             return null;
         }
 
-        File profilePicFile = new File(customDir, Common.PROFILE_PIC_FILE_NAME); //Getting a file within the dir.
+        if(filename == null) {
+            filename = Common.PROFILE_PIC_FILE_NAME;
+        }
+        File profilePicFile = new File(customDir, filename); //Getting a file within the dir.
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(profilePicFile);
@@ -306,7 +309,7 @@ public class Common {
             return reviewsList;
         }
     }
-
+/*
     public static boolean isConnected(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -314,9 +317,9 @@ public class Common {
 
         return networkInfo != null && networkInfo.getState() == NetworkInfo.State.CONNECTED;
     }
-
-/*    public static boolean isConnected(Context context) {
+*/
+    public static boolean isConnected(Context context) {
         return true;
     }
-*/
+
 }

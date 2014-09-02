@@ -1,5 +1,6 @@
 package com.application.datastorage;
 
+import android.content.Context;
 import android.util.Log;
 import com.application.commons.Common;
 import com.application.models.CoffeeMachine;
@@ -31,12 +32,12 @@ public class DataRequestServices {
     private static HttpRequestData httpRequestData;
 //    private static final String SERVER_URL = "http://192.168.137.94:3000";
 //    private static final String SERVER_URL = "http://10.0.2.2:3000";
-    //private static final String SERVER_URL = "http://192.168.56.1:3000";
-    private static final String SERVER_URL = "http://192.168.1.117:3000";
+    private static final String SERVER_URL = "http://192.168.56.1:3000";
+//    private static final String SERVER_URL = "http://192.168.1.117:3000";
 
 
-    public DataRequestServices() {
-        httpRequestData = new HttpRequestData();
+    public DataRequestServices(File customDir) {
+        httpRequestData = new HttpRequestData(customDir);
     }
 	// private final static String TAG ="retrieveDataFromServer";
     public ArrayList<CoffeeMachine> getCoffeeMachineList() {
@@ -373,7 +374,7 @@ public class DataRequestServices {
         return false;
     }
 
-    public boolean uploadProfilePicture(String profilePicturePath) {
+    public String uploadProfilePicture(String profilePicturePath) {
         //check the name (cos will be the index of the picture) -
         String PROFILE_PICTURE_CONTAINER = "profile-picture-container";
         try {
@@ -389,13 +390,13 @@ public class DataRequestServices {
             JSONObject params = new JSONObject();
             params.put("profile_picture_path", profilePicturePath);
 
-            String data = httpRequestData.asyncRequestData("POST-mimeType", new URI(SERVER_URL
+            String data = httpRequestData.asyncRequestData("POST-mime", new URI(SERVER_URL
                     + "/api/containers/" + PROFILE_PICTURE_CONTAINER + "/upload"), null, entity);
             if (data == null) {
                 Log.e(TAG, "couldn't upload file");
-                return false;
+                return null;
             }
-            return true;
+            return data;
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -407,14 +408,13 @@ public class DataRequestServices {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return false;
-
-
+        return null;
     }
-    public boolean downloadProfilePicture(String fileName) {
+
+    public String downloadProfilePicture(String fileName) {
         //check the name (cos will be the index of the picture) -
 
-        fileName = "avatar_2x.png"; //TODO - remove fake filename
+        //fileName = "avatar_2x.png"; //TODO - remove fake filename
         String PROFILE_PICTURE_CONTAINER = "profile-picture-container";
         try {
 /*            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -428,13 +428,13 @@ public class DataRequestServices {
 
             JSONObject params = new JSONObject();
             params.put("profile_picture_path", profilePicturePath);*/
-            String data = httpRequestData.asyncRequestData("GET", new URI(SERVER_URL
+            String data = httpRequestData.asyncRequestData("GET-mime", new URI(SERVER_URL
                     + "/api/containers/" + PROFILE_PICTURE_CONTAINER + "/download" + fileName), null, null);
             if (data == null) {
                 Log.e(TAG, "couldn't upload file");
-                return false;
+                return null;
             }
-            return true;
+            return data;
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -444,7 +444,7 @@ public class DataRequestServices {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
 
 
     }
@@ -452,32 +452,34 @@ public class DataRequestServices {
 
 
     private ArrayList<CoffeeMachine> getCoffeeMachineListParser(String data) {
-        try {
+        if(data != null) {
+            try {
 //            JSONObject jsonObj = new JSONObject(data);
 //            JSONArray jsonArray = jsonObj.getJSONArray("coffee_machine_list");
-            JSONArray jsonArray = new JSONArray(data); //STATIC
+                JSONArray jsonArray = new JSONArray(data); //STATIC
 
-            ArrayList<CoffeeMachine> coffeeMachineList = new ArrayList<CoffeeMachine> ();
+                ArrayList<CoffeeMachine> coffeeMachineList = new ArrayList<CoffeeMachine> ();
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject coffeeMachineObj = jsonArray.getJSONObject(i);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject coffeeMachineObj = jsonArray.getJSONObject(i);
 
-                String name = coffeeMachineObj.getString("name");
-                String address = coffeeMachineObj
-                        .getString("address");
-                long coffeeMachineId = coffeeMachineObj
-                        .getLong("id");
-                String iconPath = coffeeMachineObj
-                        .getString("icon_path");
+                    String name = coffeeMachineObj.getString("name");
+                    String address = coffeeMachineObj
+                            .getString("address");
+                    long coffeeMachineId = coffeeMachineObj
+                            .getLong("id");
+                    String iconPath = coffeeMachineObj
+                            .getString("icon_path");
 
 
-                coffeeMachineList.add(new CoffeeMachine(coffeeMachineId, name, address, iconPath));
+                    coffeeMachineList.add(new CoffeeMachine(coffeeMachineId, name, address, iconPath));
+                }
+                return coffeeMachineList;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            return coffeeMachineList;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return null;
     }

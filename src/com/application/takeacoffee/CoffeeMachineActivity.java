@@ -153,7 +153,6 @@ public class CoffeeMachineActivity extends FragmentActivity {
                 coffeeApp.getRegisteredUsername());
 
         LinearLayout loggedUserButton = (LinearLayout) mainView.findViewById(R.id.loggedUserButtonId);
-//        loggedUserButton.setBackground((getResources().getDrawable(R.drawable.button_rounded_shape)));
         loggedUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,8 +160,10 @@ public class CoffeeMachineActivity extends FragmentActivity {
                 addChangeUserFragment(mainActivityRef.getSupportFragmentManager());
             }
         });
+
+        Bitmap defaultIcon = BitmapFactory.decodeResource(mainActivityRef.getResources(), R.drawable.user_icon);
         Bitmap bitmap = Common.getRoundedBitmapByFile(coffeeApp.getRegisteredProfilePicturePath(),
-                BitmapFactory.decodeResource( mainActivityRef.getResources(), R.drawable.user_icon));
+               defaultIcon);
         ((ImageView) mainView.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
     }
 

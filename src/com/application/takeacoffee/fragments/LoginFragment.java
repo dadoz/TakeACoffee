@@ -128,7 +128,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         if(! coffeeApp.isRegisteredUser()) {
             Log.e(TAG, "failed to load profile pic from storage - load the guest one");
             //SET CUSTOM NAME
-            bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.user_icon);
+            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.user_icon);
             ((ImageView) mainActivityRef.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
             return;
         }
@@ -149,7 +149,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         }
 
         Bitmap profileImage = Common.getRoundedRectBitmap(pickedImage, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
-        String profileImagePath = Common.saveImageInStorage(profileImage, customDir); //store image in storage and get back URL
+        String profileImagePath = Common.saveImageInStorage(profileImage, customDir, Common.PROFILE_PIC_FILE_NAME); //store image in storage and get back URL
 
         if(profileImagePath != null) {
             Log.d(TAG, "[PROFILE PIC] path file - " + profileImagePath);

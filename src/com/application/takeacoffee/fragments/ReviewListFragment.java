@@ -308,40 +308,47 @@ public class ReviewListFragment extends Fragment {
 
             User userOnReview = coffeeApp.getUserById(reviewObj.getUserId());
             //set data to template
-            ((TextView)rowView.findViewById(R.id.reviewUsernameTextId)).setText(
-                    userOnReview.getUsername());
-            ((TextView)rowView.findViewById(R.id.reviewDateTextId)).setText(reviewObj.getFormattedTimestamp());
-            ((TextView)rowView.findViewById(R.id.reviewCommentTextId)).setText(reviewObj.getComment());
+            ((TextView) rowView.findViewById(R.id.reviewDateTextId)).setText(reviewObj.getFormattedTimestamp());
+            ((TextView) rowView.findViewById(R.id.reviewCommentTextId)).setText(reviewObj.getComment());
 
-            //set profile pic
-            //TODO please remove this shit -
-            if(userOnReview.getProfilePicturePath() != null) {
+            //set profile pic //TODO refactored
+            coffeeApp.setUsernameToUserOnReview((TextView) rowView.findViewById(R.id.reviewUsernameTextId),
+                    userOnReview.getUsername(), userOnReview.getId());
+            coffeeApp.setProfilePictureToUserOnReview(((ImageView) rowView.findViewById(R.id.profilePicReviewTemplateId)),
+                    userOnReview.getProfilePicturePath(), mainActivityRef.getResources(), R.drawable.user_icon ,userOnReview.getId());
+
+            //set extra menu visibility
+            extraMenuItemView.setVisibility(View.GONE);
+
+/*          ((TextView) rowView.findViewById(R.id.reviewUsernameTextId)).setText(
+                    userOnReview.getUsername());
+
+          if(userOnReview.getProfilePicturePath() != null) {
                 Bitmap bitmap = Common.getRoundedBitmapByFile(userOnReview.getProfilePicturePath(),
                         BitmapFactory.decodeResource(mainActivityRef.getResources(), R.drawable.user_icon));
                 ((ImageView) rowView.findViewById(R.id.profilePicReviewTemplateId)).setImageBitmap(bitmap);
             }
-
+*/
             //set background color
 /*            if(position % 2 != 0) {
                 mainItemView.setBackgroundColor(getResources().getColor(R.color.middle_grey));
             }*/
 
-            //set extra menu visibility
-            extraMenuItemView.setVisibility(View.GONE);
 
-            //OVERRIDE data to get loggedUser data
-            if(coffeeApp.isRegisteredUser() && (reviewObj.getUserId() == coffeeApp.getRegisteredUserId())) {
-                ((TextView)rowView.findViewById(R.id.reviewUsernameTextId)).setText(coffeeApp.getRegisteredUsername());
+            //OVERRIDE data to get loggedUser data //TODO REFACTOR
+            if(coffeeApp.isRegisteredUser() &&
+                    coffeeApp.checkIsMe(reviewObj.getUserId()) &&
+                    selectedItemIndex == position) {
+                //set extra menu visibility
+                mainItemView.setVisibility(View.GONE);
+                extraMenuItemView.setVisibility(View.VISIBLE);
+                setReviewListHeaderBackgroundLabel(extraMenuItemView, false);
+
+/*                ((TextView)rowView.findViewById(R.id.reviewUsernameTextId)).setText(coffeeApp.getRegisteredUsername());
                 Bitmap bitmap = Common.getRoundedBitmapByFile(coffeeApp.getRegisteredProfilePicturePath(),
                         BitmapFactory.decodeResource( mainActivityRef.getResources(), R.drawable.user_icon));
                 ((ImageView) rowView.findViewById(R.id.profilePicReviewTemplateId)).setImageBitmap(bitmap);
-
-                if(selectedItemIndex == position) {
-                    //set extra menu visibility
-                    mainItemView.setVisibility(View.GONE);
-                    extraMenuItemView.setVisibility(View.VISIBLE);
-                    setReviewListHeaderBackgroundLabel(extraMenuItemView, false);
-                }
+*/
             }
 
             Common.setCustomFont(rowView, getActivity().getAssets());
@@ -392,10 +399,6 @@ public class ReviewListFragment extends Fragment {
                         }
                     });
 
-        }
-
-        public long getToTimestamp() {
-            return toTimestamp;
         }
 
         public long getFromTimestamp() {

@@ -3,13 +3,19 @@ package com.application.datastorage;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.application.commons.Common;
 import com.application.models.CoffeeMachine;
 import com.application.models.Review;
 import com.application.models.User;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
@@ -28,21 +34,26 @@ public class DataStorageSingleton {
     private static SharedPreferences sharedPref;
     private static DataRequestServices dataRequestServices;
     private User registeredUser;
-    private static DataRequestDb dataRequestDb;
+//    private static DataRequestDb dataRequestDb;
 
     private static DataStorageSingleton mDataStorage;
     private static Context context;
+    private TextView usernameToUserOnReview;
     //empty constructor
 
     public static DataStorageSingleton getInstance(Context ctx) {
         context = ctx;
+        //TODO CHECK IT OUT
+        File customDir = ctx.getApplicationContext()
+                .getDir(Common.COFFEE_MACHINE_DIR, Context.MODE_PRIVATE); //Creating an internal dir;
+
         //singleton instance
         if(mDataStorage == null) {
             mDataStorage = new DataStorageSingleton();
             reviewListMap = new ArrayMap<Long, ArrayList<Review>>();
             context.deleteDatabase(Common.DATABASE_NAME);
-            dataRequestDb = new DataRequestDb(context);
-            dataRequestServices = new DataRequestServices();
+  //          dataRequestDb = new DataRequestDb(context);
+            dataRequestServices = new DataRequestServices(customDir);
             sharedPref = context.getSharedPreferences(Common.SHARED_PREF, Context.MODE_PRIVATE);
 
             //fill all coffee machine list
@@ -185,7 +196,7 @@ public class DataStorageSingleton {
         long timestamp = new Date().getTime();
         //FIRST on HTTP req - then
         review = dataRequestServices.addReviewByParams(userId, coffeeMachineId, comment, status, timestamp);
-        dataRequestDb.addReviewByParams(review.getId(), userId, coffeeMachineId, comment, status, timestamp); //TODO TEST - this is gonna be replaced by DB full update
+        /**///dataRequestDb.addReviewByParams(review.getId(), userId, coffeeMachineId, comment, status, timestamp); //TODO TEST - this is gonna be replaced by DB full update
 
 
         //full update - slow but easy
@@ -208,7 +219,7 @@ public class DataStorageSingleton {
         }
 
         reviewArrayList.remove(reviewObj);
-        dataRequestDb.removeReviewById(reviewObj.getId());
+        /**///dataRequestDb.removeReviewById(reviewObj.getId());
         if(Common.isConnected(context)) {
             dataRequestServices.removeReviewById(reviewObj.getId());
             return true;
@@ -223,12 +234,13 @@ public class DataStorageSingleton {
 
     private static boolean loadCoffeeMachineList() {
         //wrong - u must check internet connnection - if there's get from HTTP otw get from DB
-        coffeeMachineList = dataRequestDb.getCoffeeMachineList(); //DB
+        /**///coffeeMachineList = dataRequestDb.getCoffeeMachineList(); //DB
+        coffeeMachineList = null;
         if(coffeeMachineList  == null) {
             if(Common.isConnected(context)) {
                 coffeeMachineList = dataRequestServices.getCoffeeMachineList(); //HTTP
                 if(coffeeMachineList != null) {
-                    dataRequestDb.addAllCoffeeMachine(coffeeMachineList);
+                    /**///dataRequestDb.addAllCoffeeMachine(coffeeMachineList);
                     return true;
                 }
                 return false;
@@ -242,7 +254,8 @@ public class DataStorageSingleton {
         //connection
        if(! Common.isConnected(context)) {
 //        if(false) {
-            reviewArrayList = dataRequestDb.getReviewListById(coffeeMachineId); //DB
+            /**///reviewArrayList = dataRequestDb.getReviewListById(coffeeMachineId); //DB
+           reviewArrayList = null;
             //update local reviewListMap
             if(reviewArrayList != null) {
                 reviewListMap.put(coffeeMachineId, reviewArrayList);
@@ -253,8 +266,8 @@ public class DataStorageSingleton {
         reviewArrayList = dataRequestServices.getReviewListById(coffeeMachineId); //HTTP TODO refactor this
         if(reviewArrayList != null) {
             //clean all review from db and then add data got from HTTP
-            dataRequestDb.removeAllReviewByCoffeeMachineId(coffeeMachineId); //wrong
-            dataRequestDb.addAllReview(reviewArrayList); //DB
+            /**///dataRequestDb.removeAllReviewByCoffeeMachineId(coffeeMachineId); //wrong
+            /**///dataRequestDb.addAllReview(reviewArrayList); //DB
         }
 
         //TEST OVERRIDE VALUES
@@ -311,13 +324,14 @@ public class DataStorageSingleton {
 
         //else get from map or db
         //reviewListMap.get(coffeeMachineId);
-        return dataRequestDb.getReviewById(reviewId);
+        /**///return dataRequestDb.getReviewById(reviewId);
+        return null;
     }
 
     public boolean setRegisteredUser(long userId, String profilePicturePath, String username) {
-        if(userId != Common.EMPTY_LONG_VALUE) {
+/*        if(userId != Common.EMPTY_LONG_VALUE) {
             return restoreRegisteredUser(userId, profilePicturePath, username);
-        }
+        }*/
         return registeredUser != null ? updateRegisteredUser(profilePicturePath, username) : createRegisteredUser(profilePicturePath, username);
     }
 
@@ -327,45 +341,11 @@ public class DataStorageSingleton {
         return false;
     }
 
-    public boolean isRegisteredUser() {
-        return registeredUser != null;
-    }
-
-    public boolean isLocalUser() {
-        return registeredUser != null &&
-                registeredUser.getId() == Common.LOCAL_USER_ID;
-    }
-
-    public boolean registerLocalUser() {
-        if(isLocalUser()) {
-            if(Common.isConnected(context)) {
-
-                User user = dataRequestServices.addUserByParams(registeredUser.getProfilePicturePath(),
-                        registeredUser.getUsername());
-                dataRequestDb.addUserByParams(user.getId(), user.getProfilePicturePath(),
-                        user.getUsername());
-                registeredUser = user;
-
-                return true;
-            }
-        }
-        return false;
-    }
-    public String getRegisteredProfilePicturePath() {
-        return registeredUser.getProfilePicturePath();
-    }
-    public String getRegisteredUsername() {
-        return registeredUser.getUsername();
-    }
-
-    public long getRegisteredUserId() {
-        return registeredUser.getId();
-    }
-
     private boolean updateRegisteredUser(String profilePicturePath, String username) {
         if(Common.isConnected(context)) {
-            dataRequestServices.updateUserById(getRegisteredUserId(), profilePicturePath, username);
-            dataRequestDb.updateUserById(getRegisteredUserId(), profilePicturePath, username);
+            String uploadedProfilePicturePath = dataRequestServices.uploadProfilePicture(profilePicturePath);
+            dataRequestServices.updateUserById(getRegisteredUserId(), uploadedProfilePicturePath, username);
+            /**///dataRequestDb.updateUserById(getRegisteredUserId(), profilePicturePath, username);
 
             if(profilePicturePath != null) {
                 registeredUser.setProfilePicturePath(profilePicturePath);
@@ -387,8 +367,9 @@ public class DataStorageSingleton {
 //        boolean connection = false;
         //connection
         if(Common.isConnected(context)) {
-            registeredUser = dataRequestServices.addUserByParams(profilePicturePath, username); //HTTP add
-            dataRequestDb.addUserByParams(registeredUser.getId(), profilePicturePath, username); //DB add to local db
+            String uploadedProfilePicturePath = dataRequestServices.uploadProfilePicture(profilePicturePath);
+            registeredUser = dataRequestServices.addUserByParams(uploadedProfilePicturePath, username); //HTTP add
+            /**///dataRequestDb.addUserByParams(registeredUser.getId(), profilePicturePath, username); //DB add to local db
         } else {
             //create local user
             registeredUser = new User(Common.LOCAL_USER_ID, profilePicturePath, username);
@@ -405,8 +386,47 @@ public class DataStorageSingleton {
 
     }
 
+    public boolean isRegisteredUser() {
+        return registeredUser != null;
+    }
+
+    public boolean isLocalUser() {
+        return registeredUser != null &&
+                registeredUser.getId() == Common.LOCAL_USER_ID;
+    }
+
+    public boolean registerLocalUser() {
+        if(isLocalUser()) {
+            if(Common.isConnected(context)) {
+
+                String uploadedProfilePicturePath = dataRequestServices.uploadProfilePicture(registeredUser.getProfilePicturePath());
+                User user = dataRequestServices.addUserByParams(uploadedProfilePicturePath,
+                        registeredUser.getUsername());
+                /**///dataRequestDb.addUserByParams(user.getId(), user.getProfilePicturePath(),
+                        //user.getUsername());
+                registeredUser = user;
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getRegisteredProfilePicturePath() {
+        return registeredUser.getProfilePicturePath();
+    }
+
+    public String getRegisteredUsername() {
+        return registeredUser.getUsername();
+    }
+
+    public long getRegisteredUserId() {
+        return registeredUser.getId();
+    }
+
     public User getUserById(long userId) {
-        User user = dataRequestDb.getUserById(userId);
+        /**///User user = dataRequestDb.getUserById(userId);
+        User user = null;
         if(user != null) {
             return user;
         }
@@ -444,6 +464,40 @@ public class DataStorageSingleton {
         }
         Log.e(TAG, "Cannot update review - you must have internet connection");
         return false;
+    }
+
+    public void setProfilePictureToUserOnReview(ImageView profilePicReviewTemplate,
+                                                String profilePicturePath,
+                                                Resources resources, int defaultIconId, long userId) {
+
+        if(profilePicturePath != null && this.isRegisteredUser() && this.checkIsMe(userId)) {
+            Bitmap bitmap = Common.getRoundedBitmapByFile(this.getRegisteredProfilePicturePath(),
+                    BitmapFactory.decodeResource(resources, defaultIconId));
+            profilePicReviewTemplate.setImageBitmap(bitmap);
+            return;
+        }
+
+        String uploadedProfilePicture = null;
+        //TODO check if it's stored in my local storage - might be :D
+        if(Common.isConnected(context)) {
+            uploadedProfilePicture = dataRequestServices.downloadProfilePicture(profilePicturePath);
+        }
+        Bitmap bitmap = Common.getRoundedBitmapByFile(uploadedProfilePicture,
+                BitmapFactory.decodeResource(resources, defaultIconId));
+        profilePicReviewTemplate.setImageBitmap(bitmap);
+    }
+
+    public void setUsernameToUserOnReview(TextView textView, String username, long userId) {
+        if(this.isRegisteredUser() && this.checkIsMe(userId)) {
+            textView.setText("Me");
+            return;
+        }
+        textView.setText(username);
+
+    }
+
+    public boolean checkIsMe(long userId) {
+        return userId == this.getRegisteredUserId();
     }
 
     //TODO refactor it plez getReviewListById

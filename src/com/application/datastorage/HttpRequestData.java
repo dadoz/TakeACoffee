@@ -22,6 +22,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -36,13 +37,17 @@ import java.util.concurrent.ExecutionException;
 public class HttpRequestData {
     String TAG = "HttpRequestData";
     static DefaultHttpClient httpclient;
-    public HttpRequestData() {
+    static File customDir;
+    public HttpRequestData(File dir) {
         httpclient = new DefaultHttpClient();
+        customDir = dir;
     }
 
     public String asyncRequestData(final String method, URI url, final String JSONParams, final HttpEntity entity)
             throws IOException, ExecutionException, InterruptedException {
-        AsyncTask<URL, Integer, String> asyncTask = new AsyncTask<URL, Integer, String>() {
+        final AsyncTask<URL, Integer, String> asyncTask = new AsyncTask<URL, Integer, String>() {
+            public Bitmap decodedPic;
+
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -71,7 +76,7 @@ public class HttpRequestData {
                             response = httpclient.execute(httpPost);
                         } else if(method.equals("GET")) {
                             response = httpclient.execute(new HttpGet(url));
-                        } else if(method.equals("GET-mimeType")) {
+                        } else if(method.equals("GET-mime")) {
                             response = httpclient.execute(new HttpGet(url));
                         } else if(method.equals("DELETE")) {
                             response = httpclient.execute(new HttpDelete(url));
@@ -80,23 +85,28 @@ public class HttpRequestData {
                             httpPut.setEntity(new StringEntity(JSONParams));
                             httpPut.setHeader("Content-type", "application/json");
                             response = httpclient.execute(httpPut);
-                        } else if(method.equals("POST-mimeType")) {
+                        } else if(method.equals("POST-mime")) {
                             HttpPost httpPost = new HttpPost(url);
                             httpPost.setEntity(entity);
 //                            httpPost.setHeader("Content-type", "application/json");
                             response = httpclient.execute(httpPost);
                         }
 
-                            if(response == null) {
+                        if(response == null) {
                             Log.e(TAG, "no HTTP method available");
                             return null;
                         }
 
                         StatusLine statusLine = response.getStatusLine();
                         if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                            if(method.equals("GET-mimeType")) {
-                                Bitmap decodedPic = BitmapFactory.decodeStream(response.getEntity().getContent());
-                                return "{'status': 'ok'}";
+                            if(method.equals("GET-mime")) {
+                                decodedPic = BitmapFactory.decodeStream(response.getEntity().getContent());
+//                                return "{'status': 'ok'}";
+                                return "filename";
+                            }
+                            if(method.equals("POST-mime")) {
+//                                return "{'status': 'ok'}";
+                                return "filename_onserver";
                             }
 
                             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -105,8 +115,10 @@ public class HttpRequestData {
                             return out.toString();
                         } else {
                             //Closes the connection.
-                            if(response.getEntity() != null && response.getEntity().getContent() != null) {
+                            try {
                                 response.getEntity().getContent().close();
+                            } catch (Exception e) {
+                                e.getMessage();
                             }
                             throw new IOException(statusLine.getReasonPhrase());
                         }
@@ -127,9 +139,9 @@ public class HttpRequestData {
                 super.onPostExecute(data);
                 Log.d(TAG, "result data ASYNCTASK " + data);
                 //TODO refactor it
-//                customDir = co.getApplication().getApplicationContext()
-//                    .getDir(Common.COFFEE_MACHINE_DIR, Context.MODE_PRIVATE); //Creating an internal dir;
-//                Common.saveImageInStorage(decodedPic, customDir)
+                if(decodedPic != null) {
+                    Common.saveImageInStorage(decodedPic, customDir, data);
+                }
 
             }
         };
