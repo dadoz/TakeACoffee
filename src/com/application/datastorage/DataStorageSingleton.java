@@ -1,24 +1,30 @@
 package com.application.datastorage;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
+import android.util.LruCache;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.Volley;
+import com.application.commons.BitmapCustomUtils;
 import com.application.commons.Common;
+import com.application.dataRequest.CoffeeAppLogic;
+import com.application.dataRequest.DataRequestServices;
+import com.application.dataRequest.DataRequestVolleyService;
 import com.application.models.CoffeeMachine;
 import com.application.models.Review;
 import com.application.models.User;
+import com.application.takeacoffee.R;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,40 +39,85 @@ public class DataStorageSingleton {
     private static ArrayMap<Long, ArrayList<Review>> reviewListMap;
     private static SharedPreferences sharedPref;
     private static DataRequestServices dataRequestServices;
+    private final ImageLoader imageLoader;
     private User registeredUser;
 //    private static DataRequestDb dataRequestDb;
-
     private static DataStorageSingleton mDataStorage;
-    private static Context context;
-    private TextView usernameToUserOnReview;
-    //empty constructor
 
-    public static DataStorageSingleton getInstance(Context ctx) {
+    private static Context context;
+//    private TextView usernameToUserOnReview;
+    public String profilePicturePathTemp;
+    private RequestQueue requestQueue;
+
+    //empty constructor
+    //VERY IMPORTANT
+    private DataStorageSingleton(Context ctx) {
         context = ctx;
         //TODO CHECK IT OUT
-        File customDir = ctx.getApplicationContext()
+        File customDir = context.getApplicationContext()
                 .getDir(Common.COFFEE_MACHINE_DIR, Context.MODE_PRIVATE); //Creating an internal dir;
 
-        //singleton instance
-        if(mDataStorage == null) {
-            mDataStorage = new DataStorageSingleton();
-            reviewListMap = new ArrayMap<Long, ArrayList<Review>>();
-            context.deleteDatabase(Common.DATABASE_NAME);
-  //          dataRequestDb = new DataRequestDb(context);
-            dataRequestServices = new DataRequestServices(customDir);
-            sharedPref = context.getSharedPreferences(Common.SHARED_PREF, Context.MODE_PRIVATE);
+//        context.deleteDatabase(Common.DATABASE_NAME);
+        //          dataRequestDb = new DataRequestDb(context);
+        dataRequestServices = new DataRequestServices(customDir);
+        sharedPref = context.getSharedPreferences(Common.SHARED_PREF, Context.MODE_PRIVATE);
 
-            //fill all coffee machine list
-            if(loadCoffeeMachineList()) {
-                for(CoffeeMachine coffeeMachine : coffeeMachineList) {
-                    loadReviewListByCoffeeMachineId(coffeeMachine.getId());
-                }
+        reviewListMap = new ArrayMap<>();
+
+        requestQueue = getRequestQueue();
+
+        imageLoader = new ImageLoader(requestQueue, new ImageLoader.ImageCache() {
+            private final LruCache<String, Bitmap> cache = new LruCache<>(20);
+            @Override
+            public Bitmap getBitmap(String url) {
+                return cache.get(url);
+            }
+
+            @Override
+            public void putBitmap(String url, Bitmap bitmap) {
+                cache.put(url, bitmap);
+            }
+        });
+
+        //fill all coffee machine list
+        if(loadCoffeeMachineList()) {
+            for(CoffeeMachine coffeeMachine : coffeeMachineList) {
+                loadReviewListByCoffeeMachineId(coffeeMachine.getId());
             }
         }
+    }
 
+    public static synchronized DataStorageSingleton getInstance(Context context) {
+        //singleton instance
+        if(mDataStorage == null) {
+            mDataStorage = new DataStorageSingleton(context);
+        }
         return mDataStorage;
     }
 
+    public Context getContextSingleton() {
+        return context;
+    }
+
+    /*****VOLLEY lib*******/
+    public RequestQueue getRequestQueue() {
+        if (requestQueue == null) {
+            // getApplicationContext() is key, it keeps you from leaking the
+            // Activity or BroadcastReceiver if someone passes one in.
+            requestQueue = Volley.newRequestQueue(context.getApplicationContext());
+        }
+        return requestQueue;
+    }
+
+    public <T> void addToRequestQueue(Request<T> req) {
+        getRequestQueue().add(req);
+    }
+
+    public ImageLoader getImageLoader() {
+        return imageLoader;
+    }
+
+    /*********COFFEE MACHINE fx***********/
     //local
     public ArrayList<CoffeeMachine> getCoffeeMachineList() {
         return coffeeMachineList;
@@ -329,22 +380,31 @@ public class DataStorageSingleton {
     }
 
     public boolean setRegisteredUser(long userId, String profilePicturePath, String username) {
-/*        if(userId != Common.EMPTY_LONG_VALUE) {
+        if(userId != Common.EMPTY_LONG_VALUE) {
             return restoreRegisteredUser(userId, profilePicturePath, username);
-        }*/
+        }
         return registeredUser != null ? updateRegisteredUser(profilePicturePath, username) : createRegisteredUser(profilePicturePath, username);
     }
 
     private boolean restoreRegisteredUser(long userId, String profilePicturePath, String username) {
         registeredUser = new User(userId, profilePicturePath, username);
 
-        return false;
+        return true;
     }
 
     private boolean updateRegisteredUser(String profilePicturePath, String username) {
         if(Common.isConnected(context)) {
-            String uploadedProfilePicturePath = dataRequestServices.uploadProfilePicture(profilePicturePath);
-            dataRequestServices.updateUserById(getRegisteredUserId(), uploadedProfilePicturePath, username);
+            String onlineProfilePictureId = null;
+
+            //UPLOAD PIC
+            if(profilePicturePath != null) {
+                onlineProfilePictureId = dataRequestServices.uploadProfilePicture(profilePicturePath);
+            }
+
+            //UPDATE USER
+            if(onlineProfilePictureId  != null) {
+                dataRequestServices.updateUserById(getRegisteredUserId(), onlineProfilePictureId, username); //TODO INTERNAL SERVER ERROR
+            }
             /**///dataRequestDb.updateUserById(getRegisteredUserId(), profilePicturePath, username);
 
             if(profilePicturePath != null) {
@@ -367,9 +427,17 @@ public class DataStorageSingleton {
 //        boolean connection = false;
         //connection
         if(Common.isConnected(context)) {
-            String uploadedProfilePicturePath = dataRequestServices.uploadProfilePicture(profilePicturePath);
-            registeredUser = dataRequestServices.addUserByParams(uploadedProfilePicturePath, username); //HTTP add
+            String onlineProfilePictureId = null;
+            //UPLOAD PIC
+            if(profilePicturePath != null) {
+                onlineProfilePictureId = dataRequestServices.uploadProfilePicture(profilePicturePath);
+
+            }
+//            registeredUser = new User(Common.LOCAL_USER_ID, profilePicturePath, username);
+
+            registeredUser = dataRequestServices.addUserByParams(onlineProfilePictureId, username); //HTTP add
             /**///dataRequestDb.addUserByParams(registeredUser.getId(), profilePicturePath, username); //DB add to local db
+            registeredUser.setProfilePicturePath(profilePicturePath); //VERY VERY IMPORTANT
         } else {
             //create local user
             registeredUser = new User(Common.LOCAL_USER_ID, profilePicturePath, username);
@@ -465,27 +533,31 @@ public class DataStorageSingleton {
         Log.e(TAG, "Cannot update review - you must have internet connection");
         return false;
     }
-
-    public void setProfilePictureToUserOnReview(ImageView profilePicReviewTemplate,
-                                                String profilePicturePath,
-                                                Resources resources, int defaultIconId, long userId) {
-
-        if(profilePicturePath != null && this.isRegisteredUser() && this.checkIsMe(userId)) {
-            Bitmap bitmap = Common.getRoundedBitmapByFile(this.getRegisteredProfilePicturePath(),
-                    BitmapFactory.decodeResource(resources, defaultIconId));
-            profilePicReviewTemplate.setImageBitmap(bitmap);
-            return;
+/*
+    public boolean setProfilePictureToUserOnReview(ImageView profilePicImageView,
+                                                String profilePicturePath, Bitmap defaultIcon, long userId) {
+        if(profilePicturePath == null) {
+            profilePicImageView.setImageBitmap(defaultIcon);
+            return false;
         }
 
-        String uploadedProfilePicture = null;
+        //THIS RUN OUT MY FKING MEMORY :(
+        if(isRegisteredUser() && this.checkIsMe(userId)) {
+            //TODO store directly bitmap on object - this gonna store a lot of memory
+            Bitmap bitmap = BitmapCustomUtils.getBitmapByFile(this.getRegisteredProfilePicturePath(),
+                    defaultIcon);
+            profilePicImageView.setImageBitmap(bitmap);
+            return true;
+        }
+
         //TODO check if it's stored in my local storage - might be :D
         if(Common.isConnected(context)) {
-            uploadedProfilePicture = dataRequestServices.downloadProfilePicture(profilePicturePath);
+            DataRequestVolleyService.downloadProfilePicture(profilePicturePath, profilePicImageView,
+                    imageLoader);
         }
-        Bitmap bitmap = Common.getRoundedBitmapByFile(uploadedProfilePicture,
-                BitmapFactory.decodeResource(resources, defaultIconId));
-        profilePicReviewTemplate.setImageBitmap(bitmap);
+        return true;
     }
+
 
     public void setUsernameToUserOnReview(TextView textView, String username, long userId) {
         if(this.isRegisteredUser() && this.checkIsMe(userId)) {
@@ -495,7 +567,7 @@ public class DataStorageSingleton {
         textView.setText(username);
 
     }
-
+*/
     public boolean checkIsMe(long userId) {
         return userId == this.getRegisteredUserId();
     }

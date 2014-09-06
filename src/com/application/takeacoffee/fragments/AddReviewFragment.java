@@ -51,7 +51,7 @@ public class AddReviewFragment extends Fragment {
 //        addReviewCustomTextButton = addReviewView.findViewById(R.id.addReviewCustomTextButtonId);
 
         //get data from application
-        coffeeApp = DataStorageSingleton.getInstance(getActivity().getApplicationContext());
+        coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
 
         //get args from fragment
         args = getArguments();

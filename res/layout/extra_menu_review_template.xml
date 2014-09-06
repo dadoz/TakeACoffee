@@ -72,7 +72,7 @@
                     android:id="@+id/changeTypeIconImageViewId"
                     android:layout_width="@dimen/small_icon_size"
                     android:layout_height="@dimen/small_icon_size"
-                    android:src="@drawable/coffe_cup_icon"/>
+                    android:src="@drawable/coffee_cup_icon"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

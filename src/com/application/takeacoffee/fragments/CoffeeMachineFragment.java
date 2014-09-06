@@ -1,11 +1,9 @@
 package com.application.takeacoffee.fragments;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +38,8 @@ public class CoffeeMachineFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mHandler = new Handler();
         mainActivityRef = getActivity();
-        coffeeApp = DataStorageSingleton.getInstance(getActivity().getApplicationContext());
+
+        coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
 
         //get views
         final View coffeeMachineFragment = inflater.inflate(R.layout.coffe_machine_fragment, container, false);
@@ -123,6 +122,7 @@ public class CoffeeMachineFragment extends Fragment {
 
                 //TODO refactor please
                 String iconPath = (coffeeMachineObj.getIconPath());
+/*
                 int picResource = -1;
                 if (iconPath.equals(new String("coffee1.jpg"))) {
                     picResource = R.drawable.coffee1;
@@ -139,7 +139,7 @@ public class CoffeeMachineFragment extends Fragment {
                     //make piechart
 //                    pieChartList = getPieChartData();
 
-                    Bitmap bmpAbove = Common.getRoundedBitmapByResource(picResource, mainActivityRef);
+                    Bitmap bmpAbove = BitmapCustomUtils.getRoundedBitmapByResource(picResource, mainActivityRef);
 //                    Bitmap bmpBelow = Common.getRoundedBitmap(Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE,
 //                            getResources().getColor(R.color.light_black));
   //                  Bitmap coffeeMachineBmp = Common.overlayBitmaps(bmpBelow, bmpAbove);
@@ -147,8 +147,12 @@ public class CoffeeMachineFragment extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e(TAG, "failed to load profile pic from storage - load the guest one");
-                    coffeeIconImageView.setImageResource(R.drawable.coffe_cup_icon);
+                    coffeeIconImageView.setImageResource(R.drawable.coffee_cup_icon);
                 }
+                */
+                //set coffee
+                ImageView coffeeIconImageView = (ImageView) coffeeMachineTemplate.findViewById(R.id.coffeeIconId);
+                coffeeIconImageView.setImageResource(R.drawable.coffee_cup_icon);
 
                 (coffeeMachineTemplate.findViewById(R.id.coffeeIconId)).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
@@ -174,7 +178,7 @@ public class CoffeeMachineFragment extends Fragment {
 
     }
 
-    private boolean getCoffeeMachineReviewById(long coffeeMachineId){
+    private boolean getCoffeeMachineReviewById(long coffeeMachineId) {
         //change fragment
         Bundle args = new Bundle();
         args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);

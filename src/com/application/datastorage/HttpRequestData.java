@@ -1,21 +1,14 @@
 package com.application.datastorage;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import com.application.commons.Common;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
+import com.application.commons.BitmapCustomUtils;
+import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -24,7 +17,6 @@ import org.apache.http.params.HttpParams;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -88,7 +80,9 @@ public class HttpRequestData {
                         } else if(method.equals("POST-mime")) {
                             HttpPost httpPost = new HttpPost(url);
                             httpPost.setEntity(entity);
-//                            httpPost.setHeader("Content-type", "application/json");
+//                            httpPost.setHeader("Content-Type",
+//                                    "multipart/form-data;");
+                            //httpPost.setHeader("Content-type", "application/json");
                             response = httpclient.execute(httpPost);
                         }
 
@@ -101,12 +95,23 @@ public class HttpRequestData {
                         if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
                             if(method.equals("GET-mime")) {
                                 decodedPic = BitmapFactory.decodeStream(response.getEntity().getContent());
+                                if(decodedPic != null) {
+                                    String filename = "temp1";
+                                    return BitmapCustomUtils.saveImageInStorage(decodedPic, customDir, filename);
+                                }
+                                return null;
 //                                return "{'status': 'ok'}";
-                                return "filename";
+//                                return "filename";
                             }
                             if(method.equals("POST-mime")) {
 //                                return "{'status': 'ok'}";
-                                return "filename_onserver";
+                                Log.e(TAG, "POST-mime result");
+                                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                                response.getEntity().writeTo(out);
+                                out.close();
+                                Log.e(TAG, out.toString());
+                                return out.toString();
+//                                return "filename_onserver";
                             }
 
                             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -120,7 +125,8 @@ public class HttpRequestData {
                             } catch (Exception e) {
                                 e.getMessage();
                             }
-                            throw new IOException(statusLine.getReasonPhrase());
+                            Log.e(TAG, " - " + statusLine.getStatusCode() + " - " + statusLine.getReasonPhrase());
+//                            throw new IOException(statusLine.getReasonPhrase());
                         }
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
@@ -137,12 +143,12 @@ public class HttpRequestData {
             @Override
             protected void onPostExecute(String data) {
                 super.onPostExecute(data);
-                Log.d(TAG, "result data ASYNCTASK " + data);
+/*                Log.d(TAG, "result data ASYNCTASK " + data);
                 //TODO refactor it
                 if(decodedPic != null) {
                     Common.saveImageInStorage(decodedPic, customDir, data);
                 }
-
+*/
             }
         };
 

@@ -46,11 +46,16 @@ public class User {
     }
 
     public void setProfilePicturePath(String profilePicturePath) {
-        if(profilePicturePath.equals(Common.EMPTY_PIC_PATH)) {
-            this.profilePicturePath = null;
-            return;
+        try {
+            if(profilePicturePath != null && profilePicturePath.equals(Common.EMPTY_PIC_PATH)) {
+                this.profilePicturePath = null;
+                return;
+            }
+            this.profilePicturePath = profilePicturePath;
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        this.profilePicturePath = profilePicturePath;
     }
 
     public void setUsername(String username) {

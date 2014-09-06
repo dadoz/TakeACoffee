@@ -1,30 +1,36 @@
-package com.application.datastorage;
+package com.application.dataRequest;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.widget.ImageView;
+import com.android.volley.*;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.application.commons.BitmapCustomUtils;
 import com.application.commons.Common;
+import com.application.datastorage.HttpRequestData;
 import com.application.models.CoffeeMachine;
 import com.application.models.Review;
 import com.application.models.User;
+import com.application.takeacoffee.R;
 import org.apache.http.HttpEntity;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Iterator;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class DataRequestServices {
@@ -32,7 +38,9 @@ public class DataRequestServices {
     private static HttpRequestData httpRequestData;
 //    private static final String SERVER_URL = "http://192.168.137.94:3000";
 //    private static final String SERVER_URL = "http://10.0.2.2:3000";
-    private static final String SERVER_URL = "http://192.168.56.1:3000";
+//    private static final String SERVER_URL = "http://192.168.56.1:3000";
+    private static final String SERVER_URL = "http://192.168.137.94:3000";
+//    private static final String SERVER_URL = "http://192.168.130.112:3000";
 //    private static final String SERVER_URL = "http://192.168.1.117:3000";
 
 
@@ -380,15 +388,14 @@ public class DataRequestServices {
         try {
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
-            builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-            File image = new File("path");
-            FileBody fileBody = new FileBody(image); //image should be a String
-            builder.addPart("file", fileBody);
+            File file = new File(profilePicturePath);
+            String fileName = String.valueOf(UUID.randomUUID());
+//            Log.e(TAG, profilePicturePath);
+/*            String [] chunkArray = profilePicturePath.split(".");
+            String extension = chunkArray[chunkArray.length -1];*/
+//            builder.addBinaryBody(fileName, file, ContentType.MULTIPART_FORM_DATA, fileName + "." + extension);
+            builder.addBinaryBody(fileName, file, ContentType.MULTIPART_FORM_DATA, fileName);
             HttpEntity entity = builder.build();
-
-            JSONObject params = new JSONObject();
-            params.put("profile_picture_path", profilePicturePath);
 
             String data = httpRequestData.asyncRequestData("POST-mime", new URI(SERVER_URL
                     + "/api/containers/" + PROFILE_PICTURE_CONTAINER + "/upload"), null, entity);
@@ -396,7 +403,12 @@ public class DataRequestServices {
                 Log.e(TAG, "couldn't upload file");
                 return null;
             }
-            return data;
+            JSONObject obj = new JSONObject(data);
+            obj = ((obj.getJSONObject("result")).getJSONObject("files"));
+            Iterator<String> iterator = obj.keys();
+            String name = iterator.next();
+            //return id of image
+            return ((JSONObject) obj.getJSONArray(name).get(0)).getString("name");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -407,48 +419,41 @@ public class DataRequestServices {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    public String downloadProfilePicture(String fileName) {
+
+
+/*    public String downloadProfilePicture(String fileName) {
         //check the name (cos will be the index of the picture) -
+        if(fileName != null) {
+            //fileName = "avatar_2x.png"; //TODO - remove fake filename
+            String PROFILE_PICTURE_CONTAINER = "profile-picture-container";
+            try {
 
-        //fileName = "avatar_2x.png"; //TODO - remove fake filename
-        String PROFILE_PICTURE_CONTAINER = "profile-picture-container";
-        try {
-/*            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-
-            builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-            File image = new File("path");
-            FileBody fileBody = new FileBody(image); //image should be a String
-            builder.addPart("file", fileBody);
-            HttpEntity entity = builder.build();
-
-            JSONObject params = new JSONObject();
-            params.put("profile_picture_path", profilePicturePath);*/
-            String data = httpRequestData.asyncRequestData("GET-mime", new URI(SERVER_URL
-                    + "/api/containers/" + PROFILE_PICTURE_CONTAINER + "/download" + fileName), null, null);
-            if (data == null) {
-                Log.e(TAG, "couldn't upload file");
-                return null;
+                String data = httpRequestData.asyncRequestData("GET-mime", new URI(SERVER_URL
+                        + "/api/containers/" + PROFILE_PICTURE_CONTAINER + "/download/" + fileName), null, null);
+                if (data == null) {
+                    Log.e(TAG, "couldn't download file");
+                    return null;
+                }
+                return data;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
             }
-            return data;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
         }
         return null;
-
-
     }
-
+*/
 
 
     private ArrayList<CoffeeMachine> getCoffeeMachineListParser(String data) {

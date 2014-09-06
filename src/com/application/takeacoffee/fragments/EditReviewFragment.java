@@ -28,7 +28,7 @@ public class EditReviewFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mainActivityRef = getActivity();
-        coffeeApp = DataStorageSingleton.getInstance(getActivity().getApplicationContext());
+        coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
         editReviewView = inflater.inflate(R.layout.edit_review_template, container, false);
 
 //        long reviewId = getArguments().getLong(Common.REVIEW_ID);

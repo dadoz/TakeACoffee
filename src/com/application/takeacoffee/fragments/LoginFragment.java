@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
+import com.application.commons.BitmapCustomUtils;
 import com.application.commons.Common;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.models.User;
@@ -71,7 +72,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         mainActivityRef = this.getActivity();
         this.savedInstance = savedInstance;
 
-        coffeeApp = DataStorageSingleton.getInstance(getActivity().getApplicationContext());
+        coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
 
         //TODO refactor it
         customDir = this.getActivity().getApplication().getApplicationContext()
@@ -85,8 +86,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         if(coffeeApp.isRegisteredUser()) {
 //            Common.drawProfilePictureByPath(profilePic, coffeeApp.getRegisteredProfilePicturePath(),
 //                    getResources().getDrawable(R.drawable.user_icon));
-            Bitmap bitmap = Common.getRoundedBitmapByFile(coffeeApp.getRegisteredProfilePicturePath(),
-                    BitmapFactory.decodeResource( mainActivityRef.getResources(), R.drawable.user_icon));
+            Bitmap bitmap = BitmapCustomUtils.getRoundedBitmapByFile(coffeeApp.getRegisteredProfilePicturePath(),
+                    BitmapFactory.decodeResource(mainActivityRef.getResources(), R.drawable.user_icon));
             profilePicImageView.setImageBitmap(bitmap);
         }
 
@@ -143,26 +144,21 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    public boolean setProfilePicture(Bitmap pickedImage, ImageView profilePicView) {
+    public boolean setProfilePicture(Bitmap pickedImage, ImageView profilePicView, String fileName) {
+/*      TODO move it out
         if(mConnectionProgressDialog != null) {
             mConnectionProgressDialog.dismiss(); //loading dialog
-        }
-
-        Bitmap profileImage = Common.getRoundedRectBitmap(pickedImage, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
-        String profileImagePath = Common.saveImageInStorage(profileImage, customDir, Common.PROFILE_PIC_FILE_NAME); //store image in storage and get back URL
-
+        }*/
+        Bitmap profileImage = BitmapCustomUtils.getRoundedRectBitmap(pickedImage, Common.PROFILE_PIC_CIRCLE_MASK_SIZE);
+        String profileImagePath = BitmapCustomUtils.saveImageInStorage(profileImage, customDir, fileName); //store image in storage and get back URL
         if(profileImagePath != null) {
             Log.d(TAG, "[PROFILE PIC] path file - " + profileImagePath);
-            if(coffeeApp.setRegisteredUser(Common.EMPTY_LONG_VALUE, profileImagePath, null)) {
-                profilePicView.setImageBitmap(profileImage);
-                return true;
-            }
-            return false;
+            profilePicView.setImageBitmap(profileImage);
+            coffeeApp.profilePicturePathTemp = profileImagePath;
+            return true;
         }
 
         Common.displayError("Error to set your picture!", mainActivityRef);
-//        profilePicView.setImageBitmap(BitmapFactory.decodeResource( mainActivityRef.getResources(),
-//                R.drawable.user_icon)); //TODO replace with the one stored in registeredUser
         return false;
     }
 
@@ -205,7 +201,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         return bmp;
     }
 */
-
+/*
     public class LoggedUserButtonAction implements View.OnClickListener {
         android.support.v4.app.FragmentManager fragmentManager;
         public LoggedUserButtonAction(android.support.v4.app.FragmentManager fragManag) {
@@ -220,7 +216,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                 .commit();
         }
     }
-
+*/
 
     /***** FACEBOOK LOGIN *****/
 
@@ -287,7 +283,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                                             URL profilePicURL = new URL(dataJSON.getString("url"));
                                             Bitmap profilePicture = new ProfilePictureAsyncTask().execute(profilePicURL).get();
                                             ImageView profilePicView = (ImageView) mainActivityRef.findViewById(R.id.profilePicImageViewId);
-                                            setProfilePicture(profilePicture, profilePicView);
+                                            //TODO REFACTOR IT
+                                            //setProfilePicture(profilePicture, profilePicView);
                                             /***LOGOUT FROM FB**/
                                             session.close();
                                         } catch (JSONException e) {
@@ -418,7 +415,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         }
 
         protected void onPostExecute(Bitmap result) {
-            setProfilePicture(result, bmImage);
+            //TODO REFACTOR IT
+//            setProfilePicture(result, bmImage);
             if(mGoogleApiClient != null) {
                 if (mGoogleApiClient.isConnected()) {
                     mGoogleApiClient.disconnect();
@@ -531,18 +529,21 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                 Common.displayError("no username set - please insert your one", view.getContext());
                 return;
             }
+
             //rebind loggedButtonId
-            mainActivityRef.findViewById(R.id.loggedUserButtonId).setOnClickListener(
-                    new LoggedUserButtonAction(mainActivityRef.getSupportFragmentManager()));
+/*            mainActivityRef.findViewById(R.id.loggedUserButtonId).setOnClickListener(
+                    new LoggedUserButtonAction(mainActivityRef.getSupportFragmentManager()));*/
+
+            if(coffeeApp.setRegisteredUser(Common.EMPTY_LONG_VALUE,
+                    coffeeApp.profilePicturePathTemp, username)) {
+                setRegisteredUserHeader();
+            } else {
+                Common.displayError("problem to set user - ", view.getContext());
+            }
 
             //hide keyboard
-            InputMethodManager imm = (InputMethodManager) mainActivityRef.getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
-
-            if(coffeeApp.setRegisteredUser(Common.EMPTY_LONG_VALUE, null, username)) {
-                setRegisteredUserHeader();
-            }
+            ((InputMethodManager) mainActivityRef.getSystemService(
+                    Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
 
             if(getFragmentManager().getBackStackEntryCount() > 0) {
                 getFragmentManager().popBackStack();
@@ -552,7 +553,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                         .commit();
             }
 
-            Log.e(TAG, "u clicked save - " + username + " -");
+            Log.e(TAG, "u clicked save - " + username + " - " + coffeeApp.profilePicturePathTemp);
         }
     }
 
@@ -565,16 +566,21 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
             case PHOTO_CODE:
                 if(resultCode == Activity.RESULT_OK) {
                     try {
-                        Uri selectedImage = data.getData();
-                        InputStream imageStream = null;
-                        imageStream = getActivity().getContentResolver().openInputStream(selectedImage);
-                        Bitmap pickedImage = BitmapFactory.decodeStream(imageStream);
                         Log.d(TAG, "I got image as profilePic");
+                        Uri selectedImage = data.getData();
+                        Log.d(TAG, "I got image as profilePic " + data.getData().getQueryParameterNames());
+                        String fileName = selectedImage.getLastPathSegment();
+                        InputStream imageStream = getActivity().getContentResolver().openInputStream(selectedImage);
+                        Bitmap pickedImage = BitmapFactory.decodeStream(imageStream);
                         ImageView profilePic = (ImageView)this.getActivity().findViewById(R.id.profilePicImageViewId);
-                        setProfilePicture(pickedImage, profilePic);
+                        //TODO REFACTOR IT
+                        setProfilePicture(pickedImage, profilePic, fileName);
                     } catch (FileNotFoundException e) {
                         Toast.makeText(this.getActivity().getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                         e.printStackTrace();
+                    } catch (Exception e) {
+                        Toast.makeText(this.getActivity().getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        //e.printStackTrace();
                     }
                 }
                 break;

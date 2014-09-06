@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.application.commons.BitmapCustomUtils;
 import com.application.commons.Common;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.models.User;
@@ -74,7 +75,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        coffeeApp.destroy();
+//        coffeeApp.destroy();
     }
 
     @Override
@@ -130,14 +131,16 @@ public class CoffeeMachineActivity extends FragmentActivity {
 
     private static boolean initDataApplication() {
         SharedPreferences sharedPref = mainActivityRef.getSharedPreferences("SHARED_PREF_COFFEE_MACHINE", Context.MODE_PRIVATE);
+
         coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
+
         if(sharedPref != null) {
             String username = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USERNAME, null);
             String profilePicPath = sharedPref.getString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, null);
             long userId = sharedPref.getLong(Common.SHAREDPREF_REGISTERED_USER_ID,
                     Common.EMPTY_LONG_VALUE);
-                if(userId != Common.EMPTY_LONG_VALUE) {
-                    Log.e(TAG, "this is my username" + username);
+            if(userId != Common.EMPTY_LONG_VALUE) {
+                Log.e(TAG, "this is my username: " + username);
                 coffeeApp.setRegisteredUser(userId, profilePicPath, username); //TODO check empty value
                 return true;
             } else {
@@ -162,8 +165,8 @@ public class CoffeeMachineActivity extends FragmentActivity {
         });
 
         Bitmap defaultIcon = BitmapFactory.decodeResource(mainActivityRef.getResources(), R.drawable.user_icon);
-        Bitmap bitmap = Common.getRoundedBitmapByFile(coffeeApp.getRegisteredProfilePicturePath(),
-               defaultIcon);
+        Bitmap bitmap = BitmapCustomUtils.getRoundedBitmapByFile(coffeeApp.getRegisteredProfilePicturePath(),
+                defaultIcon);
         ((ImageView) mainView.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
     }
 
@@ -282,6 +285,11 @@ public class CoffeeMachineActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
+        int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
+        if(backStackEntryCount == 0) {
+            Log.e(TAG, "init your singleton");
+            coffeeApp.destroy();
+        }
         super.onBackPressed();
     }
 

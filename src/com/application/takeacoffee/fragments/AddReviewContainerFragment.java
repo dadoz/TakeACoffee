@@ -41,7 +41,7 @@ public class AddReviewContainerFragment extends Fragment {
         args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
 
         //get data from application
-        coffeeApp = DataStorageSingleton.getInstance(getActivity().getApplicationContext());
+        coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
 
         initView(coffeeMachineId);
 

@@ -46,7 +46,7 @@ public class ChoiceReviewFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         choiceReviewView = inflater.inflate(R.layout.choice_review_template, container, false);
         mainActivityRef = getActivity();
-        coffeeApp = DataStorageSingleton.getInstance(getActivity().getApplicationContext());
+        coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
 
         //get bundle args
         long coffeeMachineId = this.getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
