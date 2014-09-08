@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import com.application.commons.Common;
+import com.application.dataRequest.CoffeeAppLogic;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.models.Review;
 import com.application.takeacoffee.CoffeeMachineActivity;
@@ -25,6 +26,7 @@ public class EditReviewFragment extends Fragment{
     private DataStorageSingleton coffeeApp;
     private View editReviewView;
     private static final String TAG = "EditReviewFragment";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mainActivityRef = getActivity();
@@ -32,11 +34,11 @@ public class EditReviewFragment extends Fragment{
         editReviewView = inflater.inflate(R.layout.edit_review_template, container, false);
 
 //        long reviewId = getArguments().getLong(Common.REVIEW_ID);
-//        long coffeeMachineId = getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
+//        String coffeeMachineId = getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
 //        reviewsList = coffeeApp.getReviewListByCoffeeMachineId(coffeeMachineId);
         String reviewStatus = (String) this.getArguments().get(Common.REVIEW_STATUS_KEY);
         long reviewId = getArguments().getLong(Common.REVIEW_ID);
-        long coffeeMachineId = getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
+        String coffeeMachineId = getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
 
         setHeader();
         initView(coffeeMachineId, reviewId, reviewStatus); //test
@@ -55,15 +57,16 @@ public class EditReviewFragment extends Fragment{
     }*/
 
     public void setHeader() {
-        CoffeeMachineActivity.setHeaderByFragmentId(3, getFragmentManager(), -1);
+        CoffeeMachineActivity.setHeaderByFragmentId(3, getFragmentManager(), Common.EMPTY_VALUE);
     }
 
-    private void initView(final long coffeeMachineId, long reviewId, String reviewStatus) {
+    private void initView(final String coffeeMachineId, long reviewId, String reviewStatus) {
         //User user = coffeeApp.coffeeMachineData.getRegisteredUser();
 //        Common.ReviewStatusEnum reviewStatus = Common.ReviewStatusEnum.valueOf(reviewStatus);
+        final CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
 //        final Review review = getReviewById(reviewsList, reviewId);
-        final Review review = coffeeApp.getReviewById(coffeeMachineId, reviewId);
+        final Review review = coffeeAppLogic.getReviewById(coffeeMachineId, reviewId);
         if(review != null) {
 
             //set review data
@@ -108,7 +111,7 @@ public class EditReviewFragment extends Fragment{
                     Common.hideKeyboard(mainActivityRef, ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)));
                     getFragmentManager().popBackStack();
 
-                    coffeeApp.updateReviewById(coffeeMachineId, review.getId(), reviewCommentNew);
+                    coffeeAppLogic.updateReviewById(coffeeMachineId, review.getId(), reviewCommentNew);
                 }
             });
         } else {

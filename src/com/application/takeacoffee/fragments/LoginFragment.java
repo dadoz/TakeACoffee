@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.application.commons.BitmapCustomUtils;
 import com.application.commons.Common;
+import com.application.dataRequest.CoffeeAppLogic;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.models.User;
 import com.application.takeacoffee.CoffeeMachineActivity;
@@ -48,7 +49,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
     private static final String TAG = "LoginFragment";
 
     private DataStorageSingleton coffeeApp;
-
     private static File customDir;
 
     private FragmentActivity mainActivityRef;
@@ -73,7 +73,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         this.savedInstance = savedInstance;
 
         coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
-
         //TODO refactor it
         customDir = this.getActivity().getApplication().getApplicationContext()
                 .getDir(Common.COFFEE_MACHINE_DIR, Context.MODE_PRIVATE); //Creating an internal dir;
@@ -533,8 +532,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
             //rebind loggedButtonId
 /*            mainActivityRef.findViewById(R.id.loggedUserButtonId).setOnClickListener(
                     new LoggedUserButtonAction(mainActivityRef.getSupportFragmentManager()));*/
+            CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
-            if(coffeeApp.setRegisteredUser(Common.EMPTY_LONG_VALUE,
+            if(coffeeAppLogic.setRegisteredUser(Common.EMPTY_LONG_VALUE,
                     coffeeApp.profilePicturePathTemp, username)) {
                 setRegisteredUserHeader();
             } else {

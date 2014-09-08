@@ -7,9 +7,9 @@ import com.application.commons.Common;
 import com.application.takeacoffee.fragments.AddReviewFragment;
 
 public class AddReviewPagerAdapter extends FragmentStatePagerAdapter {
-    private long coffeeMachineId;
+    private String coffeeMachineId;
 
-    public AddReviewPagerAdapter(FragmentManager fm, long coffeeMachineId) {
+    public AddReviewPagerAdapter(FragmentManager fm, String coffeeMachineId) {
         super(fm);
         this.coffeeMachineId = coffeeMachineId;
     }

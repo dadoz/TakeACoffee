@@ -77,7 +77,7 @@ public class DataRequestDb {
         return deleteAllReviewOnDb();
     }
 
-    public boolean removeAllReviewByCoffeeMachineId(long coffeeMachineId) {
+    public boolean removeAllReviewByCoffeeMachineId(String coffeeMachineId) {
         return deleteAllReviewByCoffeeMachineIdOnDb(coffeeMachineId);
 
     }
@@ -90,11 +90,11 @@ public class DataRequestDb {
         return getReviewListOnDb();
     }
 
-    public ArrayList<Review> getReviewListById(long coffeeMachineId) {
+    public ArrayList<Review> getReviewListById(String coffeeMachineId) {
         return getReviewListByCoffeeMachineIdOnDb(coffeeMachineId);
     }
 
-    public Review addReviewByParams(long id, long userId, long coffeeMachineId, String comment, Common.ReviewStatusEnum status, long timestamp) {
+    public Review addReviewByParams(long id, long userId, String coffeeMachineId, String comment, Common.ReviewStatusEnum status, long timestamp) {
         return addReviewByParamsOnDb(id, userId, coffeeMachineId, comment, status.name(), timestamp);
     }
 
@@ -146,7 +146,9 @@ public class DataRequestDb {
             Log.e(TAG, "An error occurred while adding the document to the local DB");
             return null;
         }
-        CoffeeMachine coffeeMachine = new CoffeeMachine(rowId, name, address, iconPath);
+        //TODO TEST
+//        CoffeeMachine coffeeMachine = new CoffeeMachine(rowId, name, address, iconPath);
+        CoffeeMachine coffeeMachine = null;
         Log.d(TAG, coffeeMachine.getId() + " coffee machine correctly stored");
         return coffeeMachine;
     }
@@ -159,13 +161,14 @@ public class DataRequestDb {
                 null, null, null, null, null);
 
         cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
+        //TODO TEST
+/*        while (!cursor.isAfterLast()) {
             CoffeeMachine coffeeMachine = new CoffeeMachine(
                     cursor.getLong(0), cursor.getString(1), cursor.getString(2),
                     cursor.getString(3));
             coffeeMachineArrayList.add(coffeeMachine);
             cursor.moveToNext();
-        }
+        }*/
         // make sure to close the cursor
         cursor.close();
         closeCoffeeMachineDb();
@@ -180,7 +183,7 @@ public class DataRequestDb {
      * REVIEW table - add. get. getById
      * **/
 //    private Review addReviewOnDb(String comment, String statusName, String timestamp, int coffeeMachineId, int userId){
-      private Review addReviewByParamsOnDb(long id, long userId, long coffeeMachineId, String comment,
+      private Review addReviewByParamsOnDb(long id, long userId, String coffeeMachineId, String comment,
                                             String statusName, long timestamp) {
         long rowId;
         openCoffeeMachineDb();
@@ -203,7 +206,7 @@ public class DataRequestDb {
         // id == rowId
         Review review = new Review(id,
                 comment, Review.parseStatus(statusName),
-                timestamp, userId, -1);
+                timestamp, userId, Common.EMPTY_VALUE);
         closeCoffeeMachineDb();
         return review;
     }
@@ -217,14 +220,14 @@ public class DataRequestDb {
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            Review review = new Review(
+/*            Review review = new Review(
                     cursor.getLong(0),
                     cursor.getString(1),
                     Review.parseStatus(cursor.getString(2)),
                     cursor.getLong(3),
                     cursor.getLong(4),
                     cursor.getLong(5));
-            reviewArrayList.add(review);
+            reviewArrayList.add(review);*/
 //            Log.e(TAG, "review - " + review.toString());
             cursor.moveToNext();
         }
@@ -234,7 +237,7 @@ public class DataRequestDb {
         return reviewArrayList;
     }
 
-    private ArrayList<Review> getReviewListByCoffeeMachineIdOnDb(long coffeeMachineId) {
+    private ArrayList<Review> getReviewListByCoffeeMachineIdOnDb(String coffeeMachineId) {
         ArrayList<Review> reviewArrayList = new ArrayList<Review>();
 
         openCoffeeMachineDb();
@@ -248,7 +251,7 @@ public class DataRequestDb {
         }
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            Review review = new Review(
+/*            Review review = new Review(
                     cursor.getLong(0),
                     cursor.getString(1),
                     Review.parseStatus(cursor.getString(2)),
@@ -256,7 +259,7 @@ public class DataRequestDb {
                     cursor.getLong(4),
                     cursor.getLong(5));
             reviewArrayList.add(review);
-            Log.e(TAG, review.toString());
+            Log.e(TAG, review.toString());*/
             cursor.moveToNext();
         }
         // make sure to close the cursor
@@ -277,16 +280,17 @@ public class DataRequestDb {
             return null;
         }
         cursor.moveToFirst();
-        Review review = new Review(
+/*        Review review = new Review(
                 cursor.getLong(0),
                 cursor.getString(1),
                 Review.parseStatus(cursor.getString(2)),
                 cursor.getLong(3),
                 cursor.getLong(4),
-                cursor.getLong(5));
+                cursor.getLong(5));*/
         cursor.close();
         closeCoffeeMachineDb();
-        return review;
+//        return review;
+        return null;
     }
 
     private boolean deleteReviewByIdOnDb(long reviewId){
@@ -313,7 +317,7 @@ public class DataRequestDb {
         return true;
     }
 
-    private boolean deleteAllReviewByCoffeeMachineIdOnDb(long coffeeMachineId) {
+    private boolean deleteAllReviewByCoffeeMachineIdOnDb(String coffeeMachineId) {
         openCoffeeMachineDb();
 
         String delete = "DELETE FROM " + CoffeeMachineDbHelper.REVIEW_TABLE_NAME +

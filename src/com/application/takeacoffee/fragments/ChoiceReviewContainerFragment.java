@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.application.adapters.ChoiceReviewPagerAdapter;
 import com.application.commons.Common;
+import com.application.dataRequest.CoffeeAppLogic;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.models.Review;
 import com.application.takeacoffee.CoffeeMachineActivity;
@@ -42,18 +43,20 @@ public class ChoiceReviewContainerFragment extends Fragment {
         mainActivityRef = getActivity();
         //get data from application
         coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
-
-        //fragment bundle //TODO refactor it
-        long coffeeMachineId = this.getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
+        //fragment bundle
+        // TODO refactor it set bundle
+        String coffeeMachineId = this.getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
         args = new Bundle();
-        args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
 
         return initView(inflater, container, coffeeMachineId);
     }
 
-    public View initView(LayoutInflater inflater, ViewGroup container, long coffeeMachineId) {
+    public View initView(LayoutInflater inflater, ViewGroup container, String coffeeMachineId) {
       //check empty listview
-        ArrayList<Review> reviewList = coffeeApp.getReviewListByStatus(coffeeMachineId,
+        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+
+        ArrayList<Review> reviewList = coffeeAppLogic.getReviewListByStatus(coffeeMachineId,
                 Common.ReviewStatusEnum.NOTSET);
         if(reviewList == null) {
             //EMPTY listview
@@ -128,13 +131,13 @@ public class ChoiceReviewContainerFragment extends Fragment {
 
     }
 */
-    public void setHeader(long coffeeMachineId) {
+    public void setHeader(String coffeeMachineId) {
         CoffeeMachineActivity.setHeaderByFragmentId(1, getFragmentManager(), coffeeMachineId);
         mainActivityRef.findViewById(R.id.addReviewSwipeButtonId).setVisibility(View.INVISIBLE);
 
     }
 
-    public void setReviewPager(final long coffeeMachineId) {
+    public void setReviewPager(final String coffeeMachineId) {
         //boolean isTodayReview = false;
         mPager = (ViewPager) reviewsLayoutView.findViewById(R.id.reviewsPagerId);
         mPagerAdapter = new ChoiceReviewPagerAdapter(getChildFragmentManager(), coffeeMachineId);

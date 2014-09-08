@@ -52,7 +52,7 @@ public class MapFragment extends Fragment {
         }
     }
     private void setHeader() {
-        CoffeeMachineActivity.setHeaderByFragmentId(2, getFragmentManager(), -1);
+        CoffeeMachineActivity.setHeaderByFragmentId(2, getFragmentManager(), Common.EMPTY_VALUE);
     }
 
     public void onDestroyView() {

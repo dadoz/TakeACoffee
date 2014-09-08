@@ -56,17 +56,18 @@ public class DataRequestServices {
     }
 
     public ArrayList<Review> getReviewListById(long id) {
-        //HTTP REQUEST
+/*        //HTTP REQUEST SYNC
         String data = getReviewListByIdHttpRequest(id);
         if(data == null) {
             Log.e(TAG, "no data retrieved from server");
             return null;
         }
         //PARSE DATA AND RETURN
-        return getReviewListParser(data);
+        return getReviewListParser(data);*/
+        return null;
     }
 
-    public Review addReviewByParams(long userId, long coffeeMachineId,
+    public Review addReviewByParams(long userId, String coffeeMachineId,
                                            String comment, Common.ReviewStatusEnum status,
                                            long timestamp) {
         //HTTP REQUEST
@@ -115,7 +116,7 @@ public class DataRequestServices {
         return data;*/
     }
 
-    private String getReviewListByIdHttpRequest(long coffeeMachineId) {
+    private String getReviewListByIdHttpRequest(String coffeeMachineId) {
         try {
             return httpRequestData.asyncRequestData("GET", new URI(SERVER_URL
                     + "/api/reviews?filter[where][coffee_machine_id]=" + coffeeMachineId), null, null);
@@ -208,7 +209,7 @@ public class DataRequestServices {
     }
 
     private Review addReviewByParamsHttpRequest(String comment, long userId,
-                                                       long coffeeMachineId, String statusName,
+                                                       String coffeeMachineId, String statusName,
                                                        long timestamp) {
         try {
             JSONObject params = new JSONObject();
@@ -471,8 +472,8 @@ public class DataRequestServices {
                     String name = coffeeMachineObj.getString("name");
                     String address = coffeeMachineObj
                             .getString("address");
-                    long coffeeMachineId = coffeeMachineObj
-                            .getLong("id");
+                    String coffeeMachineId = coffeeMachineObj
+                            .getString("id");
                     String iconPath = coffeeMachineObj
                             .getString("icon_path");
 
@@ -511,8 +512,8 @@ public class DataRequestServices {
             //.getInt("review_status");
             //get username by userId
 
-            return new Review(reviewId, reviewComment, Review.parseStatus(reviewStatus),
-                    Long.parseLong(timestamp), reviewUserId, reviewCoffeeMachineId);
+/*            return new Review(reviewId, reviewComment, Review.parseStatus(reviewStatus),
+                    Long.parseLong(timestamp), reviewUserId, reviewCoffeeMachineId);*/
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -549,8 +550,8 @@ public class DataRequestServices {
 
 //                SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 //                long timestamp = dateFormat.parse(reviewDate).getTime();
-                reviewsList.add(new Review(reviewId, reviewComment, Review.parseStatus(reviewStatus),
-                        Long.parseLong(timestamp), reviewUserId, reviewCoffeeMachineId));
+/*                reviewsList.add(new Review(reviewId, reviewComment, Review.parseStatus(reviewStatus),
+                        Long.parseLong(timestamp), reviewUserId, reviewCoffeeMachineId));*/
             }
 
             return reviewsList;

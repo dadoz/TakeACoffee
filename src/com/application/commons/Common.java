@@ -64,7 +64,8 @@ public class Common {
     public enum ReviewStatusEnum {
         GOOD,
         NOTSOBAD,
-        NOTSET, WORST
+        NOTSET,
+        WORST
     };
 
     public static String COFFEE_MACHINE_DIR = "coffeeMachineFolder";

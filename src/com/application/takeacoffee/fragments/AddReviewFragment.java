@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.application.commons.Common;
+import com.application.dataRequest.CoffeeAppLogic;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.models.Review;
 import com.application.models.User;
@@ -34,11 +35,11 @@ public class AddReviewFragment extends Fragment {
 
     private static String reviewText = "Review for this machine - auto generated";
 
-    public static AddReviewFragment create(int pageNumber, long coffeeMachineId) {
+    public static AddReviewFragment create(int pageNumber, String coffeeMachineId) {
         AddReviewFragment fragment = new AddReviewFragment();
         Bundle args = new Bundle();
         args.putInt(Common.ARG_PAGE, pageNumber);
-        args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,11 +53,10 @@ public class AddReviewFragment extends Fragment {
 
         //get data from application
         coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
-
         //get args from fragment
         args = getArguments();
 
-        long coffeeMachineId = this.getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
+        String coffeeMachineId = this.getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
         pagePosition = this.getArguments().getInt(Common.ARG_PAGE);
 
         setHeader(coffeeMachineId);
@@ -73,7 +73,7 @@ public class AddReviewFragment extends Fragment {
         return addReviewView;
     }
 
-    public void setHeader(long coffeeMachineId) {
+    public void setHeader(String coffeeMachineId) {
 //        CoffeeMachineActivity.setHeaderBarVisibile(false);
 /*        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
         mainActivityRef.findViewById(R.id.headerBarLayoutId).setVisibility(View.GONE);
@@ -86,7 +86,7 @@ public class AddReviewFragment extends Fragment {
 
     }
 
-    private void initView(final long coffeeMachineId, final Common.ReviewStatusEnum reviewStatus) {
+    private void initView(final String coffeeMachineId, final Common.ReviewStatusEnum reviewStatus) {
         //replace view
         switch (reviewStatus) {
             case GOOD:
@@ -145,16 +145,17 @@ public class AddReviewFragment extends Fragment {
         addReviewView.findViewById(R.id.mainAddReviewLayoutId).setBackgroundColor(colorId);
     }
 
-    public void addReview(final long coffeeMachineId, final Common.ReviewStatusEnum reviewStatus,
+    public void addReview(final String coffeeMachineId, final Common.ReviewStatusEnum reviewStatus,
                                  boolean reviewWithText) {
         //add data to list
         if(! coffeeApp.isRegisteredUser()) {
             Common.displayError("You must be logged in before add review!", mainActivityRef);
             return;
         }
+        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
         if(coffeeApp.isLocalUser()) {
-            if(! coffeeApp.registerLocalUser()) {
+            if(! coffeeAppLogic.registerLocalUser()) {
                 Common.displayError("Failed to register your username - check your internet connection!", mainActivityRef);
                 return;
             }
@@ -183,7 +184,9 @@ public class AddReviewFragment extends Fragment {
         }
 
         //ADD new Review
-        coffeeApp.addReviewByParams(coffeeApp.getRegisteredUserId(), coffeeMachineId, reviewText, reviewStatus);        //TODO replace these rows
+        coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+
+        coffeeAppLogic.addReviewByParams(coffeeApp.getRegisteredUserId(), coffeeMachineId, reviewText, reviewStatus);        //TODO replace these rows
         createReviewsListView(reviewStatus, args);
 
 //        mainActivityRef.getSupportFragmentManager().popBackStack(); //TODO SOOOOO FUCKING WRONG -

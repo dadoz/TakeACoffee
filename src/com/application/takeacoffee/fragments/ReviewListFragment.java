@@ -37,7 +37,7 @@ public class ReviewListFragment extends Fragment {
 
     private Common.ReviewStatusEnum reviewStatus;
     private View reviewListView;
-    private long coffeeMachineId;
+    private String coffeeMachineId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
@@ -47,7 +47,7 @@ public class ReviewListFragment extends Fragment {
 
         coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
 
-        coffeeMachineId = this.getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
+        coffeeMachineId = this.getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
         reviewStatus = Common.ReviewStatusEnum.valueOf(this.getArguments().
                 getString(Common.REVIEW_STATUS_KEY));
         long fromTimestamp = this.getArguments().
@@ -55,7 +55,9 @@ public class ReviewListFragment extends Fragment {
         long toTimestamp = this.getArguments().
                 getLong(Common.TO_TIMESTAMP_KEY);
 
-        ArrayList<Review> reviewList = coffeeApp.getReviewListByTimestamp(coffeeMachineId,
+        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+
+        ArrayList<Review> reviewList = coffeeAppLogic.getReviewListByTimestamp(coffeeMachineId,
                 reviewStatus, fromTimestamp, toTimestamp);
         ReviewListTimestamp reviewListObj = new ReviewListTimestamp(fromTimestamp,
                 toTimestamp, reviewList);
@@ -94,7 +96,8 @@ public class ReviewListFragment extends Fragment {
 //        long prevMonthFromTimestamp = (cal.getTime()).getTime();
         long prevMonthFromTimestamp = Common.DATE_NOT_SET;
 
-        final ArrayList<Review> prevReviewList = coffeeApp.getReviewListByTimestamp(coffeeMachineId,
+        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+        final ArrayList<Review> prevReviewList = coffeeAppLogic.getReviewListByTimestamp(coffeeMachineId,
                 reviewStatus, prevMonthFromTimestamp, dayBeforeFromTimestamp);
         if(prevReviewList == null) {
             Log.e(TAG, "previous review list is empty");
@@ -120,7 +123,7 @@ public class ReviewListFragment extends Fragment {
 
     }
 /*
-    private void setReviewListHeader(final long coffeeMachineId, final View reviewStatusText,
+    private void setReviewListHeader(final String coffeeMachineId, final View reviewStatusText,
                                  final View reviewStatusAddImageView, boolean setTextLabel) {
         setReviewListHeaderBackgroundLabel(reviewStatusText, setTextLabel);
 
@@ -162,13 +165,13 @@ public class ReviewListFragment extends Fragment {
         }
     }
 
-    private static boolean getEditReviewFragment(long reviewId, long coffeeMachineId,
+    private static boolean getEditReviewFragment(long reviewId, String coffeeMachineId,
                                                  Common.ReviewStatusEnum reviewStatus,
                                                  FragmentManager fragmentManager) {
         //change fragment
         Bundle args = new Bundle();
         args.putLong(Common.REVIEW_ID, reviewId);
-        args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
         args.putString(Common.REVIEW_STATUS_KEY, reviewStatus.name());
 
         EditReviewFragment reviewsFrag = new EditReviewFragment();
@@ -183,17 +186,19 @@ public class ReviewListFragment extends Fragment {
         return true;
     }
 
-    public static void alertDialogDeleteReview(final long coffeeMachineId,
+    public static void alertDialogDeleteReview(final String coffeeMachineId,
                                                final ReviewListerAdapter reviewListerAdapter,
                                                final Review reviewSelectedItem) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mainActivityRef);
         dialogBuilder.setTitle("Delete Review");
         dialogBuilder.setMessage("Are you sure you want to delete your review?");
 
+        final CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+
         dialogBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                coffeeApp.removeReviewById(coffeeMachineId, reviewSelectedItem);
+                coffeeAppLogic.removeReviewById(coffeeMachineId, reviewSelectedItem);
                 (reviewListerAdapter).remove(reviewSelectedItem);
                 reviewListerAdapter.setSelectedItemIndex(Common.ITEM_NOT_SELECTED);
                 (reviewListerAdapter).notifyDataSetChanged();
@@ -210,7 +215,7 @@ public class ReviewListFragment extends Fragment {
 
     }
     public void setDataWithListView(ListView listView, ReviewListTimestamp reviewListObj,
-                                    final long coffeeMachineId) {
+                                    final String coffeeMachineId) {
         ReviewListerAdapter reviewListenerAdapter = new ReviewListerAdapter(mainActivityRef, R.layout.review_template,
                 reviewListObj, coffeeMachineId);
         reviewListenerAdapter.notifyDataSetChanged();
@@ -281,9 +286,9 @@ public class ReviewListFragment extends Fragment {
         public int selectedItemIndex = Common.ITEM_NOT_SELECTED;
         private Bitmap defaultIcon;
 
-        public long coffeeMachineId;
+        public String coffeeMachineId;
         public ReviewListerAdapter(Context context, int resource, ReviewListTimestamp reviewListObj,
-                                   long coffeeMachineId) {
+                                   String coffeeMachineId) {
             super(context, resource, reviewListObj.getReviewsList());
             this.reviewList = reviewListObj.getReviewsList();
             this.fromTimestamp = reviewListObj.getFromTimestamp();
@@ -300,7 +305,8 @@ public class ReviewListFragment extends Fragment {
 
         public View getView(final int position, View convertView, ViewGroup parent) {
             Review reviewObj = reviewList.get(position);
-            User userOnReview = coffeeApp.getUserById(reviewObj.getUserId());
+            CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+            User userOnReview = coffeeAppLogic.getUserById(reviewObj.getUserId());
 
             ViewHolder holder;
             if(convertView == null) {
@@ -321,17 +327,17 @@ public class ReviewListFragment extends Fragment {
 
             holder.reviewCommentTextView.setText(reviewObj.getComment());
             holder.reviewDateTextView.setText(reviewObj.getFormattedTimestamp());
+            coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
             //they call volley lib to load profile picture
-            CoffeeAppLogic.setUsernameToUserOnReview(coffeeApp, holder.usernameTextView,
+            coffeeAppLogic.setUsernameToUserOnReview(holder.usernameTextView,
                     userOnReview.getUsername(), userOnReview.getId());
             //TODO custom image
 //            holder.profilePicImageView.setImageDrawable(mainActivityRef.getResources().getDrawable(R.drawable.user_icon));
-            CoffeeAppLogic.setProfilePictureToUserOnReview(coffeeApp,
-                    holder.profilePicImageView,
+            //set extra menu visibility
+            coffeeAppLogic.setProfilePictureToUserOnReview(holder.profilePicImageView,
                     userOnReview.getProfilePicturePath(), this.defaultIcon,
                     userOnReview.getId());
-            //set extra menu visibility
             holder.extraMenuItemView.setVisibility(View.GONE);
 
             //show extra menu

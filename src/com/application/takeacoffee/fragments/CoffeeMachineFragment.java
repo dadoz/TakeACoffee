@@ -12,11 +12,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.application.commons.Common;
+import com.application.dataRequest.CoffeeAppLogic;
+import com.application.dataRequest.DataRequestVolleyService;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.models.CoffeeMachine;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 import com.application.takeacoffee.experimental.PieChart;
+import com.parse.ParseException;
 
 import java.util.ArrayList;
 
@@ -40,7 +43,6 @@ public class CoffeeMachineFragment extends Fragment {
         mainActivityRef = getActivity();
 
         coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
-
         //get views
         final View coffeeMachineFragment = inflater.inflate(R.layout.coffe_machine_fragment, container, false);
         settingsLayout = (LinearLayout)coffeeMachineFragment.findViewById(R.id.settingsLayoutId);
@@ -59,7 +61,7 @@ public class CoffeeMachineFragment extends Fragment {
     }
 
     private void setHeader() {
-        CoffeeMachineActivity.setHeaderByFragmentId(0, getFragmentManager(), -1);
+        CoffeeMachineActivity.setHeaderByFragmentId(0, getFragmentManager(), Common.EMPTY_VALUE);
     }
 
     private void initView(View coffeeMachineFragment) {
@@ -120,8 +122,6 @@ public class CoffeeMachineFragment extends Fragment {
                 ((TextView) coffeeMachineTemplate.findViewById(R.id.coffeeMachineNameTextId))
                         .setTextColor(getResources().getColor(R.color.light_black));
 
-                //TODO refactor please
-                String iconPath = (coffeeMachineObj.getIconPath());
 /*
                 int picResource = -1;
                 if (iconPath.equals(new String("coffee1.jpg"))) {
@@ -151,12 +151,23 @@ public class CoffeeMachineFragment extends Fragment {
                 }
                 */
                 //set coffee
+                //TODO refactor please
+                final CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+                String iconPath = (coffeeMachineObj.getIconPath());
                 ImageView coffeeIconImageView = (ImageView) coffeeMachineTemplate.findViewById(R.id.coffeeIconId);
                 coffeeIconImageView.setImageResource(R.drawable.coffee_cup_icon);
+                coffeeAppLogic.getCoffeeMachineIcon(iconPath, coffeeIconImageView);
 
                 (coffeeMachineTemplate.findViewById(R.id.coffeeIconId)).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
 //                        final String coffeeMachineId = coffeeMachineObj.getId();
+                        //TODO LOAD SYNC COFFEE_MACHINE REVIEW JSON
+                        try {
+                            coffeeAppLogic.loadReviewListByCoffeeMachineId(coffeeMachineObj.getId());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
                         getCoffeeMachineReviewById(coffeeMachineObj.getId());
                     }
                 });
@@ -178,10 +189,10 @@ public class CoffeeMachineFragment extends Fragment {
 
     }
 
-    private boolean getCoffeeMachineReviewById(long coffeeMachineId) {
+    private boolean getCoffeeMachineReviewById(String coffeeMachineId) {
         //change fragment
         Bundle args = new Bundle();
-        args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
 
         ChoiceReviewContainerFragment reviewsFrag = new ChoiceReviewContainerFragment();
         reviewsFrag.setArguments(args);

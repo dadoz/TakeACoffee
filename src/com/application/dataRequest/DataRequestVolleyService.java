@@ -18,52 +18,18 @@ import com.application.takeacoffee.R;
  */
 public class DataRequestVolleyService {
     //TODO REFACTOR IT
-    private final static String SERVER_URL = "http://192.168.137.94:3000";
+    private final static String SERVER_URL = "http://192.168.130.112:3000";
     private final static String PROFILE_PICTURE_CONTAINER = "profile-picture-container";
     private static DataStorageSingleton coffeeApp;
     private static Context context;
 
     public static void downloadProfilePicture(String profilePicturePath, ImageView profilePicImageView,
-                                              ImageLoader imageLoader) {
+                                              ImageLoader imageLoader, int defaultIconId) {
+
         String url = SERVER_URL + "/api/containers/" +
                 PROFILE_PICTURE_CONTAINER + "/download/" + profilePicturePath;
-        imageLoader.get(url, ImageLoader.getImageListener(profilePicImageView, R.drawable.user_icon, R.drawable.user_icon));
+        imageLoader.get(url, ImageLoader.getImageListener(profilePicImageView, defaultIconId, defaultIconId));
 
-    }
-
-    public static void uploadProfilePicture(DataStorageSingleton singleton) {
-    }
-
-    public void downloadProfilePictureVolley(Context context, String fileName,
-                                             final ImageView mImageView,
-                                             final Bitmap defaultIcon) {
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(context);
-        String PROFILE_PICTURE_CONTAINER = "profile-picture-container";
-        String url = SERVER_URL + "/api/containers/" +
-                PROFILE_PICTURE_CONTAINER + "/download/" + fileName;
-        // Request a string response from the provided URL.
-        ImageRequest imageRequest = new ImageRequest(url,
-                new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap response) {
-//                        Log.e(TAG, "hey " + response.toString());
-
-
-//                        Bitmap bmp = BitmapFactory.decodeStream(response.isMutable());
-                        Bitmap bmpRounded = BitmapCustomUtils.getRoundedBitmapByBitmap(response,
-                                defaultIcon);
-                        mImageView.setImageBitmap(bmpRounded);
-
-                    }
-                }, 0, 0, Bitmap.Config.ARGB_8888,
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        mImageView.setImageBitmap(defaultIcon);
-                    }
-                });
-        queue.add(imageRequest);
     }
 
 }

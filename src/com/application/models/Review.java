@@ -2,6 +2,7 @@ package com.application.models;
 
 import android.util.Log;
 import com.application.commons.Common.ReviewStatusEnum;
+import com.parse.ParseObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,10 +18,10 @@ public class Review {
     private String comment;
     private long timestamp;
     private long userId;
-    private long coffeeMachineId;
+    private String coffeeMachineId;
 
 	public Review(long id, String comment, ReviewStatusEnum status,
-                  long timestamp, long userId, long coffeeMachineId) {
+                  long timestamp, long userId, String coffeeMachineId) {
 
         this.id = id;
         this.userId = userId;
@@ -30,11 +31,11 @@ public class Review {
         this.coffeeMachineId = coffeeMachineId;
     }
 
-	public long getCoffeeMachineId() {
+	public String getCoffeeMachineId() {
 		return coffeeMachineId;
 	}
 
-    public void setCoffeeMachineId(long coffeeMachineId) {
+    public void setCoffeeMachineId(String coffeeMachineId) {
         this.coffeeMachineId = coffeeMachineId;
     }
 

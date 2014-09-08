@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.application.commons.Common;
+import com.application.dataRequest.CoffeeAppLogic;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.listener.SwipePageAction;
 import com.application.models.Review;
@@ -27,15 +28,15 @@ public class ChoiceReviewFragment extends Fragment{
     private Bundle args;
 
     int pagePosition; //allocated only once for the class
-    private static long coffeeMachineId;
+    private static String coffeeMachineId;
     private static FragmentActivity mainActivityRef;
 
-    public static Fragment create(int position, long id) {
+    public static Fragment create(int position, String id) {
         coffeeMachineId = id;
         Fragment fragment = new ChoiceReviewFragment();
         Bundle args = new Bundle();
         args.putInt(Common.ARG_REVIEW_PAGE, position);
-        args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
 //        args.putBoolean(Common.IS_TODAY_REVIEW_KEY, isTodayReviews);
         fragment.setArguments(args);
 
@@ -47,11 +48,10 @@ public class ChoiceReviewFragment extends Fragment{
         choiceReviewView = inflater.inflate(R.layout.choice_review_template, container, false);
         mainActivityRef = getActivity();
         coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
-
         //get bundle args
-        long coffeeMachineId = this.getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
+        String coffeeMachineId = this.getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
         args = new Bundle(); //TODO replace with bundle = bundle
-        args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
         pagePosition = getArguments().getInt(Common.ARG_REVIEW_PAGE);
 
         Common.setCustomFont(choiceReviewView, getActivity().getAssets());
@@ -59,7 +59,9 @@ public class ChoiceReviewFragment extends Fragment{
         return choiceReviewView;
     }
 
-    public void setReviewView(long coffeeMachineId, int choiceReviewPosition) {
+    public void setReviewView(String coffeeMachineId, int choiceReviewPosition) {
+        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+
         Common.ReviewStatusEnum reviewStatus = Review.parseStatusFromPageNumber(choiceReviewPosition);
         Calendar cal = Calendar.getInstance(); //TODO refactor it
         cal.add(Calendar.DATE, 0);
@@ -67,9 +69,9 @@ public class ChoiceReviewFragment extends Fragment{
         cal.add(Calendar.DATE, -1);
         long yesterdayTimestamp = (cal.getTime()).getTime();
 
-        final ArrayList<Review> prevReviewList = coffeeApp.getReviewListByTimestamp(coffeeMachineId,
+        final ArrayList<Review> prevReviewList = coffeeAppLogic.getReviewListByTimestamp(coffeeMachineId,
                 reviewStatus, Common.DATE_NOT_SET, yesterdayTimestamp);
-        final ArrayList<Review> todayReviewList = coffeeApp.getReviewListByTimestamp(coffeeMachineId,
+        final ArrayList<Review> todayReviewList = coffeeAppLogic.getReviewListByTimestamp(coffeeMachineId,
                 reviewStatus, yesterdayTimestamp, todayTimestamp);
 
         //TODO REFACTOR IT

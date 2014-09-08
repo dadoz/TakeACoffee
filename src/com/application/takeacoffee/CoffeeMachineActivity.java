@@ -18,9 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.application.commons.BitmapCustomUtils;
 import com.application.commons.Common;
+import com.application.dataRequest.CoffeeAppLogic;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.models.User;
 import com.application.takeacoffee.fragments.*;
+import com.parse.Parse;
+import com.parse.ParseAnalytics;
 
 public class CoffeeMachineActivity extends FragmentActivity {
     private static final String TAG = "CoffeeMachineActivity";
@@ -59,6 +62,11 @@ public class CoffeeMachineActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.coffe_machine_layout);
+
+        //INIT server application
+        Parse.initialize(this, "61rFqlbDy0UWBfY56RcLdiJVB1EPe8ce1yUxdAEY",
+                "jHD6l2E72OG9Kul7ijtawZTkF9Zml0AwbeL0J7Ex");
+
         Common.setCustomFont(findViewById(R.id.scrollViewContainerId),
                 this.getAssets());
         mainActivityRef = this;
@@ -133,6 +141,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
         SharedPreferences sharedPref = mainActivityRef.getSharedPreferences("SHARED_PREF_COFFEE_MACHINE", Context.MODE_PRIVATE);
 
         coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
+        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
         if(sharedPref != null) {
             String username = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USERNAME, null);
@@ -141,7 +150,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
                     Common.EMPTY_LONG_VALUE);
             if(userId != Common.EMPTY_LONG_VALUE) {
                 Log.e(TAG, "this is my username: " + username);
-                coffeeApp.setRegisteredUser(userId, profilePicPath, username); //TODO check empty value
+                coffeeAppLogic.setRegisteredUser(userId, profilePicPath, username); //TODO check empty value
                 return true;
             } else {
                 Log.e(TAG, "no username set");
@@ -254,8 +263,9 @@ public class CoffeeMachineActivity extends FragmentActivity {
         }
     }
 
-    public static void setHeaderByFragmentId(int fragmentId, FragmentManager fragmentManager, long coffeeMachineId) {
+    public static void setHeaderByFragmentId(int fragmentId, FragmentManager fragmentManager, String coffeeMachineId) {
         CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
         switch (fragmentId) {
             case 0:
@@ -265,7 +275,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
                 break;
             case 1:
 //                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, fragmentManager);
-                String coffeeMachineName = coffeeApp
+                String coffeeMachineName = coffeeAppLogic
                         .getCoffeeMachineById(coffeeMachineId).getName();
                 CoffeeMachineActivity.setItemOnHeaderBarById(R.id.coffeeMachineSettingsMapHeaderLayoutId,
                         fragmentManager, coffeeMachineName);
