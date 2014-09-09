@@ -5,24 +5,26 @@ import com.application.commons.Common;
 import java.util.ArrayList;
 
 public class User {
-	private long id;
+	private String id;
 	private String username;
 //	private String reviewsListId;
     private String profilePicturePath;
-/*
-	public User(String id, String username, ArrayList<Review> reviewsList){
-		this.id = id;
-		this.username = username;
-		this.reviewsList = reviewsList;
-	}
-*/
-	public User(long id, String profilePicturePath, String username) {
+    private String userId;
+
+    /*
+        public User(String id, String username, ArrayList<Review> reviewsList){
+            this.id = id;
+            this.username = username;
+            this.reviewsList = reviewsList;
+        }
+    */
+	public User(String id, String profilePicturePath, String username) {
 		this.id = id;
 		this.username = username;
         this.profilePicturePath = profilePicturePath;
 	}
 	
-	public long getId(){
+	public String getId(){
 		return this.id;
 	}
 
@@ -60,5 +62,13 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 }

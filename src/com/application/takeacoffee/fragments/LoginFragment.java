@@ -534,7 +534,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                     new LoggedUserButtonAction(mainActivityRef.getSupportFragmentManager()));*/
             CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
-            if(coffeeAppLogic.setRegisteredUser(Common.EMPTY_LONG_VALUE,
+            if(coffeeAppLogic.setRegisteredUser(Common.EMPTY_VALUE,
                     coffeeApp.profilePicturePathTemp, username)) {
                 setRegisteredUserHeader();
             } else {

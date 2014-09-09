@@ -165,12 +165,12 @@ public class ReviewListFragment extends Fragment {
         }
     }
 
-    private static boolean getEditReviewFragment(long reviewId, String coffeeMachineId,
+    private static boolean getEditReviewFragment(String reviewId, String coffeeMachineId,
                                                  Common.ReviewStatusEnum reviewStatus,
                                                  FragmentManager fragmentManager) {
         //change fragment
         Bundle args = new Bundle();
-        args.putLong(Common.REVIEW_ID, reviewId);
+        args.putString(Common.REVIEW_ID, reviewId);
         args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
         args.putString(Common.REVIEW_STATUS_KEY, reviewStatus.name());
 
@@ -246,7 +246,7 @@ public class ReviewListFragment extends Fragment {
                 //check my post and add action
                 if (mainItemView.getVisibility() == View.VISIBLE &&
                         coffeeApp.isRegisteredUser() &&
-                        reviewObj.getUserId() == coffeeApp.getRegisteredUserId()) {
+                        reviewObj.getUserId().compareTo(coffeeApp.getRegisteredUserId()) == 0) {
                     try {
                         Common.vibrate(getActivity(), Common.VIBRATE_TIME);
 

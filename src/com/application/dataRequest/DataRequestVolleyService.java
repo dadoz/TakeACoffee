@@ -26,9 +26,11 @@ public class DataRequestVolleyService {
     public static void downloadProfilePicture(String profilePicturePath, ImageView profilePicImageView,
                                               ImageLoader imageLoader, int defaultIconId) {
 
-        String url = SERVER_URL + "/api/containers/" +
-                PROFILE_PICTURE_CONTAINER + "/download/" + profilePicturePath;
-        imageLoader.get(url, ImageLoader.getImageListener(profilePicImageView, defaultIconId, defaultIconId));
+/*        String url = SERVER_URL + "/api/containers/" +
+                PROFILE_PICTURE_CONTAINER + "/download/" + profilePicturePath;*/
+
+ //       String url = "http://files.parsetfss.com/96d16904-46c1-4dfa-8bf2-fd6f238b8611/tfss-aaed6ae6-a272-4eaa-9012-55b27bff66bf-profilePicture.png";
+        imageLoader.get(profilePicturePath, ImageLoader.getImageListener(profilePicImageView, defaultIconId, defaultIconId));
 
     }
 

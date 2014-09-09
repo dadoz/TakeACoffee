@@ -12,16 +12,16 @@ import java.util.Enumeration;
 public class Review {
 
     private static final String TAG = "Review";
-    private long id;
+    private String id;
 //    private boolean feedback;
 	private ReviewStatusEnum status;
     private String comment;
     private long timestamp;
-    private long userId;
+    private String userId;
     private String coffeeMachineId;
 
-	public Review(long id, String comment, ReviewStatusEnum status,
-                  long timestamp, long userId, String coffeeMachineId) {
+	public Review(String id, String comment, ReviewStatusEnum status,
+                  long timestamp, String userId, String coffeeMachineId) {
 
         this.id = id;
         this.userId = userId;
@@ -39,7 +39,7 @@ public class Review {
         this.coffeeMachineId = coffeeMachineId;
     }
 
-    public long getId(){
+    public String getId(){
         return this.id;
     }
 
@@ -47,7 +47,7 @@ public class Review {
         return this.comment;
     }
 
-    public long getUserId(){
+    public String getUserId(){
         return this.userId;
     }
 

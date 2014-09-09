@@ -146,9 +146,9 @@ public class CoffeeMachineActivity extends FragmentActivity {
         if(sharedPref != null) {
             String username = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USERNAME, null);
             String profilePicPath = sharedPref.getString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, null);
-            long userId = sharedPref.getLong(Common.SHAREDPREF_REGISTERED_USER_ID,
-                    Common.EMPTY_LONG_VALUE);
-            if(userId != Common.EMPTY_LONG_VALUE) {
+            String userId = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USER_ID,
+                    Common.EMPTY_VALUE);
+            if(userId.compareTo(Common.EMPTY_VALUE) != 0) {
                 Log.e(TAG, "this is my username: " + username);
                 coffeeAppLogic.setRegisteredUser(userId, profilePicPath, username); //TODO check empty value
                 return true;
@@ -297,7 +297,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
     public void onBackPressed() {
         int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
         if(backStackEntryCount == 0) {
-            Log.e(TAG, "init your singleton");
+            Log.e(TAG, "exit app");
             coffeeApp.destroy();
         }
         super.onBackPressed();

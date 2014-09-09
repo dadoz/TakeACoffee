@@ -37,7 +37,7 @@ public class EditReviewFragment extends Fragment{
 //        String coffeeMachineId = getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
 //        reviewsList = coffeeApp.getReviewListByCoffeeMachineId(coffeeMachineId);
         String reviewStatus = (String) this.getArguments().get(Common.REVIEW_STATUS_KEY);
-        long reviewId = getArguments().getLong(Common.REVIEW_ID);
+        String reviewId = getArguments().getString(Common.REVIEW_ID);
         String coffeeMachineId = getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
 
         setHeader();
@@ -60,7 +60,7 @@ public class EditReviewFragment extends Fragment{
         CoffeeMachineActivity.setHeaderByFragmentId(3, getFragmentManager(), Common.EMPTY_VALUE);
     }
 
-    private void initView(final String coffeeMachineId, long reviewId, String reviewStatus) {
+    private void initView(final String coffeeMachineId, String reviewId, String reviewStatus) {
         //User user = coffeeApp.coffeeMachineData.getRegisteredUser();
 //        Common.ReviewStatusEnum reviewStatus = Common.ReviewStatusEnum.valueOf(reviewStatus);
         final CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());

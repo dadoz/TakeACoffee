@@ -1,16 +1,23 @@
 package com.application.queries;
 
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+import android.content.res.AssetManager;
+import android.util.Log;
+import com.application.dataRequest.ParseDataRequest;
+import com.parse.*;
+import org.apache.commons.io.IOUtils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
  * Created by davide on 08/09/14.
  */
 public class ParseQueries {
+
+    private static final String TAG = "ParseQueries";
 
     public static void parseQuery() {
         //update db
@@ -99,4 +106,67 @@ public class ParseQueries {
             }
         });
     }
+
+    public static void parseQuery3(AssetManager assets) {
+        InputStream is = null;
+
+        String profilePicturePath = "pictures/coffee4.png";
+        try {
+//            is = new FileInputStream(profilePicturePath);
+            is = assets.open(profilePicturePath);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "error- " + e.getMessage());
+            return ;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        final String fileName = String.valueOf(UUID.randomUUID());
+        final String fileName = "coffeeIcon4.png";
+
+        ParseFile file = null;
+
+        try {
+            file = new ParseFile(fileName, IOUtils.toByteArray(is));
+        } catch (IOException e) {
+            Log.e(TAG, "error- " + e.getMessage());
+            return;
+        }
+
+        final ParseFile finalFile = file;
+        file.saveInBackground(new SaveCallback() {
+            public void done(ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, "error- " + e.getMessage());
+                    return;
+                }
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("coffee_machines");
+                query.whereEqualTo("objectId", "kFFMaPaytU");
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> parseObjects, ParseException e) {
+                        if(parseObjects != null) {
+                            ParseObject parseObject = parseObjects.get(0);
+                            if(parseObject != null) {
+                                parseObject.put("icon_path", finalFile.getUrl());
+                                parseObject.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        Log.d(TAG, "hey saved coffee file row with success");
+                                    }
+                                });
+                                Log.d(TAG, "hey upload pic successfully upload");
+                            }
+                        }
+                    }
+                });
+            }
+        }, new ProgressCallback() {
+            public void done(Integer percentDone) {
+                // Update your progress spinner here. percentDone will be between 0 and 100.
+            }
+        });
+    }
+
+
 }

@@ -42,13 +42,15 @@ public class Common {
     public static final String ARG_REVIEW_PAGE = "REVIEW_PAGE";
     public static final String IS_TODAY_REVIEW_KEY = "IS_TODAY_REVIEW_KEY";
     public static final String FIRST_INIT_VIEW = "FIRST_INIT_VIEW";
-    public static final long LOCAL_USER_ID = -2;
+    public static final String LOCAL_USER_ID = "LOCAL_USER_ID";
     public static final long EMPTY_LONG_VALUE = -1;
     public static final String FROM_TIMESTAMP_KEY = "FROM_TIMESTAMP_KEY";
     public static final String TO_TIMESTAMP_KEY = "TO_TIMESTAMP_KEY";
     public static final String SHARED_PREF = "SHARED_PREF_COFFEE_MACHINE";
     private static final long PROFILE_PIC_MIN_HEIGHT = 300;
     private static final long PROFILE_PIC_MIN_WIDTH = 300;
+    public static final String NOT_VALID_USER_ID = "NOT_VALID_USER_ID";
+    public static final String REGISTERED_USER_ID = "REGISTERED_USER_ID";
     public static int ITEM_NOT_SELECTED = -1;
     public static String SET_MORE_TEXT_ON_REVIEW = "SET_MORE_TEXT_ON_REVIEW";
     public static final String ARG_PAGE = "page";

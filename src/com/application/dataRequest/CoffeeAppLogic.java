@@ -47,94 +47,31 @@ public class CoffeeAppLogic {
         return null;
     }
 
-    public static void loadCoffeeMachineList(final DataStorageSingleton coffeeAppLocal) throws ParseException {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("coffee_machines");
-        List<ParseObject> parseObjects = query.find();
-        ArrayList<CoffeeMachine> list = new ArrayList<>();
-
-        for (ParseObject parseObject : parseObjects) {
-//                    String coffeeMachineId = parseObjects.get(i).getLong("id");
-            String coffeeMachineId = parseObject.getObjectId();
-            String name = parseObject.getString("name");
-            String address = parseObject.getString("address");
-            String iconPath = parseObject.getString("icon_path");
-            list.add(new CoffeeMachine(coffeeMachineId, name, address, iconPath));
+    public static void loadCoffeeMachineList(final DataStorageSingleton coffeeApp) throws ParseException {
+        if(Common.isConnected(context)) {
+            ParseDataRequest.getAllCoffeeMachines(coffeeApp);
         }
-        coffeeAppLocal.setCoffeeMachineList(list); //TODO mmmmmmm I'm not so sure it works -.-
-        Log.d(TAG, "hey object id " + parseObjects.get(0).get("name"));
     }
 
     public static void loadCoffeeMachineListAsync(final DataStorageSingleton coffeeAppLocal) throws ParseException {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("coffee_machines");
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                ArrayList<CoffeeMachine> list = new ArrayList<>();
-                for (ParseObject parseObject : parseObjects) {
+        ParseDataRequest.getAllCoffeeMachinesAsync(coffeeApp);
 
-//                    String coffeeMachineId = parseObjects.get(i).getLong("id");
-                    String coffeeMachineId = parseObject.getObjectId();
-                    String name = parseObject.getString("name");
-                    String address = parseObject.getString("address");
-                    String iconPath = parseObject.getString("icon_path");
-                    list.add(new CoffeeMachine(coffeeMachineId, name, address, iconPath));
-                }
-                coffeeAppLocal.setCoffeeMachineList(list); //TODO mmmmmmm I'm not so sure it works -.-
-                Log.d(TAG, "hey object id " + parseObjects.get(0).get("name"));
-            }
-        });
     }
-    public void loadReviewListByCoffeeMachineId(final String coffeeMachineIdLocal) throws ParseException{
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
-        query.whereEqualTo("coffee_machine_id_string", coffeeMachineIdLocal);
-        List<ParseObject> parseObjects = query.find();
-        ArrayList<Review> reviewList = new ArrayList<Review>();
-        for (ParseObject parseObject : parseObjects) {
-            int id = -1;
-            String comment = parseObject.getString("comment");
-            String status = parseObject.getString("status");
-            String timestamp = parseObject.getString("timestamp");
-            int userId = parseObject.getInt("user_id");
-
-            long timestampParsed = Long.parseLong(timestamp);
-            Common.ReviewStatusEnum statusParsed = Review.parseStatus(status);
-            reviewList.add(new Review(id, comment, statusParsed, timestampParsed, userId, coffeeMachineIdLocal));
+    public void loadReviewListByCoffeeMachineId(final String coffeeMachineId) throws ParseException {
+        if (Common.isConnected(context)) {
+            ParseDataRequest.getAllReviewsByCoffeeMachineId(coffeeApp, coffeeMachineId);
         }
-
-        coffeeApp.getReviewListMap().put(coffeeMachineIdLocal, reviewList);
     }
 
+    public void loadReviewListByCoffeeMachineIdAsync(final String coffeeMachineId) throws ParseException {
+        ParseDataRequest.getAllReviewsByCoffeeMachineIdAsync(coffeeApp, coffeeMachineId);
 
-    public void loadReviewListByCoffeeMachineIdAsync(final String coffeeMachineIdLocal) {
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
-        query.whereEqualTo("coffee_machine_id_string", coffeeMachineIdLocal);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                ArrayList<Review> reviewList = new ArrayList<>();
-                for (ParseObject parseObject : parseObjects) {
-                    int id = -1;
-                    String comment = parseObject.getString("comment");
-                    String status = parseObject.getString("status");
-                    String timestamp = parseObject.getString("timestamp");
-                    int userId = parseObject.getInt("user_id");
-
-                    Long timestampParsed = Long.parseLong(timestamp);
-                    Common.ReviewStatusEnum statusParsed = Review.parseStatus(status);
-                    reviewList.add(new Review(id, comment, statusParsed, timestampParsed, userId, coffeeMachineIdLocal));
-                }
-
-                coffeeApp.getReviewListMap().put(coffeeMachineIdLocal, reviewList);
-            }
-        });
     }
-
 
     public boolean setProfilePictureToUserOnReview(ImageView profilePicImageView,
                                                    String profilePicturePath, Bitmap defaultIcon,
-                                                   long userId) {
+                                                   String userId) {
         if(profilePicturePath == null) {
             profilePicImageView.setImageBitmap(defaultIcon);
             return false;
@@ -150,15 +87,15 @@ public class CoffeeAppLogic {
         }
 
         //TODO check if it's stored in my local storage - might be :D
-        if(Common.isConnected(context)) {
+/*        if(Common.isConnected(context)) {
             DataRequestVolleyService.downloadProfilePicture(profilePicturePath, profilePicImageView,
                     coffeeApp.getImageLoader(), R.drawable.user_icon);
-        }
+        }*/
         return true;
     }
 
     public void setUsernameToUserOnReview(TextView textView,
-                                                 String username, long userId) {
+                                                 String username, String userId) {
         if(coffeeApp.isRegisteredUser() && coffeeApp.checkIsMe(userId)) {
             textView.setText("Me");
             return;
@@ -166,37 +103,36 @@ public class CoffeeAppLogic {
         textView.setText(username);
     }
 
-    public boolean setRegisteredUser(long userId, String profilePicturePath,
+    public boolean setRegisteredUser(String userId, String profilePicturePath,
                                      String username) {
-        if(userId != Common.EMPTY_LONG_VALUE) {
+        if(userId.compareTo(Common.EMPTY_VALUE) != 0) {
             return restoreRegisteredUser(userId, profilePicturePath, username);
         }
         return coffeeApp.isRegisteredUser() ? updateRegisteredUser(profilePicturePath, username) : createRegisteredUser(profilePicturePath, username);
     }
 
-    private boolean restoreRegisteredUser(long userId, String profilePicturePath, String username) {
+    private boolean restoreRegisteredUser(String userId, String profilePicturePath, String username) {
         coffeeApp.assignRegisteredUser(new User(userId, profilePicturePath, username));
         return true;
     }
 
     private boolean updateRegisteredUser(String profilePicturePath, String username) {
-        DataRequestServices dataRequestServices = coffeeApp.getDataRequestServices();
         SharedPreferences sharedPref = coffeeApp.getSharedPref();
         User registeredUser = coffeeApp.getRegisteredUser();
 
 
         if(Common.isConnected(context)) {
-            String onlineProfilePictureId = null;
+//            String onlineProfilePictureId = null;
 
             //UPLOAD PIC
             if(profilePicturePath != null) {
-                onlineProfilePictureId = dataRequestServices.uploadProfilePicture(profilePicturePath);
+                ParseDataRequest.uploadProfilePicture(profilePicturePath, registeredUser.getId());
             }
 
             //UPDATE USER
-            if(onlineProfilePictureId  != null) {
-                dataRequestServices.updateUserById(coffeeApp.getRegisteredUserId(), onlineProfilePictureId, username); //TODO INTERNAL SERVER ERROR
-            }
+/*            if(onlineProfilePictureId  != null) {
+                ParseDataRequest.updateUserById(coffeeApp.getRegisteredUserId(), onlineProfilePictureId, username); //TODO INTERNAL SERVER ERROR
+            }*/
             /**///dataRequestDb.updateUserById(getRegisteredUserId(), profilePicturePath, username);
 
             if(profilePicturePath != null) {
@@ -217,29 +153,27 @@ public class CoffeeAppLogic {
 
     private boolean createRegisteredUser(String profilePicturePath, String username) {
         SharedPreferences sharedPref = coffeeApp.getSharedPref();
-        DataRequestServices dataRequestServices = coffeeApp.getDataRequestServices();
 
-//        boolean connection = false;
-        //connection
         if(Common.isConnected(context)) {
-            String onlineProfilePictureId = null;
+//            String onlineProfilePictureId = null;
             //UPLOAD PIC
+
+            String userId = ParseDataRequest.addUserByParams(coffeeApp, null, username);
             if(profilePicturePath != null) {
-                onlineProfilePictureId = dataRequestServices.uploadProfilePicture(profilePicturePath);
-
+                ParseDataRequest.uploadProfilePicture(profilePicturePath, userId);
             }
-//            registeredUser = new User(Common.LOCAL_USER_ID, profilePicturePath, username);
-
-            User rUser = dataRequestServices.addUserByParams(onlineProfilePictureId, username);
+            User rUser = new User(userId, profilePicturePath, username);
             rUser.setProfilePicturePath(profilePicturePath); //VERY VERY IMPORTANT
             coffeeApp.assignRegisteredUser(rUser); //HTTP add
-            /**///dataRequestDb.addUserByParams(registeredUser.getId(), profilePicturePath, username); //DB add to local db
+
+//            rUser.setProfilePicturePath(profilePicturePath); //VERY VERY IMPORTANT
+//            coffeeApp.assignRegisteredUser(rUser); //HTTP add
         } else {
             //create local user
             coffeeApp.assignRegisteredUser(new User(Common.LOCAL_USER_ID, profilePicturePath, username));
         }
 
-        sharedPref.edit().putLong(Common.SHAREDPREF_REGISTERED_USER_ID,
+        sharedPref.edit().putString(Common.SHAREDPREF_REGISTERED_USER_ID,
                 coffeeApp.getRegisteredUser().getId()).commit();
         if(profilePicturePath != null) {
             sharedPref.edit().putString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, profilePicturePath).commit();
@@ -253,17 +187,16 @@ public class CoffeeAppLogic {
 
     public boolean registerLocalUser() {
         User registeredUser = coffeeApp.getRegisteredUser();
-        DataRequestServices dataRequestServices = coffeeApp.getDataRequestServices();
 
         if(coffeeApp.isLocalUser()) {
             if(Common.isConnected(context)) {
 
-                String uploadedProfilePicturePath = dataRequestServices.uploadProfilePicture(registeredUser.getProfilePicturePath());
-                User user = dataRequestServices.addUserByParams(uploadedProfilePicturePath,
+                String userId = ParseDataRequest.addUserByParams(coffeeApp, null,
                         registeredUser.getUsername());
-                /**///dataRequestDb.addUserByParams(user.getId(), user.getProfilePicturePath(),
-                //user.getUsername());
-                coffeeApp.assignRegisteredUser(user);
+                ParseDataRequest.uploadProfilePicture(registeredUser.getProfilePicturePath(), userId);
+
+//                coffeeApp.assignRegisteredUser(user);
+                registeredUser.setUserId(userId);
                 return true;
             }
         }
@@ -347,11 +280,10 @@ public class CoffeeAppLogic {
         return null;
     }
 
-    public Review getReviewById(String coffeeMachineId, long reviewId) {
-        DataRequestServices dataRequestServices = coffeeApp.getDataRequestServices();
+    public Review getReviewById(String coffeeMachineId, String reviewId) {
         //TEST
         if(Common.isConnected(context)) {
-            return dataRequestServices.getReviewById(reviewId);
+            return ParseDataRequest.getReviewById(reviewId);
         }
 
         //else get from map or db
@@ -360,16 +292,19 @@ public class CoffeeAppLogic {
         return null;
     }
 
-    public boolean addReviewByParams(long userId, String coffeeMachineId, String comment,
+    public boolean addReviewByParams(String userId, String coffeeMachineId, String comment,
                                      Common.ReviewStatusEnum status) {
+        long timestamp = new Date().getTime();
+
+        ParseDataRequest.addReviewByParams(userId, coffeeMachineId, comment,status, timestamp);
         return true;
     }
-/*    public boolean addReviewByParams(long userId, String coffeeMachineId, String comment,
+/*    public boolean addReviewByParams(String userId, String coffeeMachineId, String comment,
                                      Common.ReviewStatusEnum status) {
         DataRequestServices dataRequestServices = coffeeApp.getDataRequestServices();
         Review review;
         //test
-        long timestamp = new Date().getTime();
+        String timestamp = new Date().getTime();
         //FIRST on HTTP req - then
         review = dataRequestServices.addReviewByParams(userId, coffeeMachineId, comment, status, timestamp);
         /**///dataRequestDb.addReviewByParams(review.getId(), userId, coffeeMachineId, comment, status, timestamp); //TODO TEST - this is gonna be replaced by DB full update
@@ -389,7 +324,6 @@ public class CoffeeAppLogic {
     }*/
 
     public boolean removeReviewById(String coffeeMachineId, Review reviewObj) {
-        DataRequestServices dataRequestServices = coffeeApp.getDataRequestServices();
 
         ArrayList<Review> reviewArrayList = coffeeApp.getReviewListMap().get(coffeeMachineId);
         if(reviewArrayList == null) {
@@ -399,7 +333,7 @@ public class CoffeeAppLogic {
         reviewArrayList.remove(reviewObj);
         /**///dataRequestDb.removeReviewById(reviewObj.getId());
         if(Common.isConnected(context)) {
-            dataRequestServices.removeReviewById(reviewObj.getId());
+            ParseDataRequest.removeReviewById(reviewObj.getId());
             return true;
         }
 
@@ -455,11 +389,10 @@ public class CoffeeAppLogic {
         return true;
     }
 
-    public boolean updateReviewById(String coffeeMachineId, long reviewId, String reviewCommentNew) {
-        DataRequestServices dataRequestServices = coffeeApp.getDataRequestServices();
+    public boolean updateReviewById(String coffeeMachineId, String reviewId, String reviewCommentNew) {
 
         if(Common.isConnected(context)) {
-            if(dataRequestServices.updateReviewById(reviewId, reviewCommentNew)) {
+            if(ParseDataRequest.updateReviewById(reviewId, reviewCommentNew)) {
                 //update review also on local db
                 ArrayList<Review> reviewArrayList = coffeeApp.getReviewListMap().get(coffeeMachineId);
                 for(Review review : reviewArrayList) {
@@ -476,8 +409,11 @@ public class CoffeeAppLogic {
 
     /******USER*******/
 
-    public User getUserById(long userId) {
-        DataRequestServices dataRequestServices = coffeeApp.getDataRequestServices();
+    public User getUserById(String userId) {
+
+        if(coffeeApp.checkIsMe(userId)) {
+            return coffeeApp.getRegisteredUser();
+        }
 
         /**///User user = dataRequestDb.getUserById(userId);
         User user = null;
@@ -485,20 +421,21 @@ public class CoffeeAppLogic {
             return user;
         }
 
+        user = null; //TODO test
         //try to find out user on HTTP server
         if(Common.isConnected(context)) {
-            user = dataRequestServices.getUserById(userId);
+//            user = ParseDataRequest.getUserById(userId);
             if(user != null) {
                 return user;
             }
         }
-        return new User(-3, null, "Guest");
+        return new User(Common.NOT_VALID_USER_ID, null, "Guest");
 //        return new User(userId, null, "Tunnus");
     }
 
-    public boolean getCoffeeMachineIcon(String pictureName, ImageView pictureImageView) {
+    public boolean getCoffeeMachineIcon(String pictureIconPath, ImageView pictureImageView) {
         if(Common.isConnected(context)) {
-            DataRequestVolleyService.downloadProfilePicture(pictureName, pictureImageView,
+            DataRequestVolleyService.downloadProfilePicture(pictureIconPath, pictureImageView,
                     coffeeApp.getImageLoader(), R.drawable.coffee_cup_icon);
             return true;
         }
