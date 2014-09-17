@@ -30,27 +30,18 @@ public class Common {
     public static final int VIBRATE_TIME = 15;
     public static final long ANIMATION_GROW_TIME = 400;
     public static final String EMPTY_VALUE = "EMPTY_VALUE";
-    public static final String SELECTED_ITEM = "SELECTED_ITEM";
     public static final String REVIEW_ID = "REVIEW_ID";
-    private static final String TAG = "Common_TAG";
-    public static final String ADD_REVIEW_FROM_LISTVIEW = "ADD_REVIEW_FROM_LISTVIEW";
     public static final String COFFEE_MACHINE_FRAGMENT_TAG = "COFFEE_MACHINE_FRAGMENT_TAG";
     public static final String TERRIBLE_STATUS_STRING = "Damn Terrible";
     public static final String GOOD_STATUS_STRING = "That's Good";
     public static final String NOTSOBAD_STATUS_STRING = "Mmmmmm";
     public static final int NUM_PAGES = 3;
     public static final String ARG_REVIEW_PAGE = "REVIEW_PAGE";
-    public static final String IS_TODAY_REVIEW_KEY = "IS_TODAY_REVIEW_KEY";
-    public static final String FIRST_INIT_VIEW = "FIRST_INIT_VIEW";
     public static final String LOCAL_USER_ID = "LOCAL_USER_ID";
-    public static final long EMPTY_LONG_VALUE = -1;
     public static final String FROM_TIMESTAMP_KEY = "FROM_TIMESTAMP_KEY";
     public static final String TO_TIMESTAMP_KEY = "TO_TIMESTAMP_KEY";
     public static final String SHARED_PREF = "SHARED_PREF_COFFEE_MACHINE";
-    private static final long PROFILE_PIC_MIN_HEIGHT = 300;
-    private static final long PROFILE_PIC_MIN_WIDTH = 300;
     public static final String NOT_VALID_USER_ID = "NOT_VALID_USER_ID";
-    public static final String REGISTERED_USER_ID = "REGISTERED_USER_ID";
     public static int ITEM_NOT_SELECTED = -1;
     public static String SET_MORE_TEXT_ON_REVIEW = "SET_MORE_TEXT_ON_REVIEW";
     public static final String ARG_PAGE = "page";
@@ -58,17 +49,6 @@ public class Common {
     public static final String PROFILE_PIC_SIZE = "300";
 
     public static final String NEW_USER_FRAGMENT_TAG = "NEW_USER_FRAGMENT_TAG";
-    public static final String ADD_REVIEW_FRAGMENT_TAG = "ADD_REVIEW_FRAGMENT";
-
-    public static final String DATABASE_NAME = "takeacoffeedb";
-
-
-    public enum ReviewStatusEnum {
-        GOOD,
-        NOTSOBAD,
-        NOTSET,
-        WORST
-    };
 
     public static String COFFEE_MACHINE_DIR = "coffeeMachineFolder";
     public static String PROFILE_PIC_FILE_NAME = "profilePicture";
@@ -78,7 +58,14 @@ public class Common {
     public static int CHANGE_LOGGED_USERNAME = 99;
     public static int ICON_SMALL_SIZE = 180;
     public static int PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE = 312;
-    public static String COFFE_MACHINE_ID_KEY = "coffeMachineId";
+    public static String COFFEE_MACHINE_ID_KEY = "coffeeMachineId";
+
+    public enum ReviewStatusEnum {
+        GOOD,
+        NOTSOBAD,
+        NOTSET,
+        WORST
+    }
 
     public static void setCustomFontByView(AssetManager assets, View view, boolean boldSet) {
 //        Typeface boldFont = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAir.ttf");
@@ -115,7 +102,7 @@ public class Common {
         }
     }
 
-    public static void displayError(String error, Context context) {
+    public static void displayError(Context context, String error) {
         Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
     }
 
@@ -134,15 +121,15 @@ public class Common {
     }
     
 
-/*
-    public static boolean isConnected(Context context) {
+
+/*    public static boolean isConnected(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
         return networkInfo != null && networkInfo.getState() == NetworkInfo.State.CONNECTED;
-    }
-*/
+    }*/
+
     public static boolean isConnected(Context context) {
         return true;
     }

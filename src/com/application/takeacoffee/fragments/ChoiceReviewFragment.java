@@ -4,16 +4,19 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.application.commons.Common;
 import com.application.dataRequest.CoffeeAppLogic;
+import com.application.dataRequest.ParseDataRequest;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.listener.SwipePageAction;
 import com.application.models.Review;
 import com.application.takeacoffee.R;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,7 +39,7 @@ public class ChoiceReviewFragment extends Fragment{
         Fragment fragment = new ChoiceReviewFragment();
         Bundle args = new Bundle();
         args.putInt(Common.ARG_REVIEW_PAGE, position);
-        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putString(Common.COFFEE_MACHINE_ID_KEY, coffeeMachineId);
 //        args.putBoolean(Common.IS_TODAY_REVIEW_KEY, isTodayReviews);
         fragment.setArguments(args);
 
@@ -49,9 +52,10 @@ public class ChoiceReviewFragment extends Fragment{
         mainActivityRef = getActivity();
         coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
         //get bundle args
-        String coffeeMachineId = this.getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
+        String coffeeMachineId = this.getArguments().getString(Common.COFFEE_MACHINE_ID_KEY);
         args = new Bundle(); //TODO replace with bundle = bundle
-        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+//        args.putString(Common.COFFEE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putAll(getArguments());
         pagePosition = getArguments().getInt(Common.ARG_REVIEW_PAGE);
 
         Common.setCustomFont(choiceReviewView, getActivity().getAssets());
@@ -63,67 +67,24 @@ public class ChoiceReviewFragment extends Fragment{
         CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
         Common.ReviewStatusEnum reviewStatus = Review.parseStatusFromPageNumber(choiceReviewPosition);
-        Calendar cal = Calendar.getInstance(); //TODO refactor it
-        cal.add(Calendar.DATE, 0);
-        long todayTimestamp = (cal.getTime()).getTime();
-        cal.add(Calendar.DATE, -1);
-        long yesterdayTimestamp = (cal.getTime()).getTime();
+        DateTime dateTime = new DateTime();
+//        long yesterdayTimestamp = CoffeeAppLogic.TimestampHandler.getYesterdayTimestamp(dateTime);
+        long oneWeekAgoTimestamp = CoffeeAppLogic.TimestampHandler.getOneWeekAgoTimestamp(dateTime);
+        long todayTimestamp = CoffeeAppLogic.TimestampHandler.getTodayTimestamp(dateTime);
 
-        final ArrayList<Review> prevReviewList = coffeeAppLogic.getReviewListByTimestamp(coffeeMachineId,
-                reviewStatus, Common.DATE_NOT_SET, yesterdayTimestamp);
-        final ArrayList<Review> todayReviewList = coffeeAppLogic.getReviewListByTimestamp(coffeeMachineId,
-                reviewStatus, yesterdayTimestamp, todayTimestamp);
+        //TODO SET YESTERDAY LIST REVIEW
+        int previousReviewListCount = coffeeAppLogic.getReviewCounter(coffeeMachineId, reviewStatus, todayTimestamp);
+        setPreviousListChooser(previousReviewListCount, choiceReviewPosition, oneWeekAgoTimestamp, todayTimestamp);
 
-        //TODO REFACTOR IT
-        //PREVIOUS review list
-        choiceReviewView.findViewById(R.id.choiceReviewLatestReviewBottomBoxId).setVisibility(View.GONE);// to be shown
-        View pageSwipeButton = choiceReviewView.findViewById(R.id.reviewsMachineSwipeButtonId); //to be shown
+        //TODO SET TODAY LIST REVIEW
+        int reviewCounter = coffeeAppLogic.getReviewCounter(coffeeMachineId, reviewStatus, Common.DATE_NOT_SET);
+        setTodayListChooser(reviewCounter, choiceReviewPosition, todayTimestamp, Common.DATE_NOT_SET);
 
-        choiceReviewView.findViewById(R.id.choiceReviewLatestReviewBottomBoxId).setVisibility(View.VISIBLE);// to be shown
-        if(prevReviewList == null || prevReviewList.size() == 0) {
-            choiceReviewView.findViewById(R.id.choiceReviewLeftArrowId).setVisibility(View.GONE);
-            choiceReviewView.findViewById(R.id.choiceReviewLatestReviewBottomCounterId).setVisibility(View.VISIBLE);
-        } else {
-            choiceReviewView.findViewById(R.id.choiceReviewLatestReviewBottomCounterId).setVisibility(View.GONE);
-            choiceReviewView.findViewById(R.id.choiceReviewLeftArrowId).setVisibility(View.VISIBLE);
-            choiceReviewView.findViewById(R.id.choiceReviewLatestReviewBottomBoxId)
-                    .setOnClickListener(new ReviewListButtonListener(prevReviewList.size() == 0,
-                            Review.parseStatusFromPageNumber(choiceReviewPosition), Common.DATE_NOT_SET,
-                            yesterdayTimestamp)); //PREVIOUS LIST
-        }
         View footerChoiceReviewView = choiceReviewView.findViewById(R.id.footerChoiceReviewLayoutId);
-        //check if empty review list
-
-        //TODO REFACTOR IT
-        //PREVIOUS review list
-        if(todayReviewList == null || todayReviewList.size() == 0) {
-            ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
-                    .setText("0");
-            choiceReviewView.findViewById(R.id.choiceReviewMainContentId)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Common.displayError("No still review", mainActivityRef);
-                        }
-                    });
-        } else {
-            ((TextView) choiceReviewView.findViewById(R.id.choiceReviewLatestTimestampTextView))
-                    .setText(todayReviewList.get(todayReviewList.size() - 1)
-                            .getFormattedTimestamp().split(" ")[1]);
-            choiceReviewView.findViewById(R.id.choiceReviewMainContentId)
-                    .setOnClickListener(new ReviewListButtonListener(todayReviewList.size() == 0,
-                            Review.parseStatusFromPageNumber(choiceReviewPosition), yesterdayTimestamp,
-                            todayTimestamp)); //TODAY LIST
-            ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
-                    .setText(String.valueOf(todayReviewList.size()));
-        }
-
+        View pageSwipeButton = choiceReviewView.findViewById(R.id.reviewsMachineSwipeButtonId); //to be shown
         footerChoiceReviewView.findViewById(R.id.footerChoiceReviewAddReviewButtonId)
                 .setOnClickListener(new AddReviewAction(mainActivityRef.getSupportFragmentManager(),
                         choiceReviewPosition));
-        //TODO REFACTOR IT
-
-
 /*
 
         switch (Common.parseStatusFromPageNumber(choiceReviewPosition)) {
@@ -148,6 +109,44 @@ public class ChoiceReviewFragment extends Fragment{
         pageSwipeButton.setOnClickListener(new SwipePageAction(pagePosition, mainActivityRef));
     }
 
+    private void setPreviousListChooser(int reviewListCount, int position,
+                                        long fromTimestamp, long toTimestamp) {
+        if(reviewListCount <= 0) {
+            choiceReviewView.findViewById(R.id.choiceReviewLeftArrowId).setVisibility(View.GONE);
+            choiceReviewView.findViewById(R.id.choiceReviewLatestReviewBottomCounterId).setVisibility(View.VISIBLE);
+            return;
+        }
+
+        choiceReviewView.findViewById(R.id.choiceReviewLatestReviewBottomCounterId).setVisibility(View.GONE);
+        choiceReviewView.findViewById(R.id.choiceReviewLeftArrowId).setVisibility(View.VISIBLE);
+        choiceReviewView.findViewById(R.id.previousContainerViewId)
+                .setOnClickListener(new ReviewListButtonListener(false,
+                        Review.parseStatusFromPageNumber(position), fromTimestamp,
+                        toTimestamp));
+    }
+
+    private void setTodayListChooser(int reviewCounter, int position,
+                                     long fromTimestamp, long toTimestamp) {
+        boolean isEmptyList = false;
+        if(reviewCounter <= 0) {
+            isEmptyList = true;
+            ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
+                    .setText("0");
+        } else {
+            ((TextView) choiceReviewView.findViewById(R.id.choiceReviewLatestTimestampTextView))
+                        .setText("fake");
+/*                    .setText(reviewList.get(reviewList.size() - 1)
+                            .getFormattedTimestamp().split(" ")[1]);*/
+            ((TextView) choiceReviewView.findViewById(R.id.choiceReviewCounterTextView))
+                    .setText(String.valueOf(reviewCounter));
+        }
+
+        choiceReviewView.findViewById(R.id.choiceReviewMainContentId)
+                .setOnClickListener(new ReviewListButtonListener(isEmptyList,
+                        Review.parseStatusFromPageNumber(position), fromTimestamp,
+                        toTimestamp));
+    }
+
     private void setPageBackgroundColor(View footerChoiceReviewView, int softColorId, int colorId,
                                         String statusString) {
         choiceReviewView.findViewById(R.id.choiceReviewPageContainerId)
@@ -157,7 +156,7 @@ public class ChoiceReviewFragment extends Fragment{
                 .setText(statusString);
         footerChoiceReviewView.setBackgroundColor(getResources()
                 .getColor(R.color.light_grey));
-        choiceReviewView.findViewById(R.id.choiceReviewLatestReviewBottomBoxId)
+        choiceReviewView.findViewById(R.id.previousContainerViewId)
                 .setBackgroundColor(softColorId);
         choiceReviewView.findViewById(R.id.footerChoiceReviewLayoutId)
                 .setBackgroundColor(softColorId);
@@ -208,21 +207,21 @@ public class ChoiceReviewFragment extends Fragment{
         @Override
         public void onClick(View view) {
             if(isListViewEmpty) {
-                Common.displayError("still no one review", mainActivityRef);
-//                addReviewWithTextDialog();
-            } else {
-                ReviewListFragment fragmentObj = new ReviewListFragment();
-                args.putString(Common.REVIEW_STATUS_KEY, reviewStatus.name());
-                args.putLong(Common.FROM_TIMESTAMP_KEY, fromTimestamp);
-                args.putLong(Common.TO_TIMESTAMP_KEY, toTimestamp);
-
-                fragmentObj.setArguments(args);
-
-                mainActivityRef.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.coffeeMachineContainerLayoutId, fragmentObj)
-                        .addToBackStack("back")
-                        .commit();
+                Common.displayError(mainActivityRef.getApplicationContext(), "Empty review :(");
+                return;
             }
+
+            ReviewListFragment fragmentObj = new ReviewListFragment();
+            args.putString(Common.REVIEW_STATUS_KEY, reviewStatus.name());
+            args.putLong(Common.FROM_TIMESTAMP_KEY, fromTimestamp);
+            args.putLong(Common.TO_TIMESTAMP_KEY, toTimestamp);
+
+            fragmentObj.setArguments(args);
+
+            mainActivityRef.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.coffeeMachineContainerLayoutId, fragmentObj)
+                    .addToBackStack("back")
+                    .commit();
         }
     }
 

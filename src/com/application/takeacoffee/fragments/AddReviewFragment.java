@@ -39,7 +39,7 @@ public class AddReviewFragment extends Fragment {
         AddReviewFragment fragment = new AddReviewFragment();
         Bundle args = new Bundle();
         args.putInt(Common.ARG_PAGE, pageNumber);
-        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putString(Common.COFFEE_MACHINE_ID_KEY, coffeeMachineId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,7 +56,7 @@ public class AddReviewFragment extends Fragment {
         //get args from fragment
         args = getArguments();
 
-        String coffeeMachineId = this.getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
+        String coffeeMachineId = this.getArguments().getString(Common.COFFEE_MACHINE_ID_KEY);
         pagePosition = this.getArguments().getInt(Common.ARG_PAGE);
 
         setHeader(coffeeMachineId);
@@ -75,7 +75,7 @@ public class AddReviewFragment extends Fragment {
 
     public void setHeader(String coffeeMachineId) {
 //        CoffeeMachineActivity.setHeaderBarVisibile(false);
-/*        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+/*        HeaderUtils.hideAllItemsOnHeaderBar();
         mainActivityRef.findViewById(R.id.headerBarLayoutId).setVisibility(View.GONE);
 
         String coffeeMachineName = coffeeApp.coffeeMachineData
@@ -149,14 +149,14 @@ public class AddReviewFragment extends Fragment {
                                  boolean reviewWithText) {
         //add data to list
         if(! coffeeApp.isRegisteredUser()) {
-            Common.displayError("You must be logged in before add review!", mainActivityRef);
+            Common.displayError(mainActivityRef.getApplicationContext(), "You must be logged in before add review!");
             return;
         }
         CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
         if(coffeeApp.isLocalUser()) {
             if(! coffeeAppLogic.registerLocalUser()) {
-                Common.displayError("Failed to register your username - check your internet connection!", mainActivityRef);
+                Common.displayError(mainActivityRef.getApplicationContext(), "Failed to register your username - check your internet connection!");
                 return;
             }
         }
@@ -176,7 +176,7 @@ public class AddReviewFragment extends Fragment {
         if(reviewWithText) {
             reviewText = ((TextView)addReviewView.findViewById(R.id.reviewEditTextId)).getText().toString();
             if(reviewText.equals(new String("")))  {
-                Common.displayError("you must insert your text review!", mainActivityRef);
+                Common.displayError(mainActivityRef.getApplicationContext(), "you must insert your text review!");
                 return;
             }
             Common.hideKeyboard(mainActivityRef, ((EditText) addReviewView.findViewById(R.id.reviewEditTextId)

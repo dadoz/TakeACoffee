@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.application.commons.Common;
+import com.application.commons.HeaderUtils;
 import com.application.models.Review;
 import com.application.models.Setting;
 import com.application.models.User;
@@ -58,7 +59,7 @@ public class SettingsFragment extends Fragment {
                         break;
                     case 1:
                         //dialog
-                        Common.displayError("Enable/disable facebook integration", getActivity());
+                        Common.displayError(getActivity().getApplicationContext(), "Enable/disable facebook integration");
                         break;
                     case 2:
                         getFragmentManager().beginTransaction()
@@ -66,7 +67,7 @@ public class SettingsFragment extends Fragment {
                                 .addToBackStack(null).commit();
                         break;
                     case 3:
-                        Common.displayError("dialog", getActivity());
+                        Common.displayError(getActivity().getApplicationContext(), "dialog");
                         break;
 
                 }
@@ -75,7 +76,7 @@ public class SettingsFragment extends Fragment {
     }
 
     public void setHeader() {
-        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+        HeaderUtils.hideAllItemsOnHeaderBar(mainActivityRef);
     }
 
     public class SettingsListAdapter extends ArrayAdapter<Setting> {
@@ -104,9 +105,9 @@ public class SettingsFragment extends Fragment {
                         public void onCheckedChanged(CompoundButton compoundButton, boolean status) {
                             compoundButton.setChecked(status);
                             if(compoundButton.isChecked()) {
-                                Common.displayError("Notification enabled", getActivity());
+                                Common.displayError(getActivity().getApplicationContext(), "Notification enabled");
                             } else {
-                                Common.displayError("Notification disabled", getActivity());
+                                Common.displayError(getActivity().getApplicationContext(), "Notification disabled");
                             }
                         }
                     });

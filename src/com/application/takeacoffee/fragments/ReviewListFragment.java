@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.application.commons.Common;
+import com.application.commons.HeaderUtils;
 import com.application.commons.ReviewListTimestamp;
 import com.application.dataRequest.CoffeeAppLogic;
 import com.application.datastorage.DataStorageSingleton;
@@ -23,6 +24,7 @@ import com.application.models.Review;
 import com.application.models.User;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,7 +49,7 @@ public class ReviewListFragment extends Fragment {
 
         coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
 
-        coffeeMachineId = this.getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
+        coffeeMachineId = this.getArguments().getString(Common.COFFEE_MACHINE_ID_KEY);
         reviewStatus = Common.ReviewStatusEnum.valueOf(this.getArguments().
                 getString(Common.REVIEW_STATUS_KEY));
         long fromTimestamp = this.getArguments().
@@ -82,23 +84,17 @@ public class ReviewListFragment extends Fragment {
     }
 
     private void setPreviousReviewsButtonAction() {
-    /* TEST **/
         ListView listView = (ListView)reviewListView.findViewById(R.id.reviewsContainerListViewId);
         final ReviewListerAdapter adapter = (ReviewListerAdapter)listView.getAdapter();
         final View prevReviewsButtonId = reviewListView.findViewById(R.id.prevReviewsButtonId);
 
-        //TODO REFACTOR it
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(adapter.getFromTimestamp());
-        cal.add(Calendar.DATE, -1);
-        long dayBeforeFromTimestamp = (cal.getTime()).getTime(); //millisec
-        cal.add(Calendar.MONTH, -1); // 1 MONTH BACK
-//        long prevMonthFromTimestamp = (cal.getTime()).getTime();
-        long prevMonthFromTimestamp = Common.DATE_NOT_SET;
+        DateTime dateTime = new DateTime();
+        long oneWeekAgoTimestamp = CoffeeAppLogic.TimestampHandler.getOneWeekAgoTimestamp(dateTime);
+        long todayTimestamp = CoffeeAppLogic.TimestampHandler.getTodayTimestamp(dateTime);
 
         CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
         final ArrayList<Review> prevReviewList = coffeeAppLogic.getReviewListByTimestamp(coffeeMachineId,
-                reviewStatus, prevMonthFromTimestamp, dayBeforeFromTimestamp);
+                reviewStatus, oneWeekAgoTimestamp, todayTimestamp);
         if(prevReviewList == null) {
             Log.e(TAG, "previous review list is empty");
             prevReviewsButtonId.setVisibility(View.GONE);
@@ -118,7 +114,7 @@ public class ReviewListFragment extends Fragment {
     }
 
     public void setHeader() {
-        CoffeeMachineActivity.setHeaderByFragmentId(1, getFragmentManager(), coffeeMachineId);
+        HeaderUtils.setHeaderByFragmentId(mainActivityRef, 1, getFragmentManager(), coffeeMachineId);
         mainActivityRef.findViewById(R.id.addReviewSwipeButtonId).setVisibility(View.INVISIBLE);
 
     }
@@ -133,7 +129,7 @@ public class ReviewListFragment extends Fragment {
                 public void onClick(View view) {
                     Log.e(TAG, "add review on " + reviewStatus);
                     Bundle args = new Bundle();
-                    args.putLong(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+                    args.putLong(Common.COFFEE_MACHINE_ID_KEY, coffeeMachineId);
                     args.putBoolean(Common.ADD_REVIEW_FROM_LISTVIEW, true);
                 }
             });
@@ -171,7 +167,7 @@ public class ReviewListFragment extends Fragment {
         //change fragment
         Bundle args = new Bundle();
         args.putString(Common.REVIEW_ID, reviewId);
-        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putString(Common.COFFEE_MACHINE_ID_KEY, coffeeMachineId);
         args.putString(Common.REVIEW_STATUS_KEY, reviewStatus.name());
 
         EditReviewFragment reviewsFrag = new EditReviewFragment();
@@ -306,8 +302,7 @@ public class ReviewListFragment extends Fragment {
         public View getView(final int position, View convertView, ViewGroup parent) {
             Review reviewObj = reviewList.get(position);
             CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
-            User userOnReview = coffeeAppLogic.getUserById(reviewObj.getUserId());
-
+            User userOnReview = coffeeAppLogic.getUserById(reviewObj.getUserId(), true);
             ViewHolder holder;
             if(convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -327,7 +322,7 @@ public class ReviewListFragment extends Fragment {
 
             holder.reviewCommentTextView.setText(reviewObj.getComment());
             holder.reviewDateTextView.setText(reviewObj.getFormattedTimestamp());
-            coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+
 
             //they call volley lib to load profile picture
             coffeeAppLogic.setUsernameToUserOnReview(holder.usernameTextView,

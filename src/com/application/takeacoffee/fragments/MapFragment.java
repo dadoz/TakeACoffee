@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.application.commons.Common;
+import com.application.commons.HeaderUtils;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,7 +53,7 @@ public class MapFragment extends Fragment {
         }
     }
     private void setHeader() {
-        CoffeeMachineActivity.setHeaderByFragmentId(2, getFragmentManager(), Common.EMPTY_VALUE);
+        HeaderUtils.setHeaderByFragmentId(mainActivityRef, 2, getFragmentManager(), Common.EMPTY_VALUE);
     }
 
     public void onDestroyView() {

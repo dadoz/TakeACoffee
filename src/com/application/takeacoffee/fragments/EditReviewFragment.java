@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import com.application.commons.Common;
+import com.application.commons.HeaderUtils;
 import com.application.dataRequest.CoffeeAppLogic;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.models.Review;
@@ -34,11 +35,11 @@ public class EditReviewFragment extends Fragment{
         editReviewView = inflater.inflate(R.layout.edit_review_template, container, false);
 
 //        long reviewId = getArguments().getLong(Common.REVIEW_ID);
-//        String coffeeMachineId = getArguments().getLong(Common.COFFE_MACHINE_ID_KEY);
+//        String coffeeMachineId = getArguments().getLong(Common.COFFEE_MACHINE_ID_KEY);
 //        reviewsList = coffeeApp.getReviewListByCoffeeMachineId(coffeeMachineId);
         String reviewStatus = (String) this.getArguments().get(Common.REVIEW_STATUS_KEY);
         String reviewId = getArguments().getString(Common.REVIEW_ID);
-        String coffeeMachineId = getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
+        String coffeeMachineId = getArguments().getString(Common.COFFEE_MACHINE_ID_KEY);
 
         setHeader();
         initView(coffeeMachineId, reviewId, reviewStatus); //test
@@ -57,7 +58,7 @@ public class EditReviewFragment extends Fragment{
     }*/
 
     public void setHeader() {
-        CoffeeMachineActivity.setHeaderByFragmentId(3, getFragmentManager(), Common.EMPTY_VALUE);
+        HeaderUtils.setHeaderByFragmentId(mainActivityRef, 3, getFragmentManager(), Common.EMPTY_VALUE);
     }
 
     private void initView(final String coffeeMachineId, String reviewId, String reviewStatus) {
@@ -105,7 +106,7 @@ public class EditReviewFragment extends Fragment{
             editReviewView.findViewById(R.id.saveReviewButtonId).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Common.displayError("review saved", mainActivityRef);
+                    Common.displayError(mainActivityRef.getApplicationContext(), "review saved");
                     String reviewCommentNew = ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)).getText().toString();
                     //review.setComment(reviewCommentNew);
                     Common.hideKeyboard(mainActivityRef, ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)));

@@ -3,6 +3,7 @@ package com.application.commons;
 import android.app.Activity;
 import android.graphics.*;
 import android.util.Log;
+import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -195,4 +196,15 @@ public class BitmapCustomUtils {
         return defaultIcon;
     }
 
+    public static void setImageByPath(String filePath, ImageView profilePicImageView) {
+        try {
+            File imgFile = new  File(filePath);
+            if(imgFile.exists()){
+                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                profilePicImageView.setImageBitmap(myBitmap);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "error - " + e.getMessage());
+        }
+    }
 }

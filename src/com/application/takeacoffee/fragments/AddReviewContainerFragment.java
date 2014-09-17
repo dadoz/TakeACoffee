@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.application.adapters.AddReviewPagerAdapter;
 import com.application.commons.Common;
+import com.application.commons.HeaderUtils;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
@@ -34,11 +35,11 @@ public class AddReviewContainerFragment extends Fragment {
         mainActivityRef = getActivity();
         addReviewContainerView = inflater.inflate(R.layout.add_review_container_fragment, container, false);
         //get args from fragment
-        String coffeeMachineId = this.getArguments().getString(Common.COFFE_MACHINE_ID_KEY);
+        String coffeeMachineId = this.getArguments().getString(Common.COFFEE_MACHINE_ID_KEY);
 
         //change fragment
         args = new Bundle();
-        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putString(Common.COFFEE_MACHINE_ID_KEY, coffeeMachineId);
 
         //get data from application
         coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
@@ -65,7 +66,7 @@ public class AddReviewContainerFragment extends Fragment {
     }
 
     public void setHeader(String coffeeMachineId) {
-        CoffeeMachineActivity.setHeaderByFragmentId(1, getFragmentManager(), coffeeMachineId);
+        HeaderUtils.setHeaderByFragmentId(mainActivityRef, 1, getFragmentManager(), coffeeMachineId);
         mainActivityRef.findViewById(R.id.addReviewSwipeButtonId).setVisibility(View.VISIBLE);
 
     }

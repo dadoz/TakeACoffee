@@ -5,8 +5,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+    <include layout="@layout/review_loader_layout" />
+
     <RelativeLayout
-            android:id="@+id/choiceReviewLatestReviewBottomBoxId"
+            android:id="@+id/previousContainerViewId"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:visibility="visible"
@@ -45,73 +47,10 @@
                     android:src="@drawable/left_arrow"/>
         </LinearLayout>
     </RelativeLayout>
-
-    <!-- prev header bar -->
-    <!--    <RelativeLayout
-            android:id="@+id/choiceReviewHeaderTodayId"
-                android:visibility="gone"
-                android:layout_alignParentTop="true"
-                android:background="@color/light_green_soft"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="@dimen/small_padding"
-                android:paddingRight="@dimen/small_padding"
-                android:paddingBottom="@dimen/small_padding">
-
-            <TextView
-                    android:id="@+id/choiceReviewHeaderTitleTextId"
-                    android:layout_centerHorizontal="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/title_text_size"
-                    android:text="TODAY"/>
-                <LinearLayout
-                    android:id="@+id/choiceReviewLatestContainerId"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_small_16"
-                        android:text="latest at:"
-                        />
-                <TextView
-                        android:id="@+id/choiceReviewLatestTimestampTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_big_30"
-                        android:textColor="@color/white"
-                        android:paddingLeft="@dimen/small_padding"
-                        android:text=" - "
-                        />
-            </LinearLayout>
-        <LinearLayout
-                android:id="@+id/choiceReviewLatestContainerNotSetId"
-                android:visibility="gone"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_big_30"
-                    android:textColor="@color/light_black"
-                    android:paddingLeft="@dimen/small_padding"
-                    android:text="NO REVIEW"
-                    />
-        </LinearLayout>
-    </RelativeLayout>-->
-
     <!--main content-->
     <LinearLayout
             android:id="@+id/choiceReviewPageContainerId"
-            android:layout_below="@+id/choiceReviewLatestReviewBottomBoxId"
+            android:layout_below="@+id/previousContainerViewId"
             android:layout_marginBottom="@dimen/medium_button_size"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"

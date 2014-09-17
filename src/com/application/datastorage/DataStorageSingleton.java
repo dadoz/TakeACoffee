@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.support.v4.util.ArrayMap;
 import android.util.LruCache;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
@@ -13,8 +12,8 @@ import com.application.commons.Common;
 import com.application.dataRequest.CoffeeAppLogic;
 import com.application.models.CoffeeMachine;
 import com.application.models.Review;
+import com.application.models.ReviewCounter;
 import com.application.models.User;
-import com.application.queries.ParseQueries;
 import com.parse.ParseException;
 
 import java.io.File;
@@ -35,12 +34,14 @@ public class DataStorageSingleton {
     private final ImageLoader imageLoader;
     private User registeredUser;
     private static DataStorageSingleton mDataStorage;
+    private static ArrayMap<String, User> userListMap ;
 
     private static Context context;
     public String profilePicturePathTemp;
     private RequestQueue requestQueue;
-    private boolean coffeeMachineListNotNull;
     private File customDir;
+//    private ArrayList<ReviewCounter> prevReviewCounterList;
+    private ArrayList<ReviewCounter> reviewCounterList;
 
     //VERY IMPORTANT
     private DataStorageSingleton(Context ctx) {
@@ -52,6 +53,9 @@ public class DataStorageSingleton {
         sharedPref = context.getApplicationContext().getSharedPreferences(Common.SHARED_PREF, Context.MODE_PRIVATE);
 
         reviewListMap = new ArrayMap<>();
+        userListMap = new ArrayMap<>();
+        reviewCounterList = new ArrayList<>();
+//        prevReviewCounterList = new ArrayList<>();
 
         requestQueue = getRequestQueue();
 
@@ -74,11 +78,6 @@ public class DataStorageSingleton {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-/*        if(loadCoffeeMachineList()) {
-            for(CoffeeMachine coffeeMachine : coffeeMachineList) {
-                loadReviewListByCoffeeMachineId(coffeeMachine.getId());
-            }
-        }*/
 
 //        ParseQueries.parseQuery3(context.getAssets());
     }
@@ -168,4 +167,77 @@ public class DataStorageSingleton {
     public File getCustomDir() {
         return customDir;
     }
+
+    public void setUserOnMapByParams(String userId, User user) {
+        userListMap.put(userId, user);
+    }
+
+    public ArrayMap getUserList() {
+        return userListMap;
+    }
+
+    public User getUserById(String userId) {
+        return userListMap.get(userId); //it couldnt be null :D
+    }
+/*
+    public String getPrevRevCounterKey(String coffeeMachineId, Common.ReviewStatusEnum status) {
+        return coffeeMachineId + "_" + status.name();
+    }
+
+    public boolean resetPrevReviewCounter(String key) {
+        for (ReviewCounter prevReviewCounter : prevReviewCounterList) {
+            if (prevReviewCounter.getKey().compareTo(key) == 0) {
+                prevReviewCounter.setCounter(0);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void incrementPrevReviewCounter(String key) {
+        boolean incrementFlag = false;
+        for(ReviewCounter prevReviewCounter : prevReviewCounterList) {
+            if(prevReviewCounter.getKey().compareTo(key) == 0) {
+                prevReviewCounter.incrementCounter();
+                incrementFlag = true;
+            }
+        }
+
+        if(! incrementFlag) {
+            prevReviewCounterList.add(new ReviewCounter(key));
+        }
+
+    }
+
+    public ArrayList<ReviewCounter> getPrevReviewCounterList() {
+        return this.prevReviewCounterList;
+    }*/
+
+/*    public void setReviewCounterList(ArrayList<ReviewCounter> reviewCounterList) {
+        this.reviewCounterList = reviewCounterList;
+    }*/
+
+    public ArrayList<ReviewCounter> getReviewCounterList() {
+        return reviewCounterList;
+    }
+
+    public void addOnReviewCounterList(ReviewCounter reviewCounter) {
+        reviewCounterList.add(reviewCounter);
+    }
+
+
+/*    public ArrayList<ReviewCounter> getReviewCounterList() {
+        return reviewCounterList;
+    }*/
+
+/*    public ReviewCounter getReviewCounterByParams(String coffeeMachineId) {
+        for(ReviewCounter reviewCounter : reviewCounterList) {
+            if(reviewCounter.getKey().compareTo(coffeeMachineId) == 0) {
+                return reviewCounter;
+            }
+        }
+        return null;
+    }
+
+*/
 }

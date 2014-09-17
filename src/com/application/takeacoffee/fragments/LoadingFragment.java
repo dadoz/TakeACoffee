@@ -41,7 +41,12 @@ public class LoadingFragment extends Fragment{
         loadingView.findViewById(R.id.loadingLoginAsGuestLayoutId).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CoffeeMachineActivity.initView(null, mainActivityRef.getWindow().getDecorView());
+//                CoffeeMachineActivity.initView(null, mainActivityRef.getWindow().getDecorView());
+                mainActivityRef.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.coffeeMachineContainerLayoutId,
+                                new CoffeeMachineFragment(),
+                                Common.COFFEE_MACHINE_FRAGMENT_TAG)
+                        .commit();
             }
         });
 

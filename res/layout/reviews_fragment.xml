@@ -3,91 +3,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-<!--    <include layout="@layout/review_header_template" />-->
+
+    <include layout="@layout/review_loader_layout" />
 
     <LinearLayout
+            android:id="@+id/todayReviewsContainerId"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
-
-        <!--COLLAPSED TAB TODAY-->
-<!--        <LinearLayout
-                android:visibility="gone"
-                android:id="@+id/todayReviewsCollapsedButtonId"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/small_padding"
-                android:layout_marginBottom="@dimen/small_padding_5"
-                android:background="@drawable/border_bottom"
-                android:orientation="vertical">
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textSize="@dimen/title_text_size"
-                    android:text="Today"/>
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textSize="@dimen/text_small"
-                    android:textColor="@color/dark_grey"
-                    android:text="Tap to get reviews"/>
-        </LinearLayout>-->
-        <!--CONTENT BOX TODAY fragment-->
-        <LinearLayout
-                android:id="@+id/todayReviewsContainerId"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-            <android.support.v4.view.ViewPager
-                    android:id="@+id/reviewsPagerId"
-                    android:layout_width="match_parent"
-                    android:background="@color/light_grey"
-                    android:layout_height="fill_parent" />
-        </LinearLayout>
-        <!-- VIEWPAGER DOES NOT SUPPORT WRAPCONTENT-->
-<!--        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="@dimen/text_medium_20"
-                android:text="slide or tap on img to read all review"/>-->
-
-        <!--COLLAPSED TAB PREVIOUS-->
-<!--        <LinearLayout
-                android:id="@+id/prevReviewsCollapsedButtonId"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/small_padding"
-                android:background="@drawable/border_bottom"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textSize="@dimen/title_text_size"
-                    android:text="Latest weeks"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textSize="@dimen/text_small"
-                    android:textColor="@color/dark_grey"
-                    android:text="Tap to get reviews"/>
-        </LinearLayout>-->
-        <!--CONTENT BOX PREV fragment-->
-<!--        <LinearLayout
-                android:id="@+id/previousReviewsContainerId"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-            <android.support.v4.view.ViewPager
-                android:id="@+id/previousReviewsPagerId"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <android.support.v4.view.ViewPager
+                android:id="@+id/reviewsPagerId"
                 android:layout_width="match_parent"
                 android:background="@color/light_grey"
-                android:layout_height="@dimen/choice_review_pager_size" />
-        </LinearLayout>-->
+                android:layout_height="fill_parent" />
     </LinearLayout>
 </LinearLayout>

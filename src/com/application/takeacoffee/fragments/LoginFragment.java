@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.application.commons.BitmapCustomUtils;
 import com.application.commons.Common;
+import com.application.commons.HeaderUtils;
 import com.application.dataRequest.CoffeeAppLogic;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.models.User;
@@ -116,7 +117,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
     }
 
     public void setHeader() {
-        CoffeeMachineActivity.hideAllItemsOnHeaderBar();
+        HeaderUtils.hideAllItemsOnHeaderBar(mainActivityRef);
     }
 
     public void setRegisteredUserHeader() {
@@ -157,7 +158,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
             return true;
         }
 
-        Common.displayError("Error to set your picture!", mainActivityRef);
+        Common.displayError(mainActivityRef.getApplicationContext(), "Error to set your picture!");
         return false;
     }
 
@@ -237,7 +238,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                         if(response == null || response.getGraphObject() == null ||
                                 session != Session.getActiveSession() || user == null) {
                             Log.e(TAG, "error - response null from FB stateChange"); //IMPROVEMENT check if there is internet connection
-                            Common.displayError("failed to get data from facebook", getActivity());
+                            Common.displayError(getActivity().getApplicationContext(), "failed to get data from facebook");
                             session.close();
                             pd.cancel();
                             return;
@@ -268,7 +269,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                                         if(response == null || response.getGraphObject() == null ||
                                                 session != Session.getActiveSession()) {
                                             Log.e(TAG, "error - response null from FB stateChange"); //IMPROVEMENT check if there is internet connection
-                                            Common.displayError("failed to get data from facebook", getActivity());
+                                            Common.displayError(getActivity().getApplicationContext(), "failed to get data from facebook");
                                             session.close();
                                             pd.cancel();
                                             return;
@@ -525,7 +526,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
             final EditText usernameEditText = (EditText) loginView.findViewById(R.id.usernameNewUserEditTextId);
             String username = usernameEditText.getText().toString();
             if (username == null || username.matches("")) {
-                Common.displayError("no username set - please insert your one", view.getContext());
+                Common.displayError(view.getContext(), "no username set - please insert your one");
                 return;
             }
 
@@ -538,7 +539,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                     coffeeApp.profilePicturePathTemp, username)) {
                 setRegisteredUserHeader();
             } else {
-                Common.displayError("problem to set user - ", view.getContext());
+                Common.displayError(view.getContext(), "problem to set user - ");
             }
 
             //hide keyboard

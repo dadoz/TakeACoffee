@@ -18,20 +18,14 @@ import com.application.takeacoffee.R;
  */
 public class DataRequestVolleyService {
     //TODO REFACTOR IT
-    private final static String SERVER_URL = "http://192.168.130.112:3000";
+/*    private final static String SERVER_URL = "http://192.168.130.112:3000";
     private final static String PROFILE_PICTURE_CONTAINER = "profile-picture-container";
     private static DataStorageSingleton coffeeApp;
-    private static Context context;
+    private static Context context;*/
 
     public static void downloadProfilePicture(String profilePicturePath, ImageView profilePicImageView,
                                               ImageLoader imageLoader, int defaultIconId) {
-
-/*        String url = SERVER_URL + "/api/containers/" +
-                PROFILE_PICTURE_CONTAINER + "/download/" + profilePicturePath;*/
-
- //       String url = "http://files.parsetfss.com/96d16904-46c1-4dfa-8bf2-fd6f238b8611/tfss-aaed6ae6-a272-4eaa-9012-55b27bff66bf-profilePicture.png";
         imageLoader.get(profilePicturePath, ImageLoader.getImageListener(profilePicImageView, defaultIconId, defaultIconId));
-
     }
 
 }

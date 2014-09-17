@@ -6,21 +6,20 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.android.volley.toolbox.ImageLoader;
 import com.application.commons.BitmapCustomUtils;
 import com.application.commons.Common;
 import com.application.datastorage.DataStorageSingleton;
+import com.application.models.ReviewCounter;
 import com.application.models.CoffeeMachine;
 import com.application.models.Review;
 import com.application.models.User;
 import com.application.takeacoffee.R;
-import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by davide on 06/09/14.
@@ -60,7 +59,7 @@ public class CoffeeAppLogic {
 
     public void loadReviewListByCoffeeMachineId(final String coffeeMachineId) throws ParseException {
         if (Common.isConnected(context)) {
-            ParseDataRequest.getAllReviewsByCoffeeMachineId(coffeeApp, coffeeMachineId);
+            ParseDataRequest.getAllReviewsByCoffeeMachineIdToday(coffeeApp, coffeeMachineId);
         }
     }
 
@@ -87,10 +86,10 @@ public class CoffeeAppLogic {
         }
 
         //TODO check if it's stored in my local storage - might be :D
-/*        if(Common.isConnected(context)) {
+        if(Common.isConnected(context)) {
             DataRequestVolleyService.downloadProfilePicture(profilePicturePath, profilePicImageView,
                     coffeeApp.getImageLoader(), R.drawable.user_icon);
-        }*/
+        }
         return true;
     }
 
@@ -209,9 +208,6 @@ public class CoffeeAppLogic {
     public ArrayList<Review> getReviewListByStatus(String coffeeMachineId,
                                                    Common.ReviewStatusEnum reviewStatus) {
         if(coffeeMachineId.compareTo(Common.EMPTY_VALUE) != 0) {
-            //check if coffeMachineId exist -
-//            ArrayList<Review> reviewList = coffeeApp.
-//                    getReviewListByCoffeeMachineId(coffeeMachineId);
             ArrayList<Review> reviewList = coffeeApp.getReviewListMap().get(coffeeMachineId);
             if(reviewList == null || reviewList.size() == 0) {
                 Log.e(TAG, "error - no one coffeeMachine owned by this ID");
@@ -226,13 +222,14 @@ public class CoffeeAppLogic {
                         reviewListSortedByStatus.add(review);
                     }
                 }
-                if(reviewListSortedByStatus.size() == 0) {
+                return reviewListSortedByStatus.size() != 0 ? reviewListSortedByStatus : null;
+
+/*                if(reviewListSortedByStatus.size() == 0) {
                     return null;
                 }
-                return reviewListSortedByStatus;
+                return reviewListSortedByStatus;*/
             }
-            return reviewList;
-
+            return reviewList; //TODO refactor it
         }
         Log.e(TAG, "error - no coffeeMachineId found");
         return null;
@@ -241,6 +238,8 @@ public class CoffeeAppLogic {
     public ArrayList<Review> getReviewListByTimestamp(String coffeeMachineId,
                                                       Common.ReviewStatusEnum reviewStatus,
                                                       long fromTimestamp, long toTimestamp) {
+        ArrayList<Review> reviewListSortedByStatus = new ArrayList<Review>();
+
         if(coffeeMachineId.compareTo(Common.EMPTY_VALUE) != 0) {
             //check if coffeeMachineId exist -
             ArrayList<Review> reviewList = coffeeApp.getReviewListMap().get(coffeeMachineId);
@@ -251,16 +250,17 @@ public class CoffeeAppLogic {
             }
 
             if(reviewStatus != Common.ReviewStatusEnum.NOTSET) {
-                ArrayList<Review> reviewListSortedByStatus = new ArrayList<Review>();
                 //TODO to be refactored
                 for(Review review : reviewList) {
                     if(toTimestamp != Common.DATE_NOT_SET) {
+                        //TO timestamp set
                         if(reviewStatus == review.getStatus() &&
                                 review.getTimestamp() > fromTimestamp &&
                                 review.getTimestamp() < toTimestamp) {
                             reviewListSortedByStatus.add(review);
                         }
                     } else {
+                        //TO timestamp NOT set
                         if(reviewStatus == review.getStatus() &&
                                 review.getTimestamp() > fromTimestamp) {
                             reviewListSortedByStatus.add(review);
@@ -268,12 +268,13 @@ public class CoffeeAppLogic {
                     }
 
                 }
-                if(reviewListSortedByStatus.size() == 0) {
+                return reviewListSortedByStatus.size() != 0 ? reviewListSortedByStatus : null;
+/*                if(reviewListSortedByStatus.size() == 0) {
                     return null;
                 }
-                return reviewListSortedByStatus;
+                return reviewListSortedByStatus;*/
             }
-            return reviewList;
+            return reviewList; //TODO think about it
 
         }
         Log.e(TAG, "error - no coffeeMachineId found");
@@ -409,28 +410,42 @@ public class CoffeeAppLogic {
 
     /******USER*******/
 
-    public User getUserById(String userId) {
+    public User getUserById(String userId, boolean isInListView) {
 
         if(coffeeApp.checkIsMe(userId)) {
             return coffeeApp.getRegisteredUser();
         }
 
-        /**///User user = dataRequestDb.getUserById(userId);
-        User user = null;
+        User user = coffeeApp.getUserById(userId);
         if(user != null) {
             return user;
         }
 
         user = null; //TODO test
         //try to find out user on HTTP server
-        if(Common.isConnected(context)) {
-//            user = ParseDataRequest.getUserById(userId);
+        if(Common.isConnected(context) && ! isInListView) {
+            user = ParseDataRequest.getUserById(userId); // make it async
             if(user != null) {
                 return user;
             }
         }
         return new User(Common.NOT_VALID_USER_ID, null, "Guest");
 //        return new User(userId, null, "Tunnus");
+    }
+
+    public void getUserByIdAsync(String userId, TextView usernameTextView, ImageView profilePicImageView, ImageLoader imageLoader, int userIcon) {
+        if(coffeeApp.checkIsMe(userId)) {
+            BitmapCustomUtils.setImageByPath(coffeeApp.getRegisteredProfilePicturePath(), profilePicImageView);
+            usernameTextView.setText(coffeeApp.getRegisteredUsername());
+            coffeeApp.getRegisteredUser();
+            return;
+        }
+
+        //try to find out user on HTTP server
+        if(Common.isConnected(context)) {
+            ParseDataRequest.getUserByIdAsync(userId, usernameTextView, profilePicImageView, imageLoader, userIcon); // make it async
+        }
+//        return new User(Common.NOT_VALID_USER_ID, null, "Guest");
     }
 
     public boolean getCoffeeMachineIcon(String pictureIconPath, ImageView pictureImageView) {
@@ -440,5 +455,169 @@ public class CoffeeAppLogic {
             return true;
         }
         return false;
+    }
+
+    public void getUserToAllReviews(String coffeeMachineId) {
+        ArrayList<Review> reviewList = coffeeApp.getReviewListMap().get(coffeeMachineId);
+
+        if(reviewList != null) {
+            for(Review review : reviewList) {
+                if(coffeeApp.getUserById(review.getUserId()) == null) {
+                    User user = getUserById(review.getUserId(), false);
+                    coffeeApp.setUserOnMapByParams(user.getId(), user);
+                }
+            }
+        }
+    }
+
+    public static boolean checkAndSetRegisteredUser() {
+//        SharedPreferences sharedPref = mainActivityRef.getSharedPreferences("SHARED_PREF_COFFEE_MACHINE", Context.MODE_PRIVATE);
+
+        coffeeApp = DataStorageSingleton.getInstance(context);
+        SharedPreferences sharedPref = coffeeApp.getSharedPref();
+        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(context);
+
+        if(sharedPref != null) {
+            String username = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USERNAME, null);
+            String profilePicPath = sharedPref.getString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, null);
+            String userId = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USER_ID,
+                    Common.EMPTY_VALUE);
+            if(userId.compareTo(Common.EMPTY_VALUE) != 0) {
+                Log.e(TAG, "this is my username: " + username);
+                coffeeAppLogic.setRegisteredUser(userId, profilePicPath, username); //TODO check empty value
+                return true;
+            } else {
+                Log.e(TAG, "no username set");
+                return false;
+            }
+        }
+        return false;
+    }
+
+/*    public int getPreviousReviewCounter(String coffeeMachineId, Common.ReviewStatusEnum reviewStatus, long toTimestamp) {
+        try {
+            ArrayList<ReviewCounter> reviewCounterList = coffeeApp.getReviewCounterList();
+            for (ReviewCounter reviewCounter : reviewCounterList) {
+                if(coffeeMachineId.compareTo(reviewCounter.getKey()) == 0) {
+                    return reviewCounter.getCounterByParams(toTimestamp, reviewStatus);
+                }
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "error on prev rev counter");
+        }
+        return -1;
+    }*/
+
+    public int getReviewCounter(String coffeeMachineId, Common.ReviewStatusEnum reviewStatus, long toTimestamp) {
+        try {
+            ArrayList<ReviewCounter> reviewCounterList = coffeeApp.getReviewCounterList();
+            for (ReviewCounter reviewCounter : reviewCounterList) {
+                if(coffeeMachineId.compareTo(reviewCounter.getKey()) == 0) {
+                    return reviewCounter.getCounterByParams(toTimestamp, reviewStatus);
+                }
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "error on rev counter");
+        }
+        return -1;
+    }
+
+/*
+    public int getPreviousReviewListCountOld(String coffeeMachineId, long fromTimestamp, long toTimestamp) {
+        //try to find out user on HTTP server
+        if(Common.isConnected(context)) {
+            return ParseDataRequest.getReviewCountByCoffeeMachineId(coffeeMachineId,
+                    fromTimestamp, toTimestamp);
+        }
+
+        return 0;
+    }
+    public int getPreviousReviewListCount(String coffeeMachineId, Common.ReviewStatusEnum reviewStatus) {
+        String prevRevKey = coffeeApp.getPrevRevCounterKey(coffeeMachineId, reviewStatus);
+        ArrayList<ReviewCounter> prevReviewCounterList = coffeeApp.getPrevReviewCounterList();
+        for(ReviewCounter prevReviewCounter : prevReviewCounterList) {
+            if(prevReviewCounter.getKey().compareTo(prevRevKey) == 0) {
+                Log.e(TAG, "counter prev " + prevReviewCounter.getCounter() + " key " + prevRevKey);
+                return prevReviewCounter.getCounter();
+            }
+        }
+        return -1;
+    }
+
+
+    public void setAndCountPreviousReviewList(DataStorageSingleton coffeeApp, String coffeeMachineId,
+                                           long fromTimestamp, long toTimestamp) {
+        //try to find out user on HTTP server
+/*        if(Common.isConnected(context)) {
+            for(Common.ReviewStatusEnum status : Common.ReviewStatusEnum.values()) {
+                if(status != Common.ReviewStatusEnum.NOTSET) {
+                    ParseDataRequest.setReviewCountByCoffeeMachineId(coffeeApp, status, coffeeMachineId,
+                            fromTimestamp, toTimestamp);
+                }
+            }
+        }*/
+/*        if(Common.isConnected(context)) {
+//            ParseDataRequest.setReviewCountByCoffeeMachineId(coffeeApp, coffeeMachineId, fromTimestamp, toTimestamp);
+            ParseDataRequest.setAndCountReviewByCoffeeMachineId(coffeeApp, coffeeMachineId,
+                    fromTimestamp, toTimestamp);
+
+        }
+
+    }
+*/
+
+/*    public int getReviewCounterByTimestampLocal(String coffeeMachineId, Common.ReviewStatusEnum reviewStatus,
+                                           long fromTimestamp, long toTimestamp) {
+
+        int counter = 0;
+        if(coffeeMachineId.compareTo(Common.EMPTY_VALUE) != 0) {
+            //check if coffeeMachineId exist -
+            ArrayList<Review> reviewList = coffeeApp.getReviewListMap().get(coffeeMachineId);
+
+            if(reviewList == null || reviewList.size() == 0) {
+                Log.e(TAG,"error - no one coffeeMachine owned by this ID");
+                return -1;
+            }
+
+            if(reviewStatus != Common.ReviewStatusEnum.NOTSET) {
+                //TODO to be refactored
+                for(Review review : reviewList) {
+                    if(toTimestamp != Common.DATE_NOT_SET) {
+                        //TO timestamp set
+                        if(reviewStatus == review.getStatus() &&
+                                review.getTimestamp() > fromTimestamp &&
+                                review.getTimestamp() < toTimestamp) {
+                            counter ++;
+                        }
+                    } else {
+                        //TO timestamp NOT set
+                        if(reviewStatus == review.getStatus() &&
+                                review.getTimestamp() > fromTimestamp) {
+                            counter ++;
+                        }
+                    }
+
+                }
+            }
+        }
+
+//        Log.e(TAG, "error - no coffeeMachineId found");
+        return counter;
+    }
+*/
+
+    public static class TimestampHandler {
+
+        public static long getYesterdayTimestamp(DateTime dateTime) {
+            return dateTime.toDateTime().minusDays(1).withTimeAtStartOfDay().getMillis();
+        }
+
+        public static long getOneWeekAgoTimestamp(DateTime dateTime) {
+            return dateTime.toDateTime().minusWeeks(1).withTimeAtStartOfDay().getMillis();
+        }
+
+        public static long getTodayTimestamp(DateTime dateTime) {
+            return dateTime.toDateTime().withTimeAtStartOfDay().getMillis();
+        }
     }
 }

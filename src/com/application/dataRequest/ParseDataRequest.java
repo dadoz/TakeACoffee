@@ -2,8 +2,11 @@ package com.application.dataRequest;
 
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
+import com.android.volley.toolbox.ImageLoader;
 import com.application.commons.Common;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.models.CoffeeMachine;
@@ -11,6 +14,7 @@ import com.application.models.Review;
 import com.application.models.User;
 import com.parse.*;
 import org.apache.commons.io.IOUtils;
+import org.joda.time.DateTime;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -23,6 +27,31 @@ import java.util.UUID;
 public class ParseDataRequest {
 
     private static final String TAG = "ParseDataRequest";
+    private static final int QUERY_LIMITS = 5;
+    private static int reviewCountByCoffeeMachineId;
+    private static Object prevRevCounterKey;
+
+    public static ArrayList<CoffeeMachine> getAllCoffeeMachines() {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("coffee_machines");
+        List<ParseObject> parseObjects;
+        try {
+            parseObjects = query.find();
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+            return null;
+        }
+        ArrayList<CoffeeMachine> list = new ArrayList<>();
+
+        for (ParseObject parseObject : parseObjects) {
+            String coffeeMachineId = parseObject.getObjectId();
+            String name = parseObject.getString("name");
+            String address = parseObject.getString("address");
+            String iconPath = parseObject.getString("icon_path");
+            list.add(new CoffeeMachine(coffeeMachineId, name, address, iconPath));
+        }
+        Log.d(TAG, "hey object id " + parseObjects.get(0).get("name"));
+        return list;
+    }
 
     public static void getAllCoffeeMachines(DataStorageSingleton coffeeApp) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("coffee_machines");
@@ -210,6 +239,7 @@ public class ParseDataRequest {
             }
         });
     }
+
 
     public static void updateUserById(String userId, String profilePicturePath,
                                       String username){
@@ -424,6 +454,36 @@ public class ParseDataRequest {
         return null;
     }
 
+    public static void getUserByIdAsync(String userId, final TextView usernameTextView,
+                                        final ImageView profilePicImageView,
+                                        final ImageLoader imageLoader, final int defaultIcon) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("users");
+        query.whereEqualTo("objectId", userId);
+
+        Log.e(TAG," hey u're retrieving user");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "profile pic not found ");
+                    Log.e(TAG, e.getMessage());
+                    return;
+                }
+
+                if (parseObjects != null && parseObjects.size() == 1) {
+                    usernameTextView.setText(parseObjects.get(0).getString("username"));
+                    String profilePicturePath = parseObjects.get(0).getString("profile_picture_path");
+                    if (profilePicturePath != null) {
+                        DataRequestVolleyService.downloadProfilePicture(profilePicturePath, profilePicImageView,
+                                imageLoader, defaultIcon);
+                    }
+                }
+
+            }
+
+        });
+    }
+
     public static ParseObject getUserByIdToParseObject(String userId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("users");
         query.whereEqualTo("objectId", userId);
@@ -441,4 +501,162 @@ public class ParseDataRequest {
         return null;
     }
 
+    public static void getAllReviewsByCoffeeMachineIdToday(DataStorageSingleton coffeeApp,
+                                                      String coffeeMachineId) {
+        //TODAY request
+        DateTime dateTime = new DateTime();
+        String todayTimestamp = String.valueOf((dateTime.toDateTime().withTimeAtStartOfDay().getMillis()));
+
+        //request
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
+        query.whereEqualTo("coffee_machine_id_string", coffeeMachineId);
+        query.whereGreaterThan("timestamp", todayTimestamp);
+        //query.setLimit(QUERY_LIMITS);
+        Log.e(TAG, "timestamp " + todayTimestamp);
+        List<ParseObject> parseObjects;
+        try {
+            parseObjects = query.find();
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+            return;
+        }
+        ArrayList<Review> reviewList = new ArrayList<Review>();
+        for (ParseObject parseObject : parseObjects) {
+            String id = parseObject.getObjectId();
+            String userId = parseObject.getString("user_id_string");
+            String comment = parseObject.getString("comment");
+            String status = parseObject.getString("status");
+            String timestamp = parseObject.getString("timestamp");
+
+            long timestampParsed = Long.parseLong(timestamp);
+            Common.ReviewStatusEnum statusParsed = Review.parseStatus(status);
+            reviewList.add(new Review(id, comment, statusParsed, timestampParsed, userId, coffeeMachineId));
+        }
+        coffeeApp.getReviewListMap().put(coffeeMachineId, reviewList);
+    }
+
+    public static int getReviewCountByCoffeeMachineId(String coffeeMachineId, long fromTimestamp, long toTimestamp) {
+        int reviewsCount = 0;
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
+        query.whereEqualTo("coffee_machine_id_string", coffeeMachineId);
+        query.whereGreaterThan("timestamp", String.valueOf(fromTimestamp));
+        query.whereLessThan("timestamp", String.valueOf(toTimestamp));
+        Log.e(TAG, "timestamp " + toTimestamp + " - " + fromTimestamp);
+        try {
+            reviewsCount = query.count();
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+            return -1;
+        }
+
+//        coffeeApp.getReviewListMap().put(coffeeMachineId, reviewList);
+
+        return reviewsCount;
+    }
+
+    public static void setReviewCountByCoffeeMachineId(DataStorageSingleton coffeeApp, Common.ReviewStatusEnum status,
+                                                       String coffeeMachineId, long fromTimestamp, long toTimestamp) {
+        int reviewsCount = 0;
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
+        query.whereEqualTo("coffee_machine_id_string", coffeeMachineId);
+        query.whereEqualTo("status", status.name());
+        query.whereGreaterThan("timestamp", String.valueOf(fromTimestamp));
+        query.whereLessThan("timestamp", String.valueOf(toTimestamp));
+        Log.e(TAG, "timestamp " + toTimestamp + " - " + fromTimestamp);
+        try {
+            reviewsCount = query.count();
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+            reviewsCount = -1;
+        }
+
+//        String prevRevCounterKey = coffeeApp.getPrevRevCounterKey(coffeeMachineId, status);
+//        coffeeApp.getPrevReviewCounterList().put(prevRevCounterKey, reviewsCount);
+    }
+    public static boolean setReviewCountByCoffeeMachineId(DataStorageSingleton coffeeApp,
+                                                       String coffeeMachineId, long fromTimestamp, long toTimestamp) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
+        query.whereEqualTo("coffee_machine_id_string", coffeeMachineId);
+        query.whereGreaterThan("timestamp", String.valueOf(fromTimestamp));
+        query.whereLessThan("timestamp", String.valueOf(toTimestamp));
+        Log.e(TAG, "timestamp " + toTimestamp + " - " + fromTimestamp);
+        try {
+            List<ParseObject> parseObjects = query.find();
+            for(ParseObject object : parseObjects) {
+/*                String prevRevCounterKey = coffeeApp.getPrevRevCounterKey(coffeeMachineId,
+                        Review.parseStatus(object.getString("status")));
+                coffeeApp.incrementPrevReviewCounter(prevRevCounterKey);*/
+            }
+            return true;
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return false;
+    }
+
+
+    public static boolean setAndCountReviewByCoffeeMachineId(DataStorageSingleton coffeeApp,
+                                                          String coffeeMachineId, long fromTimestamp, long toTimestamp) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
+        query.whereEqualTo("coffee_machine_id_string", coffeeMachineId);
+        query.whereGreaterThan("timestamp", String.valueOf(fromTimestamp));
+        query.whereLessThan("timestamp", String.valueOf(toTimestamp));
+        Log.e(TAG, "timestamp " + toTimestamp + " - " + fromTimestamp);
+
+        //reset
+        for(Common.ReviewStatusEnum status : Common.ReviewStatusEnum.values()) {
+//            String prevRevCounterKey = coffeeApp.getPrevRevCounterKey(coffeeMachineId, status);
+//            coffeeApp.resetPrevReviewCounter(prevRevCounterKey);
+        }
+
+        try {
+            List<ParseObject> parseObjects = query.find();
+            ArrayList<Review> reviewList = new ArrayList<>();
+            for(ParseObject parseObject : parseObjects) {
+//                String prevRevCounterKey = coffeeApp.getPrevRevCounterKey(coffeeMachineId,
+//                        Review.parseStatus(parseObject.getString("status")));
+                String id = parseObject.getObjectId();
+                String userId = parseObject.getString("user_id_string");
+                String comment = parseObject.getString("comment");
+                String status = parseObject.getString("status");
+                String timestamp = parseObject.getString("timestamp");
+
+                long timestampParsed = Long.parseLong(timestamp);
+                Common.ReviewStatusEnum statusParsed = Review.parseStatus(status);
+                reviewList.add(new Review(id, comment, statusParsed, timestampParsed, userId, coffeeMachineId));
+//                coffeeApp.incrementPrevReviewCounter(prevRevCounterKey);
+            }
+
+            ArrayList<Review> reviewListOld = coffeeApp.getReviewListMap().get(coffeeMachineId);
+            if(reviewListOld != null) {
+                reviewListOld.addAll(reviewList); //TODO FIX IT every time add review on listview
+            }
+//            coffeeApp.getReviewListMap().put(coffeeMachineId, reviewList);
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return false;
+    }
+
+
+
+    public static Object getPrevRevCounterKey() {
+        return prevRevCounterKey;
+    }
+
+
+/*    public static class FindCallbackCustom extends FindCallback<ParseObject> {
+        private final ImageLoader imageLoader;
+        private final int defaultIcon;
+        private TextView usernameTextView;
+        private ImageView profilePicImageView;
+
+        public FindCallbackCustom(TextView textView, ImageView imageView, ImageLoader imageLoader, int defaultIcon) {
+            this.usernameTextView = textView;
+            this.profilePicImageView = imageView;
+            this.imageLoader = imageLoader;
+            this.defaultIcon = defaultIcon;
+        }
+
+    }*/
 }

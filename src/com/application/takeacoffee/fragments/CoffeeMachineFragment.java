@@ -1,9 +1,14 @@
 package com.application.takeacoffee.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,15 +16,19 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.*;
+import com.application.commons.BitmapCustomUtils;
 import com.application.commons.Common;
+import com.application.commons.HeaderUtils;
 import com.application.dataRequest.CoffeeAppLogic;
 import com.application.dataRequest.DataRequestVolleyService;
+import com.application.dataRequest.ParseDataRequest;
 import com.application.datastorage.DataStorageSingleton;
 import com.application.models.CoffeeMachine;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 import com.application.takeacoffee.experimental.PieChart;
 import com.parse.ParseException;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 
@@ -28,21 +37,20 @@ import static com.application.commons.Common.setCustomFontByView;
 /**
  * Created by davide on 3/13/14.
  */
-public class CoffeeMachineFragment extends Fragment {
+public class CoffeeMachineFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "coffeeMachineFragment";
-//    private ArrayList<CoffeeMachine> coffeeMachineList;
     private ArrayList<PieChart> pieChartList;
     private Handler mHandler;
     private static FragmentActivity mainActivityRef;
     private static LinearLayout settingsLayout;
-    private DataStorageSingleton coffeeApp;
+    private static DataStorageSingleton coffeeApp;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mHandler = new Handler();
         mainActivityRef = getActivity();
-
         coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
+
         //get views
         final View coffeeMachineFragment = inflater.inflate(R.layout.coffe_machine_fragment, container, false);
         settingsLayout = (LinearLayout)coffeeMachineFragment.findViewById(R.id.settingsLayoutId);
@@ -61,14 +69,25 @@ public class CoffeeMachineFragment extends Fragment {
     }
 
     private void setHeader() {
-        CoffeeMachineActivity.setHeaderByFragmentId(0, getFragmentManager(), Common.EMPTY_VALUE);
+        HeaderUtils.setHeaderByFragmentId(mainActivityRef, 0, getFragmentManager(), Common.EMPTY_VALUE);
     }
 
     private void initView(View coffeeMachineFragment) {
+
+        //TODO REFACTOR IT
+        boolean loggedUser = initDataApplication();
+        //change username
+        if(loggedUser) {
+            setLoggedUserView(mainActivityRef.getWindow().getDecorView());
+        } else {
+            setNotLoggedUserView(mainActivityRef.getWindow().getDecorView());
+        }
+
         int itemInTableRowCounter = 0;
         TableRow tableRow = null;
         //get data from application
         ArrayList<CoffeeMachine> coffeeMachineList = coffeeApp.getCoffeeMachineList();
+        final CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
         //setMap button available
         mainActivityRef.findViewById(R.id.headerMapButtonId).setVisibility(View.VISIBLE);
@@ -109,7 +128,7 @@ public class CoffeeMachineFragment extends Fragment {
 
                 //reset counter
                 if (itemInTableRowCounter == 0) {
-                    itemInTableRowCounter++;
+                    itemInTableRowCounter ++;
                 } else {
                     itemInTableRowCounter = 0;
                 }
@@ -122,53 +141,24 @@ public class CoffeeMachineFragment extends Fragment {
                 ((TextView) coffeeMachineTemplate.findViewById(R.id.coffeeMachineNameTextId))
                         .setTextColor(getResources().getColor(R.color.light_black));
 
-/*
-                int picResource = -1;
-                if (iconPath.equals(new String("coffee1.jpg"))) {
-                    picResource = R.drawable.coffee1;
-                } else if (iconPath.equals(new String("coffee2.jpg"))) {
-                    picResource = R.drawable.coffee2;
-                } else if (iconPath.equals(new String("coffee3.jpg"))) {
-                    picResource = R.drawable.coffee3;
-                } else if (iconPath.equals(new String("coffee4.jpg"))) {
-                    picResource = R.drawable.coffee4;
-                }
-                ImageView coffeeIconImageView = (ImageView) coffeeMachineTemplate.findViewById(R.id.coffeeIconId);
-
-                try {
-                    //make piechart
-//                    pieChartList = getPieChartData();
-
-                    Bitmap bmpAbove = BitmapCustomUtils.getRoundedBitmapByResource(picResource, mainActivityRef);
-//                    Bitmap bmpBelow = Common.getRoundedBitmap(Common.PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE,
-//                            getResources().getColor(R.color.light_black));
-  //                  Bitmap coffeeMachineBmp = Common.overlayBitmaps(bmpBelow, bmpAbove);
-                    coffeeIconImageView.setImageBitmap(bmpAbove);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "failed to load profile pic from storage - load the guest one");
-                    coffeeIconImageView.setImageResource(R.drawable.coffee_cup_icon);
-                }
-                */
-                //set coffee
-                //TODO refactor please
-                final CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
-                String iconPath = (coffeeMachineObj.getIconPath());
+                //set coffee picture
                 ImageView coffeeIconImageView = (ImageView) coffeeMachineTemplate.findViewById(R.id.coffeeIconId);
                 coffeeIconImageView.setImageResource(R.drawable.coffee_cup_icon);
-                coffeeAppLogic.getCoffeeMachineIcon(iconPath, coffeeIconImageView);
+                coffeeAppLogic.getCoffeeMachineIcon((coffeeMachineObj.getIconPath()), coffeeIconImageView);
 
                 (coffeeMachineTemplate.findViewById(R.id.coffeeIconId)).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-//                        final String coffeeMachineId = coffeeMachineObj.getId();
-                        //TODO LOAD SYNC COFFEE_MACHINE REVIEW JSON
-                        try {
-                            coffeeAppLogic.loadReviewListByCoffeeMachineId(coffeeMachineObj.getId());
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
 
-                        getCoffeeMachineReviewById(coffeeMachineObj.getId());
+                        //TODO MOVE THIS LOGIC on loaderThread
+/*                        DateTime dateTime = new DateTime();
+                        long oneWeekAgoTimestamp = CoffeeAppLogic.TimestampHandler.getOneWeekAgoTimestamp(dateTime);
+                        long todayTimestamp = CoffeeAppLogic.TimestampHandler.getTodayTimestamp(dateTime);
+                        coffeeAppLogic.setAndCountPreviousReviewList(coffeeApp, coffeeMachineObj.getId(),
+                                oneWeekAgoTimestamp, todayTimestamp);
+                        coffeeAppLogic.getUserToAllReviews(coffeeMachineObj.getId());
+*/
+                        beginTransactionFragReview(coffeeMachineObj.getId());
+
                     }
                 });
             }
@@ -189,10 +179,10 @@ public class CoffeeMachineFragment extends Fragment {
 
     }
 
-    private boolean getCoffeeMachineReviewById(String coffeeMachineId) {
+    private boolean beginTransactionFragReview(String coffeeMachineId) {
         //change fragment
         Bundle args = new Bundle();
-        args.putString(Common.COFFE_MACHINE_ID_KEY, coffeeMachineId);
+        args.putString(Common.COFFEE_MACHINE_ID_KEY, coffeeMachineId);
 
         ChoiceReviewContainerFragment reviewsFrag = new ChoiceReviewContainerFragment();
         reviewsFrag.setArguments(args);
@@ -205,6 +195,87 @@ public class CoffeeMachineFragment extends Fragment {
                 .commit();
         return true;
     }
+
+
+
+    public static boolean initDataApplication() {
+        SharedPreferences sharedPref = mainActivityRef.getSharedPreferences("SHARED_PREF_COFFEE_MACHINE", Context.MODE_PRIVATE);
+
+        coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
+        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+
+        if(sharedPref != null) {
+            String username = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USERNAME, null);
+            String profilePicPath = sharedPref.getString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, null);
+            String userId = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USER_ID,
+                    Common.EMPTY_VALUE);
+            if(userId.compareTo(Common.EMPTY_VALUE) != 0) {
+                Log.e(TAG, "this is my username: " + username);
+                coffeeAppLogic.setRegisteredUser(userId, profilePicPath, username); //TODO check empty value
+                return true;
+            } else {
+                Log.e(TAG, "no username set");
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public void setLoggedUserView(View mainView) {
+        ((TextView) mainView.findViewById(R.id.loggedUserTextId)).setText(
+                coffeeApp.getRegisteredUsername());
+
+        LinearLayout loggedUserButton = (LinearLayout) mainView.findViewById(R.id.loggedUserButtonId);
+        loggedUserButton.setOnClickListener(this);
+/*        loggedUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(mainActivityRef.getBaseContext(), "logged", Toast.LENGTH_LONG).show();
+                addChangeUserFragment(mainActivityRef.getSupportFragmentManager());
+            }
+        });*/
+
+        Bitmap defaultIcon = BitmapFactory.decodeResource(mainActivityRef.getResources(), R.drawable.user_icon);
+        Bitmap bitmap = BitmapCustomUtils.getRoundedBitmapByFile(coffeeApp.getRegisteredProfilePicturePath(),
+                defaultIcon);
+        ((ImageView) mainView.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
+    }
+
+    public void setNotLoggedUserView(View mainView) {
+        ((TextView) mainView.findViewById(R.id.loggedUserTextId)).setText("guest");
+
+        LinearLayout loggedUserButton = (LinearLayout) mainView.findViewById(R.id.loggedUserButtonId);
+
+        loggedUserButton.setOnClickListener(this);
+/*
+        loggedUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(mainActivityRef.getBaseContext(), "not logged", Toast.LENGTH_LONG).show();
+                addChangeUserFragment(mainActivityRef.getSupportFragmentManager());
+            }
+        });*/
+    }
+
+    @Override
+    public void onClick(View view) {
+        Toast.makeText(mainActivityRef.getBaseContext(), "logged", Toast.LENGTH_LONG).show();
+
+        Toast.makeText(mainActivityRef.getBaseContext(), "not logged", Toast.LENGTH_LONG).show();
+
+        LoginFragment loginFragment = new LoginFragment();
+        mainActivityRef.getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.coffeeMachineContainerLayoutId, loginFragment,
+                        Common.NEW_USER_FRAGMENT_TAG)
+                .addToBackStack("back")
+                .commit();
+
+    }
+
+
+
+
 
 
 /*
