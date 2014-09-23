@@ -410,7 +410,7 @@ public class CoffeeAppLogic {
 
     /******USER*******/
 
-    public User getUserById(String userId, boolean isInListView) {
+    public User getUserByIdInListview(String userId) {
 
         if(coffeeApp.checkIsMe(userId)) {
             return coffeeApp.getRegisteredUser();
@@ -421,17 +421,29 @@ public class CoffeeAppLogic {
             return user;
         }
 
-        user = null; //TODO test
-        //try to find out user on HTTP server
-        if(Common.isConnected(context) && ! isInListView) {
-            user = ParseDataRequest.getUserById(userId); // make it async
-            if(user != null) {
-                return user;
-            }
-        }
         return new User(Common.NOT_VALID_USER_ID, null, "Guest");
 //        return new User(userId, null, "Tunnus");
     }
+
+    public User getUserById(String userId) {
+
+        if(! coffeeApp.checkIsMe(userId)) {
+            User user = coffeeApp.getUserById(userId);
+            if(user == null) {
+                //not in local list
+                if(Common.isConnected(context)) {
+                    user = ParseDataRequest.getUserById(userId); // make it async
+                    if(user != null) {
+                        return user;
+                    }
+                    //else do nothing - no user found even on db
+                    Log.e(TAG, "not user found even on db :(");
+                }
+            }
+        }
+       return null;
+    }
+
 
     public void getUserByIdAsync(String userId, TextView usernameTextView, ImageView profilePicImageView, ImageLoader imageLoader, int userIcon) {
         if(coffeeApp.checkIsMe(userId)) {
@@ -457,25 +469,27 @@ public class CoffeeAppLogic {
         return false;
     }
 
-    public void getUserToAllReviews(String coffeeMachineId) {
+    public void addUserToAllReviewsOnLocalList(String coffeeMachineId) {
         ArrayList<Review> reviewList = coffeeApp.getReviewListMap().get(coffeeMachineId);
 
         if(reviewList != null) {
             for(Review review : reviewList) {
                 if(coffeeApp.getUserById(review.getUserId()) == null) {
-                    User user = getUserById(review.getUserId(), false);
-                    coffeeApp.setUserOnMapByParams(user.getId(), user);
+                    User user = getUserById(review.getUserId());
+                    if(user != null) {
+                        coffeeApp.addUserOnMapByParams(user.getId(), user);
+                    }
                 }
             }
         }
     }
 
-    public static boolean checkAndSetRegisteredUser() {
+    public static boolean checkAndSetRegisteredUser(Context ctx) {
 //        SharedPreferences sharedPref = mainActivityRef.getSharedPreferences("SHARED_PREF_COFFEE_MACHINE", Context.MODE_PRIVATE);
 
-        coffeeApp = DataStorageSingleton.getInstance(context);
+        coffeeApp = DataStorageSingleton.getInstance(ctx);
         SharedPreferences sharedPref = coffeeApp.getSharedPref();
-        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(context);
+        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(ctx);
 
         if(sharedPref != null) {
             String username = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USERNAME, null);
@@ -494,19 +508,20 @@ public class CoffeeAppLogic {
         return false;
     }
 
-/*    public int getPreviousReviewCounter(String coffeeMachineId, Common.ReviewStatusEnum reviewStatus, long toTimestamp) {
+    public int getPreviousReviewCounter(String coffeeMachineId, Common.ReviewStatusEnum reviewStatus, long toTimestamp) {
         try {
             ArrayList<ReviewCounter> reviewCounterList = coffeeApp.getReviewCounterList();
             for (ReviewCounter reviewCounter : reviewCounterList) {
                 if(coffeeMachineId.compareTo(reviewCounter.getKey()) == 0) {
                     return reviewCounter.getCounterByParams(toTimestamp, reviewStatus);
+
                 }
             }
         } catch (Exception e) {
             Log.d(TAG, "error on prev rev counter");
         }
         return -1;
-    }*/
+    }
 
     public int getReviewCounter(String coffeeMachineId, Common.ReviewStatusEnum reviewStatus, long toTimestamp) {
         try {
@@ -520,6 +535,11 @@ public class CoffeeAppLogic {
             Log.d(TAG, "error on rev counter");
         }
         return -1;
+    }
+
+    public void addUserOnLocalListByList(ArrayList<User> userList) {
+        coffeeApp.addUserOnMapByList(userList);
+
     }
 
 /*

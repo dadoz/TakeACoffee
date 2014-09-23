@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import com.application.commons.Common;
@@ -23,7 +24,7 @@ import java.util.Random;
 /**
  * Created by davide on 01/06/14.
  */
-public class SplashScreenActivity extends Activity{
+public class SplashScreenActivity extends Activity {
     private static final long SPLASH_TIMEOUT = 500;
     private static final String TAG = "SplashScreenActivity";
     static Activity mSplashActivity;
@@ -31,6 +32,8 @@ public class SplashScreenActivity extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splashscreen_layout);
+        mSplashActivity = this;
+
         Common.setCustomFont(getWindow().getDecorView(), getAssets());
         final int[] colorArray = {R.color.light_green, R.color.light_yellow_lemon, R.color.light_violet};
         final View mainView = getWindow().getDecorView();
@@ -38,7 +41,6 @@ public class SplashScreenActivity extends Activity{
         mainView.findViewById(R.id.splashScreenLayoutId)
                 .setBackgroundColor(getResources().getColor(colorArray[value % 3]));
 
-        mSplashActivity = this;
         //INIT server application
         Parse.initialize(this, "61rFqlbDy0UWBfY56RcLdiJVB1EPe8ce1yUxdAEY",
                 "jHD6l2E72OG9Kul7ijtawZTkF9Zml0AwbeL0J7Ex");
@@ -52,18 +54,7 @@ public class SplashScreenActivity extends Activity{
             @Override
             protected String doInBackground(String...params) {
                 if(Common.isConnected(mSplashActivity.getApplicationContext())) {
-                    DataStorageSingleton coffeeApp = DataStorageSingleton.getInstance(mSplashActivity.getApplicationContext());
-//                    CoffeeMachine coffeeMachineObj = coffeeApp.getCoffeeMachineList().get(0);
-                    CoffeeAppLogic.checkAndSetRegisteredUser();
-/*                        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mSplashActivity.getApplicationContext());
-                        try {
-                            for(CoffeeMachine coffeeMachineObj : coffeeApp.getCoffeeMachineList()) {
-                                coffeeAppLogic.loadReviewListByCoffeeMachineId(coffeeMachineObj.getId());
-                                coffeeAppLogic.getUserToAllReviews(coffeeMachineObj.getId());
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }*/
+                    CoffeeAppLogic.checkAndSetRegisteredUser(mSplashActivity.getApplicationContext());
                 } else {
                     Common.displayError(mSplashActivity.getApplicationContext(), "No internet connection!");
                 }
@@ -77,8 +68,6 @@ public class SplashScreenActivity extends Activity{
                 finish();
             }
         }.execute("hey");
-
-        Log.e(TAG, "thread 1-bis");
 
         //TODO remove it
 /*        new Handler().postDelayed(new Runnable() {

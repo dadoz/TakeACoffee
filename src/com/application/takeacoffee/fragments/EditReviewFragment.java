@@ -11,112 +11,88 @@ import android.widget.EditText;
 import com.application.commons.Common;
 import com.application.commons.HeaderUtils;
 import com.application.dataRequest.CoffeeAppLogic;
-import com.application.datastorage.DataStorageSingleton;
 import com.application.models.Review;
-import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
-
-import java.util.ArrayList;
 
 /**
  * Created by davide on 30/04/14.
  */
-public class EditReviewFragment extends Fragment{
-    private static Activity mainActivityRef;
-    private ArrayList<Review> reviewsList;
-    private DataStorageSingleton coffeeApp;
-    private View editReviewView;
+public class EditReviewFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "EditReviewFragment";
+
+    private static Activity mainActivityRef;
+    private View editReviewView;
+    static CoffeeAppLogic mCoffeeAppLogic;
+    static Review mReview;
+    static String coffeeMachineId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mainActivityRef = getActivity();
-        coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
         editReviewView = inflater.inflate(R.layout.edit_review_template, container, false);
+        mCoffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
-//        long reviewId = getArguments().getLong(Common.REVIEW_ID);
-//        String coffeeMachineId = getArguments().getLong(Common.COFFEE_MACHINE_ID_KEY);
-//        reviewsList = coffeeApp.getReviewListByCoffeeMachineId(coffeeMachineId);
         String reviewStatus = (String) this.getArguments().get(Common.REVIEW_STATUS_KEY);
         String reviewId = getArguments().getString(Common.REVIEW_ID);
-        String coffeeMachineId = getArguments().getString(Common.COFFEE_MACHINE_ID_KEY);
+        coffeeMachineId = getArguments().getString(Common.COFFEE_MACHINE_ID_KEY);
 
-        setHeader();
-        initView(coffeeMachineId, reviewId, reviewStatus); //test
+        HeaderUtils.setHeaderByFragmentId(mainActivityRef, 3, getFragmentManager(), Common.EMPTY_VALUE);
 
+        initView(reviewId, reviewStatus); //test
         Common.setCustomFont(editReviewView, getActivity().getAssets());
         return editReviewView;
     }
 
-/*    private Review getReviewById(ArrayList<Review> reviewsList, long reviewId) {
-        for(Review review:reviewsList) {
-            if(review.getId() == reviewId) {
-                return review;
-            }
+    private void initView(String reviewId, String reviewStatus) {
+        mReview = mCoffeeAppLogic.getReviewById(coffeeMachineId, reviewId);
+        if(mReview == null) {
+            Log.e(TAG, "error - no review found");
+            //TODO to be handled
+            return;
         }
-        return null;
-    }*/
 
-    public void setHeader() {
-        HeaderUtils.setHeaderByFragmentId(mainActivityRef, 3, getFragmentManager(), Common.EMPTY_VALUE);
+        switch (Common.ReviewStatusEnum.valueOf(reviewStatus)) {
+            case GOOD:
+                editReviewView.findViewById(R.id.editReviewTextLayoutId)
+                        .setBackgroundColor(getResources().getColor(R.color.light_green_soft));
+                break;
+            case NOTSOBAD:
+                editReviewView.findViewById(R.id.editReviewTextLayoutId)
+                        .setBackgroundColor(getResources().getColor(R.color.light_yellow_lemon_soft));
+                break;
+            case WORST:
+                editReviewView.findViewById(R.id.editReviewTextLayoutId)
+                        .setBackgroundColor(getResources().getColor(R.color.light_violet_soft));
+                break;
+        }
+
+        ((EditText) editReviewView.findViewById(R.id.reviewCommentEditTextId)).setText(mReview.getComment());
+        (editReviewView.findViewById(R.id.editReviewUndoImageId)).setOnClickListener(this);
+        editReviewView.findViewById(R.id.saveReviewButtonId).setOnClickListener(this);
     }
 
-    private void initView(final String coffeeMachineId, String reviewId, String reviewStatus) {
-        //User user = coffeeApp.coffeeMachineData.getRegisteredUser();
-//        Common.ReviewStatusEnum reviewStatus = Common.ReviewStatusEnum.valueOf(reviewStatus);
-        final CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()) {
 
-//        final Review review = getReviewById(reviewsList, reviewId);
-        final Review review = coffeeAppLogic.getReviewById(coffeeMachineId, reviewId);
-        if(review != null) {
+            case R.id.editReviewUndoImageId:
+                Common.hideKeyboard(mainActivityRef, ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)));
+                mainActivityRef.onBackPressed();
+                break;
 
-            //set review data
-/*            if(user != null) {
-                ((TextView) editReviewView.findViewById(R.id.reviewEditUsernameTextId)).setText(user.getUsername());
-                Common.drawProfilePictureByPath((ImageView) editReviewView
-                        .findViewById(R.id.profilePicReviewEditTemplateId), user.getProfilePicturePath(),
-                        getResources().getDrawable(R.drawable.user_icon));
-            }*/
-            switch (Common.ReviewStatusEnum.valueOf(reviewStatus)) {
-                case GOOD:
-                    editReviewView.findViewById(R.id.editReviewTextLayoutId)
-                            .setBackgroundColor(getResources().getColor(R.color.light_green_soft));
-                    break;
-                case NOTSOBAD:
-                    editReviewView.findViewById(R.id.editReviewTextLayoutId)
-                            .setBackgroundColor(getResources().getColor(R.color.light_yellow_lemon_soft));
-                    break;
-                case WORST:
-                    editReviewView.findViewById(R.id.editReviewTextLayoutId)
-                            .setBackgroundColor(getResources().getColor(R.color.light_violet_soft));
-                    break;
-            }
-
-            (editReviewView.findViewById(R.id.editReviewUndoImageId)).setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Common.hideKeyboard(mainActivityRef, ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)));
-                            mainActivityRef.onBackPressed();
-                        }
-                    }
-            );
-            ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)).setText(review.getComment());
-
-            editReviewView.findViewById(R.id.saveReviewButtonId).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            case R.id.saveReviewButtonId :
+                try {
                     Common.displayError(mainActivityRef.getApplicationContext(), "review saved");
-                    String reviewCommentNew = ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)).getText().toString();
-                    //review.setComment(reviewCommentNew);
-                    Common.hideKeyboard(mainActivityRef, ((EditText)editReviewView.findViewById(R.id.reviewCommentEditTextId)));
+                    String reviewCommentNew = ((EditText) editReviewView.findViewById(R.id.reviewCommentEditTextId)).getText().toString();
+                    Common.hideKeyboard(mainActivityRef, ((EditText) editReviewView.findViewById(R.id.reviewCommentEditTextId)));
                     getFragmentManager().popBackStack();
 
-                    coffeeAppLogic.updateReviewById(coffeeMachineId, review.getId(), reviewCommentNew);
+                    mCoffeeAppLogic.updateReviewById(coffeeMachineId, mReview.getId(), reviewCommentNew);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Common.displayError(mainActivityRef.getApplicationContext(), "review not saved :(");
                 }
-            });
-        } else {
-            Log.e(TAG, "error - no review found");
+                break;
         }
 
     }

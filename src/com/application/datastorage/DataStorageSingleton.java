@@ -40,6 +40,7 @@ public class DataStorageSingleton {
     public String profilePicturePathTemp;
     private RequestQueue requestQueue;
     private File customDir;
+    private ArrayList<Review> reviewListTemp;
 //    private ArrayList<ReviewCounter> prevReviewCounterList;
     private ArrayList<ReviewCounter> reviewCounterList;
 
@@ -47,15 +48,14 @@ public class DataStorageSingleton {
     private DataStorageSingleton(Context ctx) {
         context = ctx;
         //TODO CHECK IT OUT
-        File customDir = context.getApplicationContext()
-                .getDir(Common.COFFEE_MACHINE_DIR, Context.MODE_PRIVATE); //Creating an internal dir;
+//        File customDir = context.getApplicationContext()
+//                .getDir(Common.COFFEE_MACHINE_DIR, Context.MODE_PRIVATE); //Creating an internal dir;
 
         sharedPref = context.getApplicationContext().getSharedPreferences(Common.SHARED_PREF, Context.MODE_PRIVATE);
 
         reviewListMap = new ArrayMap<>();
         userListMap = new ArrayMap<>();
         reviewCounterList = new ArrayList<>();
-//        prevReviewCounterList = new ArrayList<>();
 
         requestQueue = getRequestQueue();
 
@@ -168,10 +168,6 @@ public class DataStorageSingleton {
         return customDir;
     }
 
-    public void setUserOnMapByParams(String userId, User user) {
-        userListMap.put(userId, user);
-    }
-
     public ArrayMap getUserList() {
         return userListMap;
     }
@@ -179,43 +175,19 @@ public class DataStorageSingleton {
     public User getUserById(String userId) {
         return userListMap.get(userId); //it couldnt be null :D
     }
-/*
-    public String getPrevRevCounterKey(String coffeeMachineId, Common.ReviewStatusEnum status) {
-        return coffeeMachineId + "_" + status.name();
+    public void addUserOnMapByParams(String userId, User user) {
+        userListMap.put(userId, user);
     }
 
-    public boolean resetPrevReviewCounter(String key) {
-        for (ReviewCounter prevReviewCounter : prevReviewCounterList) {
-            if (prevReviewCounter.getKey().compareTo(key) == 0) {
-                prevReviewCounter.setCounter(0);
-                return true;
-            }
+    public void addUserOnMapByList(ArrayList<User> userList) {
+        if(userList == null) {
+            return;
         }
-        return false;
+
+        for(User user : userList) {
+            userListMap.put(user.getId(), user);
+        }
     }
-
-    public void incrementPrevReviewCounter(String key) {
-        boolean incrementFlag = false;
-        for(ReviewCounter prevReviewCounter : prevReviewCounterList) {
-            if(prevReviewCounter.getKey().compareTo(key) == 0) {
-                prevReviewCounter.incrementCounter();
-                incrementFlag = true;
-            }
-        }
-
-        if(! incrementFlag) {
-            prevReviewCounterList.add(new ReviewCounter(key));
-        }
-
-    }
-
-    public ArrayList<ReviewCounter> getPrevReviewCounterList() {
-        return this.prevReviewCounterList;
-    }*/
-
-/*    public void setReviewCounterList(ArrayList<ReviewCounter> reviewCounterList) {
-        this.reviewCounterList = reviewCounterList;
-    }*/
 
     public ArrayList<ReviewCounter> getReviewCounterList() {
         return reviewCounterList;
@@ -225,19 +197,12 @@ public class DataStorageSingleton {
         reviewCounterList.add(reviewCounter);
     }
 
-
-/*    public ArrayList<ReviewCounter> getReviewCounterList() {
-        return reviewCounterList;
-    }*/
-
-/*    public ReviewCounter getReviewCounterByParams(String coffeeMachineId) {
-        for(ReviewCounter reviewCounter : reviewCounterList) {
-            if(reviewCounter.getKey().compareTo(coffeeMachineId) == 0) {
-                return reviewCounter;
-            }
-        }
-        return null;
+    public void setReviewListTemp(ArrayList<Review> list) {
+        reviewListTemp = list;
     }
 
-*/
+    public ArrayList<Review> getReviewListTemp() {
+        return reviewListTemp;
+    }
+
 }

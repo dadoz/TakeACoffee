@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
+import com.application.models.Review;
 import com.application.models.ReviewCounter;
+import com.application.models.User;
 import com.google.gson.JsonParseException;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
@@ -14,6 +16,7 @@ import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,12 +35,14 @@ public class RESTLoader extends AsyncTaskLoader<RESTLoader.RESTResponse> {
     private final Uri mAction;
     private final Bundle mParams;
     private final int mVerb;
+    private final String mRequestType;
 
-    public RESTLoader(FragmentActivity activity, int verb, Uri action, Bundle params) {
+    public RESTLoader(FragmentActivity activity, int verb, Uri action, Bundle params, String requestType) {
         super(activity);
         mAction = action;
         mVerb = verb;
         mParams = params;
+        mRequestType = requestType;
     }
 
     @Override
@@ -122,26 +127,25 @@ public class RESTLoader extends AsyncTaskLoader<RESTLoader.RESTResponse> {
                 int statusCode = responseStatus != null ? responseStatus.getStatusCode() : 0;
 
                 // Here we create our response and send it back to the LoaderCallbacks<RESTResponse> implementation.
-                RESTResponse restResponse = new RESTResponse(responseEntity != null ? EntityUtils.toString(responseEntity) : null, statusCode);
+                RESTResponse restResponse = new RESTResponse(responseEntity != null ? EntityUtils.toString(responseEntity) : null, statusCode, mRequestType);
                 return restResponse;
             }
 
             // Request was null if we get here, so let's just send our empty RESTResponse like usual.
             return new RESTResponse();
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             Log.e(TAG, "URI syntax was incorrect. "+ verbToString(mVerb) +": "+ mAction.toString(), e);
             return new RESTResponse();
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "A UrlEncodedFormEntity was created with an unsupported encoding.", e);
             return new RESTResponse();
-        }
-        catch (ClientProtocolException e) {
+        } catch (ClientProtocolException e) {
             Log.e(TAG, "There was a problem when sending the request.", e);
             return new RESTResponse();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
+            Log.e(TAG, "There was a problem when sending the request.", e);
+            return new RESTResponse();
+        } catch (Exception e) {
             Log.e(TAG, "There was a problem when sending the request.", e);
             return new RESTResponse();
         }
@@ -191,17 +195,26 @@ public class RESTLoader extends AsyncTaskLoader<RESTLoader.RESTResponse> {
 
     public class RESTResponse {
 
+        private String requestType;
         private int key;
         private String data;
+        private boolean userResponse;
+        private boolean reviewResponse;
+        private Object userListParser;
 
         public RESTResponse() {
             //TODO need to be implemented
         }
 
-        public RESTResponse(String data, int key) {
+        public RESTResponse(String data, int key, String requestType) {
             //TODO need to be implemented
             this.data = data;
             this.key = key;
+            this.requestType = requestType;
+        }
+
+        public String getRequestType() {
+            return requestType;
         }
 
         public int getCode() {
@@ -210,6 +223,31 @@ public class RESTLoader extends AsyncTaskLoader<RESTLoader.RESTResponse> {
 
         public String getData() {
             return data;
+        }
+
+        public int getHttpResponseCode() {
+            JSONObject object = null;
+            Log.e(TAG, "data result" + data);
+            assert data != null;
+            try {
+                object = new JSONObject(data);
+                return object.getJSONObject("result").getInt("code");
+            } catch (JSONException e) {
+                assert object != null;
+                try {
+                    if(object.getJSONObject("result").keys().hasNext()) {
+                        return 200;
+                    }
+                } catch (JSONException e1) {
+                    try {
+                        return object.getInt("code");
+                    } catch (JSONException e2) {
+//                        e2.printStackTrace();
+                    }
+//                    e1.printStackTrace();
+                }
+            }
+            return -1; //NOT AVAILABLE
         }
 
         /***** DATA PARSER ****/
@@ -248,7 +286,105 @@ public class RESTLoader extends AsyncTaskLoader<RESTLoader.RESTResponse> {
             }
             return null;
         }
+
+        private Review reviewParser(String data) {
+            JSONObject reviewJsonObj = null;
+            try {
+                reviewJsonObj = new JSONObject(data);
+                String reviewId = reviewJsonObj.getString("objectId");
+                String reviewUserId = reviewJsonObj
+                        .getString("user_id_string");
+                String reviewCoffeeMachineId = reviewJsonObj
+                        .getString("coffee_machine_id_string");
+                String reviewComment = reviewJsonObj
+                        .getString("comment");
+                long timestamp = reviewJsonObj
+                        .getLong("timestamp");
+                String reviewStatus = reviewJsonObj
+                        .getString("status");
+
+                return new Review(reviewId, reviewComment, Review.parseStatus(reviewStatus), timestamp, reviewUserId, reviewCoffeeMachineId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        public boolean getHasMoreReviews() {
+            try {
+                JSONObject dataObject = new JSONObject(this.data);
+                return (dataObject.getJSONObject("result")).getBoolean("hasMoreReviews");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        public ArrayList<Review> getReviewListParser() {
+            try {
+                JSONObject dataObject = new JSONObject(this.data);
+//                boolean hasMoreReviews = (dataObject.getJSONObject("result")).getBoolean("hasMoreReviews");
+                JSONArray reviewJsonArray = (dataObject.getJSONObject("result")).getJSONArray("data");
+                ArrayList<Review> reviewsList = new ArrayList<Review>();
+                for (int j = 0; j < reviewJsonArray.length(); j ++) {
+                    JSONObject reviewJsonObj = reviewJsonArray.getJSONObject(j);
+                    reviewsList.add(reviewParser(reviewJsonObj.toString()));
+                }
+
+                return reviewsList;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        public boolean isUserResponse() {
+            return requestType != null && requestType.compareTo("USER_REQ") == 0;
+        }
+
+        public boolean isReviewResponse() {
+            return requestType != null && requestType.compareTo("REVIEW_REQ") == 0;
+        }
+
+        public Object getUserListParser() {
+            ArrayList<User> userList = new ArrayList<User>();
+            try {
+                JSONArray jsonArray = new JSONObject(this.data)
+                        .getJSONArray("result");
+                for (int i = 0; i < jsonArray.length(); i ++) {
+                    User user = userParser(jsonArray.get(i).toString());
+                    if(user != null) {
+                        userList.add(user);
+                    }
+                }
+                return userList;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        private User userParser(String data) {
+            JSONObject jsonObj = null;
+            try {
+                jsonObj = new JSONObject(data);
+                String userId = jsonObj.getString("objectId");
+                String username = jsonObj
+                        .getString("username");
+                String profilePicturePath = jsonObj
+                        .getString("profile_picture_path");
+
+                return new User(userId, profilePicturePath, username);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
     }
+
 
     public class HTTPVerb {
         public static final int GET = 0;

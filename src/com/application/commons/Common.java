@@ -79,6 +79,15 @@ public class Common {
         }
     }
 
+    public static void setCustomFontByTextView(View v, AssetManager assets) {
+        //set custom font style
+//        Typeface font = Typeface.createFromAsset(assets, "fonts/Qiber.otf");
+//        Typeface font = Typeface.createFromAsset(assets, "fonts/rabiohead.ttf");
+//        Typeface font = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAir.ttf");
+        Typeface font = Typeface.createFromAsset(assets, "fonts/AmaticSC-Regular.ttf");
+        ((TextView) v).setTypeface(font);
+    }
+
     public static void setCustomFont(View fragmentView, AssetManager assets) {
         //set custom font style
 //        Typeface font = Typeface.createFromAsset(assets, "fonts/Qiber.otf");

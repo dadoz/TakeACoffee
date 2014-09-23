@@ -275,7 +275,7 @@ public class ChoiceReviewContainerFragment extends Fragment
             int verb = RESTLoader.HTTPVerb.POST;
             Uri action = Uri.parse("https://api.parse.com/1/functions/countOnReviewsWithTimestamp");
 
-            return new RESTLoader(this.getActivity(), verb, action, bundle);
+            return new RESTLoader(this.getActivity(), verb, action, bundle, "REVIEW_REQ");
         } catch (Exception e) {
             e.printStackTrace();
         }
