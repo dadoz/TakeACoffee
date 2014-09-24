@@ -348,6 +348,10 @@ public class RESTLoader extends AsyncTaskLoader<RESTLoader.RESTResponse> {
             return requestType != null && requestType.compareTo("REVIEW_REQ") == 0;
         }
 
+        public boolean isMoreReviewResponse() {
+            return requestType != null && requestType.compareTo("MORE_REVIEW_REQ") == 0;
+        }
+
         public Object getUserListParser() {
             ArrayList<User> userList = new ArrayList<User>();
             try {

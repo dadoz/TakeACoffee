@@ -25,18 +25,21 @@ import com.application.extraMenu.ExtraMenuController;
 import com.application.models.Review;
 import com.application.models.User;
 import com.application.takeacoffee.R;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by davide on 08/04/14.
  */
 public class ReviewListFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<RESTLoader.RESTResponse>,
-        AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+        AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener {
     private static final String TAG = "ReviewListFragment";
     private static DataStorageSingleton coffeeApp;
     private static FragmentActivity mainActivityRef = null;
@@ -113,6 +116,7 @@ public class ReviewListFragment extends Fragment
         listView.setAdapter(reviewListenerAdapter);
 
         listView.setOnItemLongClickListener(this);
+        listView.setOnItemClickListener(this);
     }
 
     public void setReviewListHeaderBackgroundLabel(final View reviewStatusText, boolean setLabel) {
@@ -182,6 +186,24 @@ public class ReviewListFragment extends Fragment
         return null;
     }
 
+    private Bundle createBundleMoreReview(String coffeeMachineId, String fromReviewId, long toTimestamp) {
+        String action = "https://api.parse.com/1/functions/getMoreReview";
+        Bundle bundle = new Bundle();
+        JSONObject paramsObj = new JSONObject();
+        try {
+            paramsObj.put("coffeeMachineId", coffeeMachineId);
+            paramsObj.put("fromReviewId", fromReviewId);
+            paramsObj.put("toTimestamp", toTimestamp);
+            bundle.putString("params", paramsObj.toString());
+            bundle.putString("action", action);
+            bundle.putString("requestType", "MORE_REVIEW_REQ");
+            return bundle;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /*********LOADER**********/
     @Override
     public Loader<RESTLoader.RESTResponse> onCreateLoader(int verb, Bundle bundle) {
@@ -222,7 +244,38 @@ public class ReviewListFragment extends Fragment
             return;
         }
 
+
+        if (restResponse.isMoreReviewResponse()) {
+            moreReviewResponse(restResponse);
+            return;
+        }
+
+
         Log.e(TAG, "error - no one response is caught");
+    }
+
+    private void moreReviewResponse(RESTLoader.RESTResponse restResponse) {
+        if(! restResponse.getHasMoreReviews()) {
+            listView.removeHeaderView(moreReviewLoaderView);
+        }
+
+        ArrayList<Review> reviewList = restResponse.getReviewListParser();
+
+        Collections.reverse(reviewList);
+
+        reviewListDataStorage.addAll(0, reviewList);
+
+        ArrayList<String> userIdList = new ArrayList<>();
+        for (Review review : reviewList) {
+            userIdList.add(review.getUserId());
+        }
+        Bundle bundle = createBundleUser(userIdList);
+        Log.d(TAG, "hey " + bundle.getString("requestType"));
+        getLoaderManager().restartLoader(RESTLoader.HTTPVerb.POST, bundle, this).forceLoad();
+
+        if (listView.getAdapter() != null) {
+            ((ReviewListAdapter) ((WrapperListAdapter) listView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+        }
 
     }
 
@@ -232,14 +285,15 @@ public class ReviewListFragment extends Fragment
         ArrayList<User> userList = (ArrayList<User>) restResponse.getUserListParser();
         coffeeAppLogic.addUserOnLocalListByList(userList);
         if (listView.getAdapter() != null) {
-            ((ReviewListAdapter) listView.getAdapter()).notifyDataSetChanged();
+            ((ReviewListAdapter) ((WrapperListAdapter) listView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
         }
     }
 
     private void reviewResponse(RESTLoader.RESTResponse restResponse) {
-        //            if(restResponse.getHasMoreReviews()) {
-//                listView.addHeaderView(moreReviewLoaderView);
-//            }
+        if(restResponse.getHasMoreReviews()) {
+                listView.addHeaderView(moreReviewLoaderView);
+        }
+
         ArrayList<Review> reviewList = restResponse.getReviewListParser();
 
         reviewListDataStorage = reviewList;
@@ -254,7 +308,6 @@ public class ReviewListFragment extends Fragment
 
         initView(reviewList, coffeeMachineId);
     }
-
 
     @Override
     public void onLoaderReset(Loader loader) {
@@ -273,10 +326,29 @@ public class ReviewListFragment extends Fragment
         if(view.getId() == R.id.linearLayout) {
             Log.e(TAG, " id: linearLayout");
         }
+        //more review click
+        if(view.getId() == R.id.loadOlderReviewLayoutId) {
+            try{
+                Review firstReview = reviewListDataStorage.get(0);
+                String latestReviewId = firstReview.getId();
+                DateTime dateTime = new DateTime(firstReview.getTimestamp());
+                long fromTimestamp = CoffeeAppLogic.TimestampHandler.getOneWeekAgoTimestamp(dateTime);
+                Bundle bundle = createBundleMoreReview(coffeeMachineId, latestReviewId, fromTimestamp);
+                Log.d(TAG, "hey " + bundle.getString("requestType"));
+                getLoaderManager().restartLoader(RESTLoader.HTTPVerb.POST, bundle, this).forceLoad();
+            } catch (Exception e) {
+                Log.e(TAG, "failed to load more review");
+            }
+        }
     }
+
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+        if(view.getId() == R.id.loadOlderReviewLayoutId) {
+            return true;
+        }
+
         Review reviewObj = (Review) adapterView.getItemAtPosition(position);
         final View mainItemView = view.findViewById(R.id.mainItemViewId);
 
@@ -315,57 +387,4 @@ public class ReviewListFragment extends Fragment
 
 
 }
-
-
-
-
-
-    /*    private void setPreviousReviewsButtonAction() {
-        ListView listView = (ListView)reviewListView.findViewById(R.id.reviewsContainerListViewId);
-        final ReviewListAdapter adapter = (ReviewListAdapter)listView.getAdapter();
-        final View prevReviewsButtonId = reviewListView.findViewById(R.id.prevReviewsButtonId);
-
-        DateTime dateTime = new DateTime();
-        long oneWeekAgoTimestamp = CoffeeAppLogic.TimestampHandler.getOneWeekAgoTimestamp(dateTime);
-        long todayTimestamp = CoffeeAppLogic.TimestampHandler.getTodayTimestamp(dateTime);
-
-        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
-        final ArrayList<Review> prevReviewList = coffeeAppLogic.getReviewListByTimestamp(coffeeMachineId,
-                reviewStatus, oneWeekAgoTimestamp, todayTimestamp);
-        if(prevReviewList == null) {
-            Log.e(TAG, "previous review list is empty");
-            prevReviewsButtonId.setVisibility(View.GONE);
-            return;
-        }
-
-        prevReviewsButtonId.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ArrayList<Review> reviewList = adapter.getList();
-                reviewList.removeAll(reviewList);
-                reviewList.addAll(prevReviewList);
-                adapter.notifyDataSetChanged();
-                prevReviewsButtonId.setVisibility(View.GONE);
-            }
-        });
-    }
-*/
-/*
-    private void setReviewListHeader(final String coffeeMachineId, final View reviewStatusText,
-                                 final View reviewStatusAddImageView, boolean setTextLabel) {
-        setReviewListHeaderBackgroundLabel(reviewStatusText, setTextLabel);
-
-        if(reviewStatusAddImageView != null) {
-            reviewStatusAddImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.e(TAG, "add review on " + reviewStatus);
-                    Bundle args = new Bundle();
-                    args.putLong(Common.COFFEE_MACHINE_ID_KEY, coffeeMachineId);
-                    args.putBoolean(Common.ADD_REVIEW_FROM_LISTVIEW, true);
-                }
-            });
-        }
-    }*/
-
 

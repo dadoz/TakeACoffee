@@ -639,5 +639,6 @@ public class CoffeeAppLogic {
         public static long getTodayTimestamp(DateTime dateTime) {
             return dateTime.toDateTime().withTimeAtStartOfDay().getMillis();
         }
+
     }
 }
