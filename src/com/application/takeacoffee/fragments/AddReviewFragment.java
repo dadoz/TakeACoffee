@@ -1,5 +1,6 @@
 package com.application.takeacoffee.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -9,10 +10,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.application.commons.Common;
-import com.application.dataRequest.CoffeeAppLogic;
-import com.application.datastorage.DataStorageSingleton;
+import com.application.dataRequest.CoffeeAppController;
+import com.application.datastorage.DataStorageApplication;
 import com.application.models.Review;
-import com.application.models.User;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 import java.util.Calendar;
@@ -25,8 +26,6 @@ import java.util.Calendar;
  */
 public class AddReviewFragment extends Fragment {
     private static final String TAG = "AddReviewFragment";
-    private static DataStorageSingleton coffeeApp;
-
     private static FragmentActivity mainActivityRef;
 
     private View addReviewView, addReviewButton;
@@ -34,14 +33,13 @@ public class AddReviewFragment extends Fragment {
     private int pagePosition;
 
     private static String reviewText = "Review for this machine - auto generated";
+    private CoffeeAppController coffeeAppController;
 
-    public static AddReviewFragment create(int pageNumber, String coffeeMachineId) {
-        AddReviewFragment fragment = new AddReviewFragment();
-        Bundle args = new Bundle();
-        args.putInt(Common.ARG_PAGE, pageNumber);
-        args.putString(Common.COFFEE_MACHINE_ID_KEY, coffeeMachineId);
-        fragment.setArguments(args);
-        return fragment;
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mainActivityRef = (CoffeeMachineActivity) activity;
+        coffeeAppController = ((CoffeeMachineActivity) mainActivityRef).getCoffeeAppController();
     }
 
     @Override
@@ -51,8 +49,6 @@ public class AddReviewFragment extends Fragment {
         addReviewButton = addReviewView.findViewById(R.id.addReviewButtonId);
 //        addReviewCustomTextButton = addReviewView.findViewById(R.id.addReviewCustomTextButtonId);
 
-        //get data from application
-        coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
         //get args from fragment
         args = getArguments();
 
@@ -148,14 +144,13 @@ public class AddReviewFragment extends Fragment {
     public void addReview(final String coffeeMachineId, final Common.ReviewStatusEnum reviewStatus,
                                  boolean reviewWithText) {
         //add data to list
-        if(! coffeeApp.isRegisteredUser()) {
+        if(! coffeeAppController.isRegisteredUser()) {
             Common.displayError(mainActivityRef.getApplicationContext(), "You must be logged in before add review!");
             return;
         }
-        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
-        if(coffeeApp.isLocalUser()) {
-            if(! coffeeAppLogic.registerLocalUser()) {
+        if(coffeeAppController.isLocalUser()) {
+            if(! coffeeAppController.registerLocalUser()) {
                 Common.displayError(mainActivityRef.getApplicationContext(), "Failed to register your username - check your internet connection!");
                 return;
             }
@@ -174,7 +169,7 @@ public class AddReviewFragment extends Fragment {
         }
 
         if(reviewWithText) {
-            reviewText = ((TextView)addReviewView.findViewById(R.id.reviewEditTextId)).getText().toString();
+            reviewText = ((TextView) addReviewView.findViewById(R.id.reviewEditTextId)).getText().toString();
             if(reviewText.equals(new String("")))  {
                 Common.displayError(mainActivityRef.getApplicationContext(), "you must insert your text review!");
                 return;
@@ -184,9 +179,7 @@ public class AddReviewFragment extends Fragment {
         }
 
         //ADD new Review
-        coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
-
-        coffeeAppLogic.addReviewByParams(coffeeApp.getRegisteredUserId(), coffeeMachineId, reviewText, reviewStatus);        //TODO replace these rows
+        coffeeAppController.addReviewByParams(coffeeAppController.getRegisteredUserId(), coffeeMachineId, reviewText, reviewStatus);        //TODO replace these rows
         createReviewsListView(reviewStatus, args);
 
 //        mainActivityRef.getSupportFragmentManager().popBackStack(); //TODO SOOOOO FUCKING WRONG -

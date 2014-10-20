@@ -1,17 +1,7 @@
 package com.application.dataRequest;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.widget.ImageView;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
-import com.application.commons.BitmapCustomUtils;
-import com.application.datastorage.DataStorageSingleton;
-import com.application.takeacoffee.R;
 
 /**
  * Created by davide on 06/09/14.

@@ -2,13 +2,12 @@ package com.application.dataRequest;
 
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.application.commons.Common;
-import com.application.datastorage.DataStorageSingleton;
+import com.application.datastorage.DataStorageApplication;
 import com.application.models.CoffeeMachine;
 import com.application.models.Review;
 import com.application.models.User;
@@ -19,7 +18,6 @@ import org.joda.time.DateTime;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by davide on 08/09/14.
@@ -30,6 +28,7 @@ public class ParseDataRequest {
     private static final int QUERY_LIMITS = 5;
     private static int reviewCountByCoffeeMachineId;
     private static Object prevRevCounterKey;
+    private static String reviewCountFakeData;
 
     public static ArrayList<CoffeeMachine> getAllCoffeeMachines() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("coffee_machines");
@@ -53,7 +52,7 @@ public class ParseDataRequest {
         return list;
     }
 
-    public static void getAllCoffeeMachines(DataStorageSingleton coffeeApp) {
+    public static void getAllCoffeeMachines(DataStorageApplication coffeeApp) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("coffee_machines");
         List<ParseObject> parseObjects;
         try {
@@ -75,7 +74,7 @@ public class ParseDataRequest {
         Log.d(TAG, "hey object id " + parseObjects.get(0).get("name"));
     }
 
-    public static void getAllCoffeeMachinesAsync(final DataStorageSingleton coffeeApp) {
+    public static void getAllCoffeeMachinesAsync(final DataStorageApplication coffeeApp) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("coffee_machines");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -94,7 +93,7 @@ public class ParseDataRequest {
         });
     }
 
-    public static void getAllReviewsByCoffeeMachineId(DataStorageSingleton coffeeApp,
+    public static void getAllReviewsByCoffeeMachineId(DataStorageApplication coffeeApp,
                                                       String coffeeMachineId){
         ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
         query.whereEqualTo("coffee_machine_id_string", coffeeMachineId);
@@ -120,7 +119,7 @@ public class ParseDataRequest {
         coffeeApp.getReviewListMap().put(coffeeMachineId, reviewList);
     }
 
-    public static void getAllReviewsByCoffeeMachineIdAsync(final DataStorageSingleton coffeeApp,
+    public static void getAllReviewsByCoffeeMachineIdAsync(final DataStorageApplication coffeeApp,
                                                       final String coffeeMachineId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
         query.whereEqualTo("coffee_machine_id_string", coffeeMachineId);
@@ -199,11 +198,12 @@ public class ParseDataRequest {
         return;
     }
 
-    public static void downloadProfilePicture(final DataStorageSingleton coffeeApp,
+    public static void downloadProfilePicture(final DataStorageApplication coffeeApp,
                                               String userId, final ImageView profilePicImageView,
                                               final Drawable defaultIcon){
 
-        final File dir = coffeeApp.getCustomDir();
+        final File dir = null;
+//        final File dir = coffeeApp.getCustomDir();
         ParseQuery<ParseObject> query = ParseQuery.getQuery("users");
         query.whereEqualTo("user_id_string", userId);
 //        List<ParseObject> userList = query.find();
@@ -275,7 +275,7 @@ public class ParseDataRequest {
         Log.e(TAG, "user not found ");
     }
 
-    public static String addUserByParams(final DataStorageSingleton coffeeApp,
+    public static String addUserByParams(final DataStorageApplication coffeeApp,
                                        final String profilePicturePath, final String username) {
         ParseObject parseObject = new ParseObject("users");
         if (profilePicturePath != null) {
@@ -501,7 +501,7 @@ public class ParseDataRequest {
         return null;
     }
 
-    public static void getAllReviewsByCoffeeMachineIdToday(DataStorageSingleton coffeeApp,
+    public static void getAllReviewsByCoffeeMachineIdToday(DataStorageApplication coffeeApp,
                                                       String coffeeMachineId) {
         //TODAY request
         DateTime dateTime = new DateTime();
@@ -554,7 +554,7 @@ public class ParseDataRequest {
         return reviewsCount;
     }
 
-    public static void setReviewCountByCoffeeMachineId(DataStorageSingleton coffeeApp, Common.ReviewStatusEnum status,
+    public static void setReviewCountByCoffeeMachineId(DataStorageApplication coffeeApp, Common.ReviewStatusEnum status,
                                                        String coffeeMachineId, long fromTimestamp, long toTimestamp) {
         int reviewsCount = 0;
         ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
@@ -573,7 +573,7 @@ public class ParseDataRequest {
 //        String prevRevCounterKey = coffeeApp.getPrevRevCounterKey(coffeeMachineId, status);
 //        coffeeApp.getPrevReviewCounterList().put(prevRevCounterKey, reviewsCount);
     }
-    public static boolean setReviewCountByCoffeeMachineId(DataStorageSingleton coffeeApp,
+    public static boolean setReviewCountByCoffeeMachineId(DataStorageApplication coffeeApp,
                                                        String coffeeMachineId, long fromTimestamp, long toTimestamp) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
         query.whereEqualTo("coffee_machine_id_string", coffeeMachineId);
@@ -595,7 +595,7 @@ public class ParseDataRequest {
     }
 
 
-    public static boolean setAndCountReviewByCoffeeMachineId(DataStorageSingleton coffeeApp,
+    public static boolean setAndCountReviewByCoffeeMachineId(DataStorageApplication coffeeApp,
                                                           String coffeeMachineId, long fromTimestamp, long toTimestamp) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
         query.whereEqualTo("coffee_machine_id_string", coffeeMachineId);
@@ -645,18 +645,6 @@ public class ParseDataRequest {
     }
 
 
-/*    public static class FindCallbackCustom extends FindCallback<ParseObject> {
-        private final ImageLoader imageLoader;
-        private final int defaultIcon;
-        private TextView usernameTextView;
-        private ImageView profilePicImageView;
 
-        public FindCallbackCustom(TextView textView, ImageView imageView, ImageLoader imageLoader, int defaultIcon) {
-            this.usernameTextView = textView;
-            this.profilePicImageView = imageView;
-            this.imageLoader = imageLoader;
-            this.defaultIcon = defaultIcon;
-        }
 
-    }*/
 }

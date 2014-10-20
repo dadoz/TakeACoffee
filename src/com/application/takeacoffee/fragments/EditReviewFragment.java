@@ -10,8 +10,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import com.application.commons.Common;
 import com.application.commons.HeaderUtils;
-import com.application.dataRequest.CoffeeAppLogic;
+import com.application.dataRequest.CoffeeAppController;
 import com.application.models.Review;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 /**
@@ -22,15 +23,21 @@ public class EditReviewFragment extends Fragment implements View.OnClickListener
 
     private static Activity mainActivityRef;
     private View editReviewView;
-    static CoffeeAppLogic mCoffeeAppLogic;
     static Review mReview;
     static String coffeeMachineId;
+    private CoffeeAppController coffeeAppController;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        mainActivityRef = activity;
+        coffeeAppController = ((CoffeeMachineActivity) mainActivityRef).getCoffeeAppController();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
-        mainActivityRef = getActivity();
         editReviewView = inflater.inflate(R.layout.edit_review_template, container, false);
-        mCoffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
         String reviewStatus = (String) this.getArguments().get(Common.REVIEW_STATUS_KEY);
         String reviewId = getArguments().getString(Common.REVIEW_ID);
@@ -44,7 +51,7 @@ public class EditReviewFragment extends Fragment implements View.OnClickListener
     }
 
     private void initView(String reviewId, String reviewStatus) {
-        mReview = mCoffeeAppLogic.getReviewById(coffeeMachineId, reviewId);
+        mReview = coffeeAppController.getReviewById(coffeeMachineId, reviewId);
         if(mReview == null) {
             Log.e(TAG, "error - no review found");
             //TODO to be handled
@@ -87,7 +94,7 @@ public class EditReviewFragment extends Fragment implements View.OnClickListener
                     Common.hideKeyboard(mainActivityRef, ((EditText) editReviewView.findViewById(R.id.reviewCommentEditTextId)));
                     getFragmentManager().popBackStack();
 
-                    mCoffeeAppLogic.updateReviewById(coffeeMachineId, mReview.getId(), reviewCommentNew);
+                    coffeeAppController.updateReviewById(coffeeMachineId, mReview.getId(), reviewCommentNew);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Common.displayError(mainActivityRef.getApplicationContext(), "review not saved :(");

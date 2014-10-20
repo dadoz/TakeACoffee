@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import com.application.commons.Common;
 import com.application.takeacoffee.fragments.AddReviewFragment;
-
+/*
 public class AddReviewPagerAdapter extends FragmentStatePagerAdapter {
     private String coffeeMachineId;
 
@@ -24,3 +24,4 @@ public class AddReviewPagerAdapter extends FragmentStatePagerAdapter {
         return Common.NUM_PAGES;
     }
 }
+*/

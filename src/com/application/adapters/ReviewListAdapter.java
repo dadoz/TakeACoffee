@@ -12,11 +12,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.application.commons.Common;
-import com.application.dataRequest.CoffeeAppLogic;
-import com.application.datastorage.DataStorageSingleton;
+import com.application.dataRequest.CoffeeAppController;
 import com.application.extraMenu.ExtraMenuController;
 import com.application.models.Review;
 import com.application.models.User;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 
 import java.util.ArrayList;
@@ -24,12 +24,12 @@ import java.util.ArrayList;
 /****ADAPTER****/
 public class ReviewListAdapter extends ArrayAdapter<Review> implements View.OnClickListener {
     private static final String TAG = "ReviewListAdapter";
-    private final DataStorageSingleton coffeeApp;
     private ArrayList<Review> reviewList;
     private int selectedItemIndex = Common.ITEM_NOT_SELECTED;
     private Bitmap defaultIcon;
     private String coffeeMachineId;
     private FragmentActivity mainActivityRef;
+    private CoffeeAppController coffeeAppController;
 
     public ReviewListAdapter(FragmentActivity activity, int resource, ArrayList<Review> reviewList,
                                String coffeeMachineId) {
@@ -37,10 +37,9 @@ public class ReviewListAdapter extends ArrayAdapter<Review> implements View.OnCl
         this.mainActivityRef = activity;
         this.reviewList = reviewList;
         this.coffeeMachineId = coffeeMachineId;
-        this.coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
         //SAVE MEMORY DEFAULT ICON ALLOCATION
         this.defaultIcon = BitmapFactory.decodeResource(mainActivityRef.getResources(), R.drawable.user_icon);
-
+        this.coffeeAppController = ((CoffeeMachineActivity) mainActivityRef).getCoffeeAppController();
     }
 
     public ArrayList<Review> getList(){
@@ -49,8 +48,8 @@ public class ReviewListAdapter extends ArrayAdapter<Review> implements View.OnCl
 
     public View getView(final int position, View convertView, ViewGroup parent) {
         Review reviewObj = reviewList.get(position);
-        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
-        User userOnReview = coffeeAppLogic.getUserByIdInListview(reviewObj.getUserId());
+//        CoffeeAppController coffeeAppLogic = new CoffeeAppController(mainActivityRef.getApplicationContext());
+        User userOnReview = coffeeAppController.getUserByIdInListview(reviewObj.getUserId());
         ViewHolder holder;
 //            if(convertView == null) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -72,10 +71,10 @@ public class ReviewListAdapter extends ArrayAdapter<Review> implements View.OnCl
         holder.reviewDateTextView.setText(reviewObj.getFormattedTimestamp());
 
         //they call volley lib to load profile picture
-        coffeeAppLogic.setUsernameToUserOnReview(holder.usernameTextView,
+        coffeeAppController.setUsernameToUserOnReview(holder.usernameTextView,
                 userOnReview.getUsername(), userOnReview.getId());
         //set extra menu visibility
-        coffeeAppLogic.setProfilePictureToUserOnReview(holder.profilePicImageView,
+        coffeeAppController.setProfilePictureToUserOnReview(holder.profilePicImageView,
                 userOnReview.getProfilePicturePath(), this.defaultIcon,
                 userOnReview.getId());
         holder.extraMenuItemView.setVisibility(View.GONE);

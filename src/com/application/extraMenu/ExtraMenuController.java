@@ -1,19 +1,17 @@
 package com.application.extraMenu;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import com.application.adapters.ReviewListAdapter;
 import com.application.commons.Common;
-import com.application.dataRequest.CoffeeAppLogic;
+import com.application.dataRequest.CoffeeAppController;
 import com.application.models.Review;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 import com.application.takeacoffee.fragments.EditReviewFragment;
 
@@ -23,6 +21,7 @@ import com.application.takeacoffee.fragments.EditReviewFragment;
 public class ExtraMenuController {
 
     private static final String TAG = "ExtraMenuController";
+    public static CoffeeAppController coffeeAppController;
 
     public static void getEditReviewFragment(FragmentActivity mainActivityRef, String reviewId, String coffeeMachineId,
                                              Common.ReviewStatusEnum reviewStatus) {
@@ -45,15 +44,17 @@ public class ExtraMenuController {
     public static void alertDialogDeleteReview(FragmentActivity mainActivityRef, final String coffeeMachineId,
                                                final ReviewListAdapter adapter,
                                                final Review reviewSelectedItem) {
-        final CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+
+        coffeeAppController = ((CoffeeMachineActivity) mainActivityRef).getCoffeeAppController();
 
         Dialog dialog = new AlertDialog.Builder(mainActivityRef)
                 .setTitle("Delete Review")
                 .setMessage("Are you sure you want to delete your review?")
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        coffeeAppLogic.removeReviewById(coffeeMachineId, reviewSelectedItem);
+                        coffeeAppController.removeReviewById(coffeeMachineId, reviewSelectedItem);
                         adapter.remove(reviewSelectedItem);
                         adapter.setSelectedItemIndex(Common.ITEM_NOT_SELECTED);
                         adapter.notifyDataSetChanged();

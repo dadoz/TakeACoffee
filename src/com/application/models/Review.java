@@ -87,6 +87,11 @@ public class Review {
     }
 
     public static ReviewStatusEnum parseStatus(String reviewStatus) {
+        if(reviewStatus == null) {
+            Log.e(TAG, "status not set -");
+            return ReviewStatusEnum.NOTSET;
+        }
+
         if(reviewStatus.equals("GOOD")) {
             return ReviewStatusEnum.GOOD;
         } else if(reviewStatus.equals("NOTSOBAD")) {

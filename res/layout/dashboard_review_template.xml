@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <include layout="@layout/review_loader_layout" />
+
+    <!--main content-->
+<!--    <RelativeLayout
+            android:id="@+id/choiceReviewPageContainerId"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="@dimen/extra_huge_icon_size"
+            android:orientation="vertical">
+
+
+    <include layout="@layout/dashboard_today_review_template"/>
+            <include layout="@layout/dashboard_status_template"/>
+
+    </RelativeLayout>-->
+
+<!--    <LinearLayout
+            android:id="@+id/leftArrowLayoutId"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:padding="@dimen/small_padding"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/extra_huge_icon_size"
+            android:layout_alignParentRight="true">
+    </LinearLayout>
+-->
+
+    <!--bottom bar-->
+    <RelativeLayout
+            android:id="@+id/footerChoiceReviewLayoutId"
+            android:layout_width="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_height="@dimen/button_height"
+            android:gravity="center"
+            android:background="@color/dark_black"
+            android:padding="@dimen/small_padding">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/light_grey"
+                android:textSize="@dimen/text_big_24"
+                android:text="Add review"
+                />
+    </RelativeLayout>
+
+
+    <!-- MAIN CONTENT -->
+    <RelativeLayout
+            android:id="@+id/reviewDashboardContainerLayoutId"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:padding="@dimen/small_padding"
+            android:layout_above="@id/footerChoiceReviewLayoutId"
+            android:layout_alignParentLeft="true">
+        <!--<ImageView-->
+                <!--android:id="@+id/reviewDashboardLeftArrowImageViewId"-->
+                <!--android:layout_width="@dimen/medium_icon_size"-->
+                <!--android:layout_height="fill_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:src="@drawable/left_arrow"/>-->
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:orientation="vertical">
+                <!--android:layout_toLeftOf="@id/reviewDashboardLeftArrowImageViewId"-->
+            <include layout="@layout/dashboard_today_review_template"/>
+            <include layout="@layout/header_coffee_machine_tpl"/>
+
+            <LinearLayout
+                    android:id="@+id/containerReviewListId"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/small_padding"
+                    android:orientation="vertical">
+                <ListView
+                        android:id="@+id/reviewsContainerListViewId"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:listSelector="@color/listview_selector"
+                        android:orientation="vertical" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

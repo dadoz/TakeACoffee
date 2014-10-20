@@ -5,7 +5,8 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.application.dataRequest.CoffeeAppLogic;
+import com.application.dataRequest.CoffeeAppController;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 import com.application.takeacoffee.fragments.LoginFragment;
 import com.application.takeacoffee.fragments.MapFragment;
@@ -79,7 +80,7 @@ public class HeaderUtils {
 
     public static void setHeaderByFragmentId(Activity mainActivityRef, int fragmentId, FragmentManager fragmentManager, String coffeeMachineId) {
         hideAllItemsOnHeaderBar(mainActivityRef);
-        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
+        CoffeeAppController coffeeAppController = ((CoffeeMachineActivity) mainActivityRef).getCoffeeAppController();
 
         switch (fragmentId) {
             case 0:
@@ -89,7 +90,7 @@ public class HeaderUtils {
                 break;
             case 1:
 //                CoffeeMachineActivity.setItemOnHeaderBarById(R.id.loggedUserButtonId, fragmentManager);
-                String coffeeMachineName = coffeeAppLogic
+                String coffeeMachineName = coffeeAppController
                         .getCoffeeMachineById(coffeeMachineId).getName();
                 setItemOnHeaderBarById(mainActivityRef, R.id.coffeeMachineSettingsMapHeaderLayoutId,
                         fragmentManager, coffeeMachineName);

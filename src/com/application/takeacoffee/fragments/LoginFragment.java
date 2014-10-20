@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.graphics.*;
 import android.net.Uri;
 import android.os.*;
@@ -20,9 +19,8 @@ import android.widget.*;
 import com.application.commons.BitmapCustomUtils;
 import com.application.commons.Common;
 import com.application.commons.HeaderUtils;
-import com.application.dataRequest.CoffeeAppLogic;
-import com.application.datastorage.DataStorageSingleton;
-import com.application.models.User;
+import com.application.dataRequest.CoffeeAppController;
+import com.application.datastorage.DataStorageApplication;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 import com.facebook.SessionState;
@@ -49,13 +47,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
     private static final int PHOTO_CODE = 100;
     private static final String TAG = "LoginFragment";
 
-    private DataStorageSingleton coffeeApp;
     private static File customDir;
-
     private FragmentActivity mainActivityRef;
-//    private SharedPreferences sharedPref;
-
     private View loginView;
+    private CoffeeAppController coffeeAppController;
+    private EditText usernameEditText;
+    private ImageView profilePicImageView;
+
+    private Bundle savedInstance;
 
     //FACEBOOK uiLifecycle
     private UiLifecycleHelper uiHelper;
@@ -67,26 +66,33 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
     private ConnectionResult mConnectionResult;
     private ProgressDialog mConnectionProgressDialog;
 
-    private Bundle savedInstance;
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        mainActivityRef = (CoffeeMachineActivity) activity;
+        coffeeAppController = ((CoffeeMachineActivity) mainActivityRef).getCoffeeAppController();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstance){
-        mainActivityRef = this.getActivity();
         this.savedInstance = savedInstance;
 
-        coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
+        loginView = inflater.inflate(R.layout.login_fragment, container, false);
+
         //TODO refactor it
         customDir = this.getActivity().getApplication().getApplicationContext()
                 .getDir(Common.COFFEE_MACHINE_DIR, Context.MODE_PRIVATE); //Creating an internal dir;
 
-        loginView = inflater.inflate(R.layout.login_fragment, container, false);
 
-        final EditText usernameEditText = (EditText) loginView.findViewById(R.id.usernameNewUserEditTextId);
+        usernameEditText = (EditText) loginView.findViewById(R.id.usernameNewUserEditTextId);
+        profilePicImageView = (ImageView)loginView.findViewById(R.id.profilePicImageViewId);
 
-        ImageView profilePicImageView = (ImageView)loginView.findViewById(R.id.profilePicImageViewId);
-        if(coffeeApp.isRegisteredUser()) {
-//            Common.drawProfilePictureByPath(profilePic, coffeeApp.getRegisteredProfilePicturePath(),
+        //TODO move in coffeeAppcontroller
+        if(coffeeAppController.isRegisteredUser()) {
+//            Common.drawProfilePictureByPath(profilePic, coffeeAppController.getRegisteredProfilePicturePath(),
 //                    getResources().getDrawable(R.drawable.user_icon));
-            Bitmap bitmap = BitmapCustomUtils.getRoundedBitmapByFile(coffeeApp.getRegisteredProfilePicturePath(),
+            Bitmap bitmap = BitmapCustomUtils.getRoundedBitmapByFile(coffeeAppController.getRegisteredProfilePicturePath(),
                     BitmapFactory.decodeResource(mainActivityRef.getResources(), R.drawable.user_icon));
             profilePicImageView.setImageBitmap(bitmap);
         }
@@ -98,8 +104,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
             }
         });
         //set old username on editText
-        if(coffeeApp.isRegisteredUser()) {
-            usernameEditText.setText(coffeeApp.getRegisteredUsername());
+        if(coffeeAppController.isRegisteredUser()) {
+            usernameEditText.setText(coffeeAppController.getRegisteredUsername());
         }
 
         //unbind loggedUserButtonId action
@@ -126,7 +132,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 
-        if(! coffeeApp.isRegisteredUser()) {
+        if(! coffeeAppController.isRegisteredUser()) {
             Log.e(TAG, "failed to load profile pic from storage - load the guest one");
             //SET CUSTOM NAME
             bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.user_icon);
@@ -134,13 +140,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
             return;
         }
 
-        if(coffeeApp.getRegisteredProfilePicturePath() != null) {
-            bitmap = BitmapFactory.decodeFile(coffeeApp.getRegisteredProfilePicturePath(), options);
+        if(coffeeAppController.getRegisteredProfilePicturePath() != null) {
+            bitmap = BitmapFactory.decodeFile(coffeeAppController.getRegisteredProfilePicturePath(), options);
             ((ImageView) mainActivityRef.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
         }
 
-        if(coffeeApp.getRegisteredUsername() != null) {
-            ((TextView) mainActivityRef.findViewById(R.id.loggedUserTextId)).setText(coffeeApp.getRegisteredUsername());
+        if(coffeeAppController.getRegisteredUsername() != null) {
+            ((TextView) mainActivityRef.findViewById(R.id.loggedUserTextId)).setText(coffeeAppController.getRegisteredUsername());
         }
     }
 
@@ -154,7 +160,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         if(profileImagePath != null) {
             Log.d(TAG, "[PROFILE PIC] path file - " + profileImagePath);
             profilePicView.setImageBitmap(profileImage);
-            coffeeApp.profilePicturePathTemp = profileImagePath;
+            coffeeAppController.setProfilePicturePathTemp(profileImagePath);
             return true;
         }
 
@@ -533,10 +539,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
             //rebind loggedButtonId
 /*            mainActivityRef.findViewById(R.id.loggedUserButtonId).setOnClickListener(
                     new LoggedUserButtonAction(mainActivityRef.getSupportFragmentManager()));*/
-            CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
 
-            if(coffeeAppLogic.setRegisteredUser(Common.EMPTY_VALUE,
-                    coffeeApp.profilePicturePathTemp, username)) {
+            if(coffeeAppController.setRegisteredUser(Common.EMPTY_VALUE,
+                    coffeeAppController.getProfilePicturePathTemp(), username)) {
                 setRegisteredUserHeader();
             } else {
                 Common.displayError(view.getContext(), "problem to set user - ");
@@ -554,7 +559,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
                         .commit();
             }
 
-            Log.e(TAG, "u clicked save - " + username + " - " + coffeeApp.profilePicturePathTemp);
+            Log.e(TAG, "u clicked save - " + username + " - " + coffeeAppController.getProfilePicturePathTemp());
         }
     }
 

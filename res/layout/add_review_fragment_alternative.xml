@@ -112,13 +112,11 @@
                     </LinearLayout>
                     <!--add text on review -->
                     <LinearLayout
-                            android:id="@+id/addReviewCustomTextLayoutId"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:visibility="gone">
                         <EditText
-                                android:id="@+id/reviewEditTextId"
                                 android:paddingLeft="@dimen/small_padding"
                                 android:paddingRight="@dimen/small_padding"
                                 android:paddingTop="@dimen/small_padding"
@@ -165,7 +163,6 @@
         </LinearLayout>
         <!-- bottom button -->
         <LinearLayout
-                android:id="@+id/addReviewButtonId"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/button_height"
                 android:gravity="center"

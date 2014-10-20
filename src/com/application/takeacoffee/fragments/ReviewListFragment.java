@@ -1,13 +1,10 @@
 package com.application.takeacoffee.fragments;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -18,30 +15,26 @@ import android.widget.*;
 import com.application.adapters.ReviewListAdapter;
 import com.application.commons.Common;
 import com.application.commons.HeaderUtils;
-import com.application.dataRequest.CoffeeAppLogic;
-import com.application.dataRequest.RESTLoader;
-import com.application.datastorage.DataStorageSingleton;
-import com.application.extraMenu.ExtraMenuController;
+import com.application.dataRequest.CoffeeAppController;
+import com.application.dataRequest.RestLoader;
+import com.application.dataRequest.RestResponse;
 import com.application.models.Review;
 import com.application.models.User;
+import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
+import com.application.commons.TimestampHandler;
 import org.joda.time.DateTime;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 /**
  * Created by davide on 08/04/14.
  */
 public class ReviewListFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks<RESTLoader.RESTResponse>,
+        implements LoaderManager.LoaderCallbacks<RestResponse>,
         AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener {
     private static final String TAG = "ReviewListFragment";
-    private static DataStorageSingleton coffeeApp;
     private static FragmentActivity mainActivityRef = null;
 
     private Common.ReviewStatusEnum reviewStatus;
@@ -49,6 +42,15 @@ public class ReviewListFragment extends Fragment
     private String coffeeMachineId;
     private ListView listView;
     private ArrayList<Review> reviewListDataStorage;
+    private CoffeeAppController coffeeAppController;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mainActivityRef = (CoffeeMachineActivity) activity;
+        coffeeAppController = ((CoffeeMachineActivity) mainActivityRef).getCoffeeAppController();
+//        coffeeApp = (DataStorageApplication) getActivity().getApplication();
+    }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         mainActivityRef = getActivity();
@@ -59,7 +61,9 @@ public class ReviewListFragment extends Fragment
                 .inflate(R.layout.more_review_loader_layout, listView, false);
 
         emptyView = inflater.inflate(R.layout.empty_data_status_layout, container, false);
-        coffeeApp = DataStorageSingleton.getInstance(mainActivityRef.getApplicationContext());
+
+        coffeeAppController = ((CoffeeMachineActivity) mainActivityRef)
+                .getCoffeeAppController();
 
         coffeeMachineId = this.getArguments().getString(Common.COFFEE_MACHINE_ID_KEY);
         reviewStatus = Common.ReviewStatusEnum.valueOf(this.getArguments().
@@ -68,14 +72,12 @@ public class ReviewListFragment extends Fragment
         long fromTimestamp = this.getArguments().getLong(Common.FROM_TIMESTAMP_KEY);
         long toTimestamp = this.getArguments().getLong(Common.TO_TIMESTAMP_KEY);
 
-        Bundle bundle = createBundle(coffeeMachineId, fromTimestamp, toTimestamp);
-
+        Bundle bundle = RestResponse.createBundleReview(coffeeMachineId, fromTimestamp, toTimestamp);
         setHeader();
-
         setLoaderView(true);
 
-        if (getLoaderManager().getLoader(RESTLoader.HTTPVerb.POST) == null) {
-            getLoaderManager().initLoader(RESTLoader.HTTPVerb.POST, bundle, this)
+        if (getLoaderManager().getLoader(RestLoader.HTTPVerb.POST) == null) {
+            getLoaderManager().initLoader(RestLoader.HTTPVerb.POST, bundle, this)
                     .forceLoad();
         } else {
             initView(reviewListDataStorage, coffeeMachineId);
@@ -92,8 +94,8 @@ public class ReviewListFragment extends Fragment
     }
 
     private void setLoaderView(boolean showLoader) {
-        setReviewListHeaderBackgroundLabel((reviewListView
-                .findViewById(R.id.reviewStatusTextViewId)), true);
+//        setReviewListHeaderBackgroundLabel((reviewListView
+//                .findViewById(R.id.reviewStatusTextViewId)), true);
 
         if (showLoader) {
             reviewListView.findViewById(R.id.containerReviewListId).setVisibility(View.GONE);
@@ -146,72 +148,14 @@ public class ReviewListFragment extends Fragment
 
 
 
-    /*********BUNDLE**********/
-
-    //TODO MOVE THEM SMWHERE ELSE
-    //BUNDLE move out maybe its better
-    private Bundle createBundleUser(ArrayList<String> userIdList) {
-        String action = "https://api.parse.com/1/functions/getUserListByUserIdList";
-        Bundle bundle = new Bundle();
-        JSONObject paramsObj = new JSONObject();
-        try {
-            paramsObj.put("userIdList", new JSONArray(userIdList));
-            bundle.putString("params", paramsObj.toString());
-            Log.d(TAG, "params" + paramsObj.toString());
-            bundle.putString("action", action);
-            bundle.putString("requestType", "USER_REQ");
-            return bundle;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private Bundle createBundle(String coffeeMachineId, long fromTimestamp, long toTimestamp) {
-        String action = "https://api.parse.com/1/functions/getReviewByTimestampLimitOnResult";
-
-        Bundle bundle = new Bundle();
-        JSONObject paramsObj = new JSONObject();
-        try {
-            paramsObj.put("coffeeMachineId", coffeeMachineId);
-            paramsObj.put("toTimestamp", toTimestamp);
-            paramsObj.put("fromTimestamp", fromTimestamp);
-            bundle.putString("params", paramsObj.toString());
-            bundle.putString("action", action);
-            bundle.putString("requestType", "REVIEW_REQ");
-            return bundle;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private Bundle createBundleMoreReview(String coffeeMachineId, String fromReviewId, long toTimestamp) {
-        String action = "https://api.parse.com/1/functions/getMoreReview";
-        Bundle bundle = new Bundle();
-        JSONObject paramsObj = new JSONObject();
-        try {
-            paramsObj.put("coffeeMachineId", coffeeMachineId);
-            paramsObj.put("fromReviewId", fromReviewId);
-            paramsObj.put("toTimestamp", toTimestamp);
-            bundle.putString("params", paramsObj.toString());
-            bundle.putString("action", action);
-            bundle.putString("requestType", "MORE_REVIEW_REQ");
-            return bundle;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /*********LOADER**********/
     @Override
-    public Loader<RESTLoader.RESTResponse> onCreateLoader(int verb, Bundle bundle) {
+    public Loader<RestResponse> onCreateLoader(int verb, Bundle bundle) {
         try {
-//            int verb = RESTLoader.HTTPVerb.POST;
             Uri action = Uri.parse(bundle.getString("action"));
             String requestType = bundle.getString("requestType");
-            return new RESTLoader(this.getActivity(), verb, action, bundle, requestType);
+            return new RestLoader(this.getActivity(), verb, action, bundle, requestType);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -219,22 +163,46 @@ public class ReviewListFragment extends Fragment
     }
 
     @Override
-    public void onLoadFinished(Loader<RESTLoader.RESTResponse> restResponseLoader,
-                               RESTLoader.RESTResponse restResponse) {
+    public void onLoadFinished(Loader<RestResponse> restResponseLoader,
+                               RestResponse restResponse) {
         setLoaderView(false);
 
-        if (restResponse.getCode() != 200) {
-            Log.e(TAG, "Error on HTTP get/post - code: " + restResponse.getCode());
-            if (restResponse.isReviewResponse()) {
-                listView.setEmptyView(emptyView);
+        try {
+            Log.d(TAG, "this are data result" + restResponse.getData());
+    /*        if (restResponse.getCode() != 200) {
+                Log.e(TAG, "Error on HTTP get/post - code: " + restResponse.getCode());
+                if (restResponse.isReviewResponse()) {
+                    listView.setEmptyView(emptyView);
+                }
+                return;
+            }*/
+
+            if(restResponse.getRequestType() == null) {
+                reviewResponse(restResponse);
+                return;
             }
-            return;
+
+            switch(restResponse.getRequestType()) {
+                case RestResponse.REVIEW_REQUEST:
+                    reviewResponse(restResponse);
+                    break;
+                case RestResponse.USER_REQUEST:
+                    userResponse(restResponse);
+                    break;
+                case RestResponse.MORE_REVIEW_REQUEST:
+                    moreReviewResponse(restResponse);
+                    break;
+                default:
+                    Log.e(TAG, "error - no valid response");
+                    break;
+            }
+
+            reviewResponse(restResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        Log.d(TAG, "this are data result" + restResponse.getData());
-//        Log.d(TAG, "this are key result" + restResponse.getCode());
-
-        if (restResponse.isReviewResponse()) {
+/*        if (restResponse.isReviewResponse()) {
             reviewResponse(restResponse);
             return;
         }
@@ -249,17 +217,24 @@ public class ReviewListFragment extends Fragment
             moreReviewResponse(restResponse);
             return;
         }
-
-
-        Log.e(TAG, "error - no one response is caught");
+*/
     }
 
-    private void moreReviewResponse(RESTLoader.RESTResponse restResponse) {
+    @Override
+    public void onLoaderReset(Loader loader) {
+        //TODO need to be implemented
+        //delete all data
+        coffeeAppController.resetReviewListTemp();
+    }
+
+    private void moreReviewResponse(RestResponse restResponse) {
         if(! restResponse.getHasMoreReviews()) {
             listView.removeHeaderView(moreReviewLoaderView);
         }
 
-        ArrayList<Review> reviewList = restResponse.getReviewListParser();
+        String filename = "reviews.json";
+        String data = RestResponse.getJSONDataMockup(this.getActivity(), filename);
+        ArrayList<Review> reviewList = restResponse.getReviewListParser(data);
 
         Collections.reverse(reviewList);
 
@@ -269,32 +244,43 @@ public class ReviewListFragment extends Fragment
         for (Review review : reviewList) {
             userIdList.add(review.getUserId());
         }
-        Bundle bundle = createBundleUser(userIdList);
+        Bundle bundle = RestResponse.createBundleUser(userIdList);
         Log.d(TAG, "hey " + bundle.getString("requestType"));
-        getLoaderManager().restartLoader(RESTLoader.HTTPVerb.POST, bundle, this).forceLoad();
+        getLoaderManager().restartLoader(RestLoader.HTTPVerb.POST, bundle, this).forceLoad();
 
         if (listView.getAdapter() != null) {
-            ((ReviewListAdapter) ((WrapperListAdapter) listView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+            try {
+                ((ReviewListAdapter) ((WrapperListAdapter) listView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+            } catch (Exception e) {
+                ((ReviewListAdapter) listView.getAdapter()).notifyDataSetChanged();
+            }
         }
 
     }
 
-    private void userResponse(RESTLoader.RESTResponse restResponse) {
-        CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(this.getActivity()
-                .getApplicationContext());
-        ArrayList<User> userList = (ArrayList<User>) restResponse.getUserListParser();
-        coffeeAppLogic.addUserOnLocalListByList(userList);
+    private void userResponse(RestResponse restResponse) {
+        ArrayList<User> userList = restResponse.getUserListParser();
+        //TODO move in coffeeAppLogic
+        coffeeAppController.addUserOnLocalListByList(userList);
         if (listView.getAdapter() != null) {
-            ((ReviewListAdapter) ((WrapperListAdapter) listView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+            try {
+                ((ReviewListAdapter) ((WrapperListAdapter) listView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+            } catch (Exception e) {
+                ((ReviewListAdapter) listView.getAdapter()).notifyDataSetChanged();
+            }
         }
     }
 
-    private void reviewResponse(RESTLoader.RESTResponse restResponse) {
+    private void reviewResponse(RestResponse restResponse) {
         if(restResponse.getHasMoreReviews()) {
-                listView.addHeaderView(moreReviewLoaderView);
+            listView.addHeaderView(moreReviewLoaderView);
         }
 
-        ArrayList<Review> reviewList = restResponse.getReviewListParser();
+
+        String filename = "reviews.json";
+        String data = RestResponse.getJSONDataMockup(this.getActivity(), filename);
+
+        ArrayList<Review> reviewList = RestResponse.getReviewListParser(data);
 
         reviewListDataStorage = reviewList;
 
@@ -302,18 +288,11 @@ public class ReviewListFragment extends Fragment
         for (Review review : reviewList) {
             userIdList.add(review.getUserId());
         }
-        Bundle bundle = createBundleUser(userIdList);
+        Bundle bundle = RestResponse.createBundleUser(userIdList);
         Log.d(TAG, "hey " + bundle.getString("requestType"));
-        getLoaderManager().restartLoader(RESTLoader.HTTPVerb.POST, bundle, this).forceLoad();
+        getLoaderManager().restartLoader(RestLoader.HTTPVerb.POST, bundle, this).forceLoad();
 
         initView(reviewList, coffeeMachineId);
-    }
-
-    @Override
-    public void onLoaderReset(Loader loader) {
-        //TODO need to be implemented
-        //delete all data
-        coffeeApp.setReviewListTemp(null);
     }
 
 
@@ -332,10 +311,10 @@ public class ReviewListFragment extends Fragment
                 Review firstReview = reviewListDataStorage.get(0);
                 String latestReviewId = firstReview.getId();
                 DateTime dateTime = new DateTime(firstReview.getTimestamp());
-                long fromTimestamp = CoffeeAppLogic.TimestampHandler.getOneWeekAgoTimestamp(dateTime);
-                Bundle bundle = createBundleMoreReview(coffeeMachineId, latestReviewId, fromTimestamp);
+                long fromTimestamp = TimestampHandler.getOneWeekAgoTimestamp(dateTime);
+                Bundle bundle = RestResponse.createBundleMoreReview(coffeeMachineId, latestReviewId, fromTimestamp);
                 Log.d(TAG, "hey " + bundle.getString("requestType"));
-                getLoaderManager().restartLoader(RESTLoader.HTTPVerb.POST, bundle, this).forceLoad();
+                getLoaderManager().restartLoader(RestLoader.HTTPVerb.POST, bundle, this).forceLoad();
             } catch (Exception e) {
                 Log.e(TAG, "failed to load more review");
             }
@@ -355,8 +334,7 @@ public class ReviewListFragment extends Fragment
         //TODO CHECK THIS STATEMENT
         if (mainItemView != null &&
                 mainItemView.getVisibility() == View.VISIBLE &&
-                coffeeApp.isRegisteredUser() &&
-                coffeeApp.checkIsMe(reviewObj.getUserId())) {
+                coffeeAppController.checkIsMe(reviewObj.getUserId())) {
             try {
                 final View extraMenuItemView = view.findViewById(R.id.extraMenuItemViewId);
                 ReviewListAdapter adapter = ((ReviewListAdapter) adapterView.getAdapter());

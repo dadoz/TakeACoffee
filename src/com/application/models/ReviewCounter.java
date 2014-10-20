@@ -29,7 +29,7 @@ public class ReviewCounter {
     public int getCounterByParams(long toTimestamp, Common.ReviewStatusEnum status) {
         ReviewCounterTimestamp reviewCounterTimestamp = getReviewCounterTimestamp(toTimestamp);
         if(reviewCounterTimestamp == null) {
-            return -1;
+            return Common.REVIEW_COUNTER_ERROR;
         }
 
         switch (status) {
@@ -40,7 +40,7 @@ public class ReviewCounter {
             case WORST:
                 return reviewCounterTimestamp.getWorst();
         }
-        return -1;
+        return Common.REVIEW_COUNTER_ERROR;
     }
 
     private ReviewCounterTimestamp getReviewCounterTimestamp(long toTimestamp) {

@@ -2,23 +2,12 @@ package com.application.takeacoffee;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import com.application.commons.Common;
-import com.application.dataRequest.CoffeeAppLogic;
-import com.application.dataRequest.ParseDataRequest;
-import com.application.datastorage.DataStorageSingleton;
-import com.application.models.CoffeeMachine;
-import com.google.android.gms.identity.intents.AddressConstants;
 import com.parse.Parse;
-import com.parse.ParseException;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -44,7 +33,7 @@ public class SplashScreenActivity extends Activity {
         //INIT server application
         Parse.initialize(this, "61rFqlbDy0UWBfY56RcLdiJVB1EPe8ce1yUxdAEY",
                 "jHD6l2E72OG9Kul7ijtawZTkF9Zml0AwbeL0J7Ex");
-
+/*
         new AsyncTask<String, String, String>() {
             @Override
             protected void onPreExecute() {
@@ -56,7 +45,7 @@ public class SplashScreenActivity extends Activity {
                 if(Common.isConnected(mSplashActivity.getApplicationContext())) {
                     CoffeeAppLogic.checkAndSetRegisteredUser(mSplashActivity.getApplicationContext());
                 } else {
-                    Common.displayError(mSplashActivity.getApplicationContext(), "No internet connection!");
+                    Log.e(TAG, "No internet connection!");
                 }
                 return null;
             }
@@ -67,17 +56,17 @@ public class SplashScreenActivity extends Activity {
                 startActivity(intent);
                 finish();
             }
-        }.execute("hey");
+        }*/
 
         //TODO remove it
-/*        new Handler().postDelayed(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent intent = new Intent(SplashScreenActivity.this, CoffeeMachineActivity.class);
                 startActivity(intent);
                 finish();
             }
-        }, SPLASH_TIMEOUT);*/
+        }, SPLASH_TIMEOUT);
     }
 
 }

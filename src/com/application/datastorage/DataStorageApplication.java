@@ -1,22 +1,13 @@
 package com.application.datastorage;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
+import android.app.Application;
 import android.support.v4.util.ArrayMap;
-import android.util.LruCache;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
 import com.application.commons.Common;
-import com.application.dataRequest.CoffeeAppLogic;
 import com.application.models.CoffeeMachine;
 import com.application.models.Review;
 import com.application.models.ReviewCounter;
 import com.application.models.User;
-import com.parse.ParseException;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -26,60 +17,29 @@ import java.util.ArrayList;
  * Time: 10:32 AM
  * To change this template use File | Settings | File Templates.
  */
-public class DataStorageSingleton {
-    private static final String TAG = "DataStorageSingleton";
+public class DataStorageApplication extends Application {
+    private static final String TAG = "DataStorageApplication";
     private static ArrayList<CoffeeMachine> coffeeMachineList;
     private static ArrayMap<String, ArrayList<Review>> reviewListMap;
-    private static SharedPreferences sharedPref;
-    private final ImageLoader imageLoader;
     private User registeredUser;
-    private static DataStorageSingleton mDataStorage;
     private static ArrayMap<String, User> userListMap ;
 
-    private static Context context;
-    public String profilePicturePathTemp;
-    private RequestQueue requestQueue;
-    private File customDir;
+    private String profilePicturePathTemp;
     private ArrayList<Review> reviewListTemp;
-//    private ArrayList<ReviewCounter> prevReviewCounterList;
     private ArrayList<ReviewCounter> reviewCounterList;
 
     //VERY IMPORTANT
-    private DataStorageSingleton(Context ctx) {
-        context = ctx;
+/*    private DataStorageSingleton() {
+//        context = ctx;
         //TODO CHECK IT OUT
 //        File customDir = context.getApplicationContext()
 //                .getDir(Common.COFFEE_MACHINE_DIR, Context.MODE_PRIVATE); //Creating an internal dir;
 
-        sharedPref = context.getApplicationContext().getSharedPreferences(Common.SHARED_PREF, Context.MODE_PRIVATE);
+//        sharedPref = context.getApplicationContext().getSharedPreferences(Common.SHARED_PREF, Context.MODE_PRIVATE);
 
         reviewListMap = new ArrayMap<>();
         userListMap = new ArrayMap<>();
         reviewCounterList = new ArrayList<>();
-
-        requestQueue = getRequestQueue();
-
-        imageLoader = new ImageLoader(requestQueue, new ImageLoader.ImageCache() {
-            private final LruCache<String, Bitmap> cache = new LruCache<>(20);
-            @Override
-            public Bitmap getBitmap(String url) {
-                return cache.get(url);
-            }
-
-            @Override
-            public void putBitmap(String url, Bitmap bitmap) {
-                cache.put(url, bitmap);
-            }
-        });
-
-        //fill all coffee machine list
-        try {
-            CoffeeAppLogic.loadCoffeeMachineList(this);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-//        ParseQueries.parseQuery3(context.getAssets());
     }
 
     public static synchronized DataStorageSingleton getInstance(Context context) {
@@ -89,23 +49,15 @@ public class DataStorageSingleton {
         }
         return mDataStorage;
     }
+*/
+    public void DataStorageApplication() {
+        reviewListMap = new ArrayMap<>();
+        userListMap = new ArrayMap<>();
+        reviewCounterList = new ArrayList<>();
+    }
 
     public void setCoffeeMachineList(ArrayList<CoffeeMachine> list) {
         coffeeMachineList = list;
-    }
-
-    /*****VOLLEY lib*******/
-    public RequestQueue getRequestQueue() {
-        if (requestQueue == null) {
-            // getApplicationContext() is key, it keeps you from leaking the
-            // Activity or BroadcastReceiver if someone passes one in.
-            requestQueue = Volley.newRequestQueue(context.getApplicationContext());
-        }
-        return requestQueue;
-    }
-
-    public ImageLoader getImageLoader() {
-        return imageLoader;
     }
 
     /*********COFFEE MACHINE fx***********/
@@ -118,9 +70,6 @@ public class DataStorageSingleton {
         return reviewListMap;
     }
 
-    public SharedPreferences getSharedPref() {
-        return sharedPref;
-    }
 
     public boolean isRegisteredUser() {
         return registeredUser != null;
@@ -157,31 +106,43 @@ public class DataStorageSingleton {
 
     public void destroy() {
         //call garbage collector to delete this class
-        mDataStorage = null;
+        //mDataStorage = null;
+
+        //TODO clean all stuff inside here
     }
 
     public boolean isCoffeeMachineListNotNull() {
         return coffeeMachineList != null;
     }
 
-    public File getCustomDir() {
-        return customDir;
-    }
+//    public File getCustomDir() {
+//        return customDir;
+//    }
 
     public ArrayMap getUserList() {
         return userListMap;
     }
 
     public User getUserById(String userId) {
+        if(userListMap == null) {
+            userListMap = new ArrayMap<>();
+        }
         return userListMap.get(userId); //it couldnt be null :D
     }
     public void addUserOnMapByParams(String userId, User user) {
+        if(userListMap == null) {
+            userListMap = new ArrayMap<>();
+        }
         userListMap.put(userId, user);
     }
 
     public void addUserOnMapByList(ArrayList<User> userList) {
         if(userList == null) {
             return;
+        }
+
+        if(userListMap == null) {
+            userListMap = new ArrayMap<>();
         }
 
         for(User user : userList) {
@@ -194,6 +155,9 @@ public class DataStorageSingleton {
     }
 
     public void addOnReviewCounterList(ReviewCounter reviewCounter) {
+        if(reviewCounterList == null) {
+            reviewCounterList = new ArrayList<>();
+        }
         reviewCounterList.add(reviewCounter);
     }
 
@@ -205,4 +169,11 @@ public class DataStorageSingleton {
         return reviewListTemp;
     }
 
+    public void setProfilePicturePathTemp(String value) {
+        profilePicturePathTemp = value;
+    }
+
+    public String getProfilePicturePathTemp() {
+        return profilePicturePathTemp;
+    }
 }

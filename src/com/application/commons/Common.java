@@ -36,7 +36,7 @@ public class Common {
     public static final String GOOD_STATUS_STRING = "That's Good";
     public static final String NOTSOBAD_STATUS_STRING = "Mmmmmm";
     public static final int NUM_PAGES = 3;
-    public static final String ARG_REVIEW_PAGE = "REVIEW_PAGE";
+    public static final String EMPTY_REVIEW_STRING  = "0";
     public static final String LOCAL_USER_ID = "LOCAL_USER_ID";
     public static final String FROM_TIMESTAMP_KEY = "FROM_TIMESTAMP_KEY";
     public static final String TO_TIMESTAMP_KEY = "TO_TIMESTAMP_KEY";
@@ -59,6 +59,7 @@ public class Common {
     public static int ICON_SMALL_SIZE = 180;
     public static int PROFILE_PIC_CIRCLE_MASK_BIGGER_SIZE = 312;
     public static String COFFEE_MACHINE_ID_KEY = "coffeeMachineId";
+    public static int REVIEW_COUNTER_ERROR = -1;
 
     public enum ReviewStatusEnum {
         GOOD,
@@ -140,7 +141,7 @@ public class Common {
     }*/
 
     public static boolean isConnected(Context context) {
-        return true;
+        return false;
     }
 
 }

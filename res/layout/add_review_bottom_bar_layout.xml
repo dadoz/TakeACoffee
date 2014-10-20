@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:orientation="vertical">
+
+    <LinearLayout
+              android:id="@+id/statusButtonContainer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/small_padding"
+        android:orientation="horizontal">
+        <ImageView
+                android:layout_width="@dimen/medium_icon_size"
+                android:layout_height="@dimen/medium_icon_size"
+                android:background="@color/light_violet"
+                android:src="@drawable/coffee_cup_icon"/>
+        <ImageView
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
+                android:src="@drawable/coffee_cup_icon_empty"/>
+        <ImageView
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
+                android:src="@drawable/coffee_cup_icon_empty"/>
+        <ImageView
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
+                android:src="@drawable/coffee_cup_icon_empty"/>
+        <ImageView
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
+                android:src="@drawable/coffee_cup_icon_empty"/>
+        </LinearLayout>
+
+        <RelativeLayout
+        android:id="@+id/addReviewCustomTextLayoutId"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/statusButtonContainer"
+        android:padding="@dimen/small_padding">
+        <EditText
+                android:id="@+id/reviewEditTextId"
+                android:background="@color/white"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:lines="2"
+                android:layout_alignParentLeft="true"
+                android:hint="Such a good coffee"
+                android:src="@drawable/add_icon"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+        android:id="@+id/addReviewButtonId"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/button_height"
+        android:gravity="center"
+        android:background="@color/dark_black"
+        android:padding="@dimen/small_padding"
+        android:layout_below="@id/addReviewCustomTextLayoutId">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/light_grey"
+                android:textSize="@dimen/text_big_24"
+                android:text="add new review"
+                />
+        </RelativeLayout>
+</LinearLayout>

@@ -3,7 +3,6 @@ package com.application.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import com.application.takeacoffee.fragments.ChoiceReviewFragment;
 import com.application.commons.Common;
 
 /**
@@ -19,7 +18,8 @@ public class ChoiceReviewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return ChoiceReviewFragment.create(position, coffeeMachineId);
+//        return ReviewStatusChoiceFragment.create(position, coffeeMachineId);
+        return null;
     }
 
     @Override

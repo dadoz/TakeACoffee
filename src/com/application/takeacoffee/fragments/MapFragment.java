@@ -1,5 +1,6 @@
 package com.application.takeacoffee.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -28,8 +29,14 @@ public class MapFragment extends Fragment {
     private FragmentActivity mainActivityRef;
 
     @Override
+    public void onAttach(Activity activity)
+    {
+        super.onAttach(activity);
+        mainActivityRef = (CoffeeMachineActivity) activity;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)  {
-        mainActivityRef = getActivity();
         mapView = inflater.inflate(R.layout.map_fragment, container, false);
         mMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
