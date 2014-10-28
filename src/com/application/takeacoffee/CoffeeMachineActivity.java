@@ -1,14 +1,11 @@
 package com.application.takeacoffee;
 
-import android.app.Application;
 import android.content.*;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import com.application.commons.Common;
 import com.application.dataRequest.CoffeeAppController;
-import com.application.datastorage.DataStorageApplication;
 import com.application.takeacoffee.fragments.*;
 
 public class CoffeeMachineActivity extends FragmentActivity {
@@ -22,7 +19,7 @@ public class CoffeeMachineActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.coffe_machine_layout);
 
-        coffeeAppController = new CoffeeAppController(this.getApplicationContext(), this.getApplication());
+        coffeeAppController = new CoffeeAppController(this.getApplicationContext(), this.getApplication(), getLoaderManager());
         Common.setCustomFont(findViewById(R.id.scrollViewContainerId),
                 this.getAssets());
 

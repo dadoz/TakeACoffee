@@ -3,6 +3,7 @@ package com.application.dataRequest;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
+import com.application.models.Review;
 import com.application.models.User;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -14,9 +15,10 @@ public class RestLoaderRetrofit extends AsyncTaskLoader<RestResponse> {
     private static final String TAG = "RESTLoader";
     private final String mAction;
     private final RestAdapter restAdapter;
-    private final ParseServiceInterface parseService;
+    private final RetrofitServiceInterface parseService;
+    private final Object params;
 
-    public RestLoaderRetrofit(FragmentActivity activity, String action) {
+    public RestLoaderRetrofit(FragmentActivity activity, String action, Object params) {
         super(activity);
         mAction = action;
         restAdapter = new RestAdapter.Builder()
@@ -24,7 +26,8 @@ public class RestLoaderRetrofit extends AsyncTaskLoader<RestResponse> {
                 .setRequestInterceptor(requestInterceptor)
                 .build();
 
-        parseService = restAdapter.create(ParseServiceInterface.class);
+        parseService = restAdapter.create(RetrofitServiceInterface.class);
+        this.params = params;
     }
 
     @Override
@@ -50,6 +53,10 @@ public class RestLoaderRetrofit extends AsyncTaskLoader<RestResponse> {
                     break;
                 case HTTPAction.REVIEW_COUNT_REQUEST:
                     data = parseService.mapReviewCount();
+                    break;
+                case HTTPAction.ADD_REVIEW_BY_PARAMS:
+                    Review review = (Review) params;
+                    data = parseService.addReviewByParams(review, null);
                     break;
             }
             return new RestResponse(data, mAction); // We send an empty response back. The LoaderCallbacks<RESTResponse>
@@ -94,11 +101,17 @@ public class RestLoaderRetrofit extends AsyncTaskLoader<RestResponse> {
         public static final String CLASSES = "classes/";
         public static final String FUNCTIONS = "functions/";
 
-        public static final String COFFEE_MACHINE_REQUEST = "coffee_machines";
+        public static final String COFFEE_MACHINE = "coffee_machines";
+        public static final String REVIEW = "review";
+
+        public static final String ADD_REVIEW_REQUEST = "ADD_REVIEW_REQ";
         public static final String REVIEW_REQUEST = "REVIEW_REQ";
         public static final String MORE_REVIEW_REQUEST = "MORE_REVIEW_REQ";
         public static final String USER_REQUEST = "USER_REQ";
         public static final String REVIEW_COUNT_REQUEST = "REVIEW_COUNT";
+        public static final String ADD_REVIEW_BY_PARAMS = "ADD_REVIEW_BY_PARAMS";
+        public static final String COFFEE_MACHINE_REQUEST = "COFFEE_MACHINE_REQUEST";
+
     }
 
 }

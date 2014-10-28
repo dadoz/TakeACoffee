@@ -16,4 +16,9 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <style name="reviewStatusRatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/rating_bar_custom_full</item>
+        <item name="android:minHeight">70dip</item>
+        <item name="android:maxHeight">70dip</item>
+    </style>
 </resources>

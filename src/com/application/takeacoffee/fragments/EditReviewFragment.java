@@ -43,7 +43,7 @@ public class EditReviewFragment extends Fragment implements View.OnClickListener
         String reviewId = getArguments().getString(Common.REVIEW_ID);
         coffeeMachineId = getArguments().getString(Common.COFFEE_MACHINE_ID_KEY);
 
-        HeaderUtils.setHeaderByFragmentId(mainActivityRef, 3, getFragmentManager(), Common.EMPTY_VALUE);
+//        HeaderUtils.setHeaderByFragmentId(mainActivityRef, 3, getFragmentManager(), Common.EMPTY_VALUE);
 
         initView(reviewId, reviewStatus); //test
         Common.setCustomFont(editReviewView, getActivity().getAssets());

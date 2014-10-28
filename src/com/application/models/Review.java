@@ -1,5 +1,6 @@
 package com.application.models;
 
+import android.os.Parcelable;
 import android.util.Log;
 import com.application.commons.Common.ReviewStatusEnum;
 import com.parse.ParseObject;
@@ -116,4 +117,6 @@ public class Review {
             "timestamp: " + this.timestamp +
             "coffeeMachineId: " + this.coffeeMachineId;
     }
+
+
 }

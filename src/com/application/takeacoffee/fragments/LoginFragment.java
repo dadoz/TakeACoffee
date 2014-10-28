@@ -117,7 +117,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         /**GOOGLEPLUS INTEGRATION**/
         loginView.findViewById(R.id.googlePlusLoginButtonId).setOnClickListener(this);
 
-        setHeader();
+//        setHeader();
         Common.setCustomFont(loginView, getActivity().getAssets());
         return loginView ;
     }

@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import static com.application.dataRequest.RestLoaderRetrofit.HTTPAction.*;
+
 /**
  * Created by davide on 02/10/14.
  */
@@ -32,10 +34,6 @@ public class RestResponse {
     private boolean reviewResponse;
     private ArrayList<User> userListParser;
 
-    public static final String REVIEW_REQUEST = "REVIEW_REQ";
-    public static final String MORE_REVIEW_REQUEST = "MORE_REVIEW_REQ";
-    public static final String USER_REQUEST = "USER_REQ";
-    public static final String REVIEW_COUNT_REQUEST = "REVIEW_COUNT";
 
     public RestResponse(Object data, String requestType) {
         this.dataObject = data;

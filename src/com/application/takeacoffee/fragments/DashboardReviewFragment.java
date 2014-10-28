@@ -1,6 +1,7 @@
 package com.application.takeacoffee.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import com.application.dataRequest.RestLoader;
 import com.application.dataRequest.RestResponse;
 import com.application.models.Review;
 import com.application.models.ReviewCounter;
+import com.application.takeacoffee.AddReviewActivity;
 import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
 import com.application.commons.TimestampHandler;
@@ -66,8 +68,9 @@ public class DashboardReviewFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstance) {
         super.onActivityCreated(savedInstance);
         footerChoiceReviewView = dashboardReviewView.findViewById(R.id.footerChoiceReviewLayoutId);
-        coffeeMachineNameLabelView = dashboardReviewView.findViewById(R.id.coffeeMachineNameContainerId);
+        coffeeMachineNameLabelView = dashboardReviewView.findViewById(R.id.coffeeMachineNameReviewTextTemplateId);
         coffeeMachineStatusTextView = dashboardReviewView.findViewById(R.id.coffeeMachineStatusTextId);
+        coffeeMachineStatusView = dashboardReviewView.findViewById(R.id.coffeeMachineStatusIconId);
         reviewDashboardContainerLayout = dashboardReviewView.findViewById(R.id.reviewDashboardContainerLayoutId);
 
 
@@ -113,7 +116,8 @@ public class DashboardReviewFragment extends Fragment implements
         }
 
         //set coffee machine name
-        ((TextView) coffeeMachineNameLabelView).setText("coffee machine name");
+        ((TextView) coffeeMachineNameLabelView).setText(coffeeAppController
+                .getCoffeeMachineById(coffeeMachineId).getName());
 
 //        Log.e(TAG, "review counter" + reviewCounter);
 //        choiceReviewCounterView.setText(reviewCounter);
@@ -129,12 +133,21 @@ public class DashboardReviewFragment extends Fragment implements
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.footerChoiceReviewLayoutId :
-                AddReviewFragment addReviewFragment = new AddReviewFragment();
+                //move in main activity
+                Bundle b = new Bundle();
+                b.putString(Common.COFFEE_MACHINE_ID_KEY, coffeeMachineId);
+
+                Intent intent = new Intent(mainActivityRef, AddReviewActivity.class);
+
+                intent.putExtras(b);
+                startActivity(intent);
+//                Log.e(TAG, "you're trying to add a new review");
+/*                AddReviewFragment addReviewFragment = new AddReviewFragment();
                 addReviewFragment.setArguments(args);
 
                 mainActivityRef.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.coffeeMachineContainerLayoutId, addReviewFragment)
-                        .addToBackStack("back").commit();
+                        .addToBackStack("back").commit();*/
                 break;
 /*            case R.id.goodReviewButtonId :
                 reviewStatus = Common.ReviewStatusEnum.GOOD;

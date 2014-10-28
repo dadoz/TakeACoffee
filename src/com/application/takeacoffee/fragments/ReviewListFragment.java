@@ -17,6 +17,7 @@ import com.application.commons.Common;
 import com.application.commons.HeaderUtils;
 import com.application.dataRequest.CoffeeAppController;
 import com.application.dataRequest.RestLoader;
+import com.application.dataRequest.RestLoaderRetrofit;
 import com.application.dataRequest.RestResponse;
 import com.application.models.Review;
 import com.application.models.User;
@@ -73,7 +74,7 @@ public class ReviewListFragment extends Fragment
         long toTimestamp = this.getArguments().getLong(Common.TO_TIMESTAMP_KEY);
 
         Bundle bundle = RestResponse.createBundleReview(coffeeMachineId, fromTimestamp, toTimestamp);
-        setHeader();
+//        setHeader();
         setLoaderView(true);
 
         if (getLoaderManager().getLoader(RestLoader.HTTPVerb.POST) == null) {
@@ -183,13 +184,13 @@ public class ReviewListFragment extends Fragment
             }
 
             switch(restResponse.getRequestType()) {
-                case RestResponse.REVIEW_REQUEST:
+                case RestLoaderRetrofit.HTTPAction.REVIEW_REQUEST:
                     reviewResponse(restResponse);
                     break;
-                case RestResponse.USER_REQUEST:
+                case RestLoaderRetrofit.HTTPAction.USER_REQUEST:
                     userResponse(restResponse);
                     break;
-                case RestResponse.MORE_REVIEW_REQUEST:
+                case RestLoaderRetrofit.HTTPAction.MORE_REVIEW_REQUEST:
                     moreReviewResponse(restResponse);
                     break;
                 default:

@@ -43,7 +43,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
         settListView = (ListView) settingsView.findViewById(R.id.settingsListViewId);
 
         initView();
-        setHeader();
+//        setHeader();
         Common.setCustomFont(settingsView, getActivity().getAssets());
         return settingsView;
     }

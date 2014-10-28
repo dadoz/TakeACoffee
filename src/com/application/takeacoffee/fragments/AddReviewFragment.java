@@ -55,7 +55,7 @@ public class AddReviewFragment extends Fragment {
         String coffeeMachineId = this.getArguments().getString(Common.COFFEE_MACHINE_ID_KEY);
         pagePosition = this.getArguments().getInt(Common.ARG_PAGE);
 
-        setHeader(coffeeMachineId);
+//        setHeader(coffeeMachineId);
 
         boolean isPostAction = false;
         (addReviewView.findViewById(R.id.addReviewUndoImageId)).setOnClickListener(new AddMoreTextAction(isPostAction));
@@ -179,7 +179,7 @@ public class AddReviewFragment extends Fragment {
         }
 
         //ADD new Review
-        coffeeAppController.addReviewByParams(coffeeAppController.getRegisteredUserId(), coffeeMachineId, reviewText, reviewStatus);        //TODO replace these rows
+//        coffeeAppController.addReviewByParams(coffeeAppController.getRegisteredUserId(), coffeeMachineId, reviewText, reviewStatus);        //TODO replace these rows
         createReviewsListView(reviewStatus, args);
 
 //        mainActivityRef.getSupportFragmentManager().popBackStack(); //TODO SOOOOO FUCKING WRONG -

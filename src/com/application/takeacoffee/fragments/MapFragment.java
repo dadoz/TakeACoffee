@@ -41,7 +41,7 @@ public class MapFragment extends Fragment {
         mMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
         initView();
-        setHeader();
+//        setHeader();
         Common.setCustomFont(mapView, getActivity().getAssets());
         return mapView;
     }

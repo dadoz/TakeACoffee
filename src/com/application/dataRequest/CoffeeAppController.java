@@ -1,11 +1,11 @@
 package com.application.dataRequest;
 
-import android.app.Activity;
 import android.app.Application;
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.support.v4.app.FragmentActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.util.LruCache;
 import android.widget.ImageView;
@@ -16,25 +16,26 @@ import com.android.volley.toolbox.Volley;
 import com.application.commons.BitmapCustomUtils;
 import com.application.commons.Common;
 import com.application.datastorage.CoffeeAppInterface;
-import com.application.datastorage.DataHandlerSingleton;
 import com.application.datastorage.DataStorageApplication;
 import com.application.models.ReviewCounter;
 import com.application.models.CoffeeMachine;
 import com.application.models.Review;
 import com.application.models.User;
-import com.application.takeacoffee.CoffeeMachineActivity;
 import com.application.takeacoffee.R;
-import com.parse.ParseException;
-import org.joda.time.DateTime;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+
+import static com.application.dataRequest.RestLoaderRetrofit.HTTPAction.ADD_REVIEW_REQUEST;
 
 /**
  * Created by davide on 06/09/14.
  */
 public class CoffeeAppController implements CoffeeAppInterface, ImageLoader.ImageCache {
     private static final String TAG = "CoffeeAppLogic";
+    private final LoaderManager loaderManager;
     private DataStorageApplication coffeeApp;
     private Context context;
 
@@ -48,14 +49,15 @@ public class CoffeeAppController implements CoffeeAppInterface, ImageLoader.Imag
     private boolean localUser;
 
 
-    public CoffeeAppController(Context ctx, Application coffeeApp) {
+    public CoffeeAppController(Context ctx, Application coffeeApp, LoaderManager loaderManager) {
 //        this.coffeeApp = (DataStorageApplication) ((FragmentActivity) ctx).getApplication();
         context = ctx;
         this.coffeeApp = (DataStorageApplication) coffeeApp;
         //volley
-        requestQueue = getRequestQueue();
-        imageLoader = new ImageLoader(requestQueue, this);
+        this.requestQueue = getRequestQueue();
+        this.imageLoader = new ImageLoader(requestQueue, this);
 
+        this.loaderManager = loaderManager;
         //Creating an internal dir
 //        File customDir = context.getApplicationContext()
 //                .getDir(Common.COFFEE_MACHINE_DIR, Context.MODE_PRIVATE);
@@ -334,14 +336,25 @@ public class CoffeeAppController implements CoffeeAppInterface, ImageLoader.Imag
         return null;
     }
 
-    @Override
+/*    @Override
     public boolean addReviewByParams(String userId, String coffeeMachineId, String comment,
-                                     Common.ReviewStatusEnum status) {
+                                     Common.ReviewStatusEnum status) throws JSONException {
         long timestamp = new Date().getTime();
 
-        ParseDataRequest.addReviewByParams(userId, coffeeMachineId, comment,status, timestamp);
+        Bundle bundle = new Bundle();
+        bundle.putString("ACTION", ADD_REVIEW_REQUEST);
+        JSONObject params = new JSONObject();
+        params.put("a", userId);
+        params.put("a", coffeeMachineId);
+        params.put("a", comment);
+        params.put("a", status.name());
+        bundle.putString("DATA", params.toString());
+
+        loaderManager.initLoader(RestLoader.HTTPVerb.POST, bundle, (LoaderManager.LoaderCallbacks<Object>) context)
+                .forceLoad();
+//        ParseDataRequest.addReviewByParams(userId, coffeeMachineId, comment,status, timestamp);
         return true;
-    }
+    }*/
 
     @Override
     public boolean removeReviewById(String coffeeMachineId, Review reviewObj) {

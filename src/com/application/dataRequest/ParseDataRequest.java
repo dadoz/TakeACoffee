@@ -144,59 +144,7 @@ public class ParseDataRequest {
         });
     }
 
-    public static void uploadProfilePicture(String profilePicturePath, final String userId) {
-        InputStream is;
 
-        try {
-            is = new FileInputStream(profilePicturePath);
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, e.getMessage());
-            return ;
-        }
-
-//        final String fileName = String.valueOf(UUID.randomUUID());
-        final String fileName = "profilePicture.png";
-
-        ParseFile file = null;
-
-        try {
-            file = new ParseFile(fileName, IOUtils.toByteArray(is));
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-            return;
-        }
-
-        final ParseFile finalFile = file;
-        file.saveInBackground(new SaveCallback() {
-            public void done(ParseException e) {
-                if(e != null) {
-                    Log.e(TAG, e.getMessage());
-                    return;
-                }
-
-                ParseObject parseObject = ParseDataRequest.getUserByIdToParseObject(userId);
-                if(parseObject != null) {
-                    parseObject.put("profile_picture_name", finalFile.getName());
-                    parseObject.put("profile_picture_path", finalFile.getUrl());
-                    parseObject.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            Log.d(TAG, "hey saved user file row with success");
-                        }
-                    });
-                    Log.d(TAG, "hey upload pic successfully upload");
-                    return;
-                }
-
-                Log.e(TAG, "hey upload pic failed - no user found");
-            }
-        }, new ProgressCallback() {
-            public void done(Integer percentDone) {
-                // Update your progress spinner here. percentDone will be between 0 and 100.
-            }
-        });
-        return;
-    }
 
     public static void downloadProfilePicture(final DataStorageApplication coffeeApp,
                                               String userId, final ImageView profilePicImageView,
@@ -275,34 +223,6 @@ public class ParseDataRequest {
         Log.e(TAG, "user not found ");
     }
 
-    public static String addUserByParams(final DataStorageApplication coffeeApp,
-                                       final String profilePicturePath, final String username) {
-        ParseObject parseObject = new ParseObject("users");
-        if (profilePicturePath != null) {
-            parseObject.put("profile_picture_path", profilePicturePath);
-        }
-        if (username != null) {
-            parseObject.put("username", username);
-        }
-        try {
-            parseObject.save();
-        } catch (ParseException e) {
-            Log.e(TAG, "user not updated " + e.getMessage());
-            return null;
-        }
-        return parseObject.getObjectId();
-/*        parseObject.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if(e != null) {
-                    Log.d(TAG, "user updated with success");
-                    return;
-                }
-                Log.e(TAG, "user not updated ");
-            }
-        });**/
-    }
-
     public static void removeUserById(String userId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("users");
         query.whereEqualTo("user_id_string", userId);
@@ -328,130 +248,6 @@ public class ParseDataRequest {
             });
         }
         Log.e(TAG, "user not found ");
-    }
-
-    public static void addReviewByParams(String userId, String coffeeMachineId, String comment,
-                                         Common.ReviewStatusEnum status, long timestamp) {
-        ParseObject parseObject = new ParseObject("reviews");
-        parseObject.put("comment", comment);
-        parseObject.put("coffee_machine_id_string", coffeeMachineId);
-        parseObject.put("timestamp", String.valueOf(timestamp));
-        parseObject.put("status", status.toString());
-        parseObject.put("user_id_string", userId);
-        parseObject.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if(e != null) {
-                    Log.e(TAG, "review not inserted " + e.getMessage());
-                    return;
-                }
-                Log.d(TAG, "review inserted successfully");
-            }
-        });
-    }
-
-    public static Review getReviewById(String reviewId) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
-        query.whereEqualTo("objectId", reviewId);
-        List<ParseObject> reviewList;
-        try {
-            reviewList = query.find();
-        } catch (ParseException e) {
-            Log.e(TAG, e.getMessage());
-            return null;
-        }
-        if(reviewList != null && reviewList.size() == 1) {
-            ParseObject parseObject = reviewList.get(0);
-            String id = parseObject.getObjectId();
-            String comment = parseObject.getString("comment");
-            String userId = parseObject.getString("user_id_string");
-            String coffeeMachineId = parseObject.getString("coffee_machine_id_string");
-            String timestamp = parseObject.getString("timestamp");
-            String status = parseObject.getString("status");
-            Long timestampParsed = Long.parseLong(timestamp);
-            Common.ReviewStatusEnum statusParsed = Review.parseStatus(status);
-            return new Review(id, comment, statusParsed, timestampParsed, userId, coffeeMachineId);
-        }
-        Log.e(TAG, "review not found ");
-        return null;
-    }
-
-    public static boolean removeReviewById(String reviewId) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
-        query.whereEqualTo("objectId", reviewId);
-        List<ParseObject> reviewList;
-        try {
-            reviewList = query.find();
-        } catch (ParseException e) {
-            Log.e(TAG, e.getMessage());
-            return false;
-        }
-        if(reviewList != null && reviewList.size() == 1) {
-            ParseObject review = reviewList.get(0);
-            review.deleteInBackground(new DeleteCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if(e != null) {
-                        Log.e(TAG, "review not deleted");
-                        return;
-                    }
-                    Log.d(TAG, "review deleted successfully");
-
-                }
-            });
-            return true;
-        }
-        Log.e(TAG, "review not updated ");
-        return false;
-    }
-
-    public static boolean updateReviewById(String reviewId, String comment) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
-        query.whereEqualTo("objectId", reviewId);
-        List<ParseObject> reviewList;
-        try {
-            reviewList = query.find();
-        } catch (ParseException e) {
-            Log.e(TAG, e.getMessage());
-            return false;
-        }
-        if(reviewList != null && reviewList.size() == 1) {
-            ParseObject review = reviewList.get(0);
-            review.put("comment", comment);
-            review.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if(e != null) {
-                        Log.e(TAG, "review not updated");
-                        return;
-                    }
-                    Log.d(TAG, "review updated successfully");
-                }
-            });
-            return true;
-        }
-        Log.e(TAG, "review not updated ");
-        return false;
-    }
-
-    public static User getUserById(String userId) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("users");
-        query.whereEqualTo("objectId", userId);
-        List<ParseObject> userList;
-        try {
-            userList = query.find();
-        } catch (ParseException e) {
-            Log.e(TAG, e.getMessage());
-            return null;
-        }
-        if(userList != null && userList.size() == 1) {
-            String id = userList.get(0).getObjectId();
-            String profilePicturePath = userList.get(0).getString("profile_picture_path");
-            String username = userList.get(0).getString("username");
-            return new User(id, profilePicturePath, username);
-        }
-        Log.e(TAG, "user not found ");
-        return null;
     }
 
     public static void getUserByIdAsync(String userId, final TextView usernameTextView,
@@ -484,22 +280,6 @@ public class ParseDataRequest {
         });
     }
 
-    public static ParseObject getUserByIdToParseObject(String userId) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("users");
-        query.whereEqualTo("objectId", userId);
-        List<ParseObject> userList;
-        try {
-            userList = query.find();
-        } catch (ParseException e) {
-            Log.e(TAG, e.getMessage());
-            return null;
-        }
-        if(userList != null && userList.size() == 1) {
-            return userList.get(0);
-        }
-        Log.e(TAG, "user not found ");
-        return null;
-    }
 
     public static void getAllReviewsByCoffeeMachineIdToday(DataStorageApplication coffeeApp,
                                                       String coffeeMachineId) {
@@ -642,6 +422,238 @@ public class ParseDataRequest {
 
     public static Object getPrevRevCounterKey() {
         return prevRevCounterKey;
+    }
+
+
+
+
+
+
+
+
+
+    public static void uploadProfilePicture(String profilePicturePath, final String userId) {
+        InputStream is;
+
+        try {
+            is = new FileInputStream(profilePicturePath);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, e.getMessage());
+            return ;
+        }
+
+//        final String fileName = String.valueOf(UUID.randomUUID());
+        final String fileName = "profilePicture.png";
+
+        ParseFile file = null;
+
+        try {
+            file = new ParseFile(fileName, IOUtils.toByteArray(is));
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+            return;
+        }
+
+        final ParseFile finalFile = file;
+        file.saveInBackground(new SaveCallback() {
+            public void done(ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, e.getMessage());
+                    return;
+                }
+
+                ParseObject parseObject = ParseDataRequest.getUserByIdToParseObject(userId);
+                if(parseObject != null) {
+                    parseObject.put("profile_picture_name", finalFile.getName());
+                    parseObject.put("profile_picture_path", finalFile.getUrl());
+                    parseObject.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            Log.d(TAG, "hey saved user file row with success");
+                        }
+                    });
+                    Log.d(TAG, "hey upload pic successfully upload");
+                    return;
+                }
+
+                Log.e(TAG, "hey upload pic failed - no user found");
+            }
+        }, new ProgressCallback() {
+            public void done(Integer percentDone) {
+                // Update your progress spinner here. percentDone will be between 0 and 100.
+            }
+        });
+        return;
+    }
+
+    public static String addUserByParams(final DataStorageApplication coffeeApp,
+                                         final String profilePicturePath, final String username) {
+        ParseObject parseObject = new ParseObject("users");
+        if (profilePicturePath != null) {
+            parseObject.put("profile_picture_path", profilePicturePath);
+        }
+        if (username != null) {
+            parseObject.put("username", username);
+        }
+        try {
+            parseObject.save();
+        } catch (ParseException e) {
+            Log.e(TAG, "user not updated " + e.getMessage());
+            return null;
+        }
+        return parseObject.getObjectId();
+/*        parseObject.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e != null) {
+                    Log.d(TAG, "user updated with success");
+                    return;
+                }
+                Log.e(TAG, "user not updated ");
+            }
+        });**/
+    }
+
+
+//    public static void addReviewByParams(String userId, String coffeeMachineId, String comment,
+//                                         Common.ReviewStatusEnum status, long timestamp) {
+//        ParseObject parseObject = new ParseObject("reviews");
+//        parseObject.put("comment", comment);
+//        parseObject.put("coffee_machine_id_string", coffeeMachineId);
+//        parseObject.put("timestamp", String.valueOf(timestamp));
+//        parseObject.put("status", status.toString());
+//        parseObject.put("user_id_string", userId);
+//        parseObject.saveInBackground(new SaveCallback() {
+//            @Override
+//            public void done(ParseException e) {
+//                if(e != null) {
+//                    Log.e(TAG, "review not inserted " + e.getMessage());
+//                    return;
+//                }
+//                Log.d(TAG, "review inserted successfully");
+//            }
+//        });
+//    }
+
+    public static Review getReviewById(String reviewId) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
+        query.whereEqualTo("objectId", reviewId);
+        List<ParseObject> reviewList;
+        try {
+            reviewList = query.find();
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+            return null;
+        }
+        if(reviewList != null && reviewList.size() == 1) {
+            ParseObject parseObject = reviewList.get(0);
+            String id = parseObject.getObjectId();
+            String comment = parseObject.getString("comment");
+            String userId = parseObject.getString("user_id_string");
+            String coffeeMachineId = parseObject.getString("coffee_machine_id_string");
+            String timestamp = parseObject.getString("timestamp");
+            String status = parseObject.getString("status");
+            Long timestampParsed = Long.parseLong(timestamp);
+            Common.ReviewStatusEnum statusParsed = Review.parseStatus(status);
+            return new Review(id, comment, statusParsed, timestampParsed, userId, coffeeMachineId);
+        }
+        Log.e(TAG, "review not found ");
+        return null;
+    }
+
+    public static boolean removeReviewById(String reviewId) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
+        query.whereEqualTo("objectId", reviewId);
+        List<ParseObject> reviewList;
+        try {
+            reviewList = query.find();
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+            return false;
+        }
+        if(reviewList != null && reviewList.size() == 1) {
+            ParseObject review = reviewList.get(0);
+            review.deleteInBackground(new DeleteCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e != null) {
+                        Log.e(TAG, "review not deleted");
+                        return;
+                    }
+                    Log.d(TAG, "review deleted successfully");
+
+                }
+            });
+            return true;
+        }
+        Log.e(TAG, "review not updated ");
+        return false;
+    }
+
+    public static boolean updateReviewById(String reviewId, String comment) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("reviews");
+        query.whereEqualTo("objectId", reviewId);
+        List<ParseObject> reviewList;
+        try {
+            reviewList = query.find();
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+            return false;
+        }
+        if(reviewList != null && reviewList.size() == 1) {
+            ParseObject review = reviewList.get(0);
+            review.put("comment", comment);
+            review.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e != null) {
+                        Log.e(TAG, "review not updated");
+                        return;
+                    }
+                    Log.d(TAG, "review updated successfully");
+                }
+            });
+            return true;
+        }
+        Log.e(TAG, "review not updated ");
+        return false;
+    }
+
+    public static User getUserById(String userId) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("users");
+        query.whereEqualTo("objectId", userId);
+        List<ParseObject> userList;
+        try {
+            userList = query.find();
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+            return null;
+        }
+        if(userList != null && userList.size() == 1) {
+            String id = userList.get(0).getObjectId();
+            String profilePicturePath = userList.get(0).getString("profile_picture_path");
+            String username = userList.get(0).getString("username");
+            return new User(id, profilePicturePath, username);
+        }
+        Log.e(TAG, "user not found ");
+        return null;
+    }
+
+    public static ParseObject getUserByIdToParseObject(String userId) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("users");
+        query.whereEqualTo("objectId", userId);
+        List<ParseObject> userList;
+        try {
+            userList = query.find();
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+            return null;
+        }
+        if(userList != null && userList.size() == 1) {
+            return userList.get(0);
+        }
+        Log.e(TAG, "user not found ");
+        return null;
     }
 
 

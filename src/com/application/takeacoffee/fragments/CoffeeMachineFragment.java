@@ -51,7 +51,6 @@ public class CoffeeMachineFragment extends Fragment implements View.OnClickListe
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
-
         coffeeMachineView = inflater.inflate(R.layout.coffee_machine_fragment, container, false);
         settingsLayout = (LinearLayout) coffeeMachineView.findViewById(R.id.settingsLayoutId);
         emptyCoffeeMachineView = coffeeMachineView.findViewById(R.id.emptyCoffeeMachineLayoutId);
@@ -62,154 +61,20 @@ public class CoffeeMachineFragment extends Fragment implements View.OnClickListe
             public void run() {
                             }
         });*/
-        initDataApplication();
-        setHeader();
+//        initDataApplication();
+//        setHeader();
         Common.setCustomFont(coffeeMachineView, this.getActivity().getAssets());
         return coffeeMachineView;
-    }
-
-    private void setHeader() {
-        HeaderUtils.setHeaderByFragmentId(mainActivityRef, 0, getFragmentManager(), Common.EMPTY_VALUE);
     }
 
     private void initOnLoadView() {
 
     }
 
-/*    private void initView(View coffeeMachineFragment) {
-
-        //TODO REFACTOR IT
-        boolean loggedUser = initDataApplication();
-        //change username
-        if(loggedUser) {
-            setLoggedUserView(mainActivityRef.getWindow().getDecorView());
-        } else {
-            setNotLoggedUserView(mainActivityRef.getWindow().getDecorView());
-        }
-
-        int itemInTableRowCounter = 0;
-        TableRow tableRow = null;
-        //get data from application
-        ArrayList<CoffeeMachine> coffeeMachineList = coffeeApp.getCoffeeMachineList();
-        final CoffeeAppLogic coffeeAppLogic = new CoffeeAppLogic(mainActivityRef.getApplicationContext());
-
-        //setMap button available
-        mainActivityRef.findViewById(R.id.headerMapButtonId).setVisibility(View.VISIBLE);
-
-        if(coffeeMachineList == null || coffeeMachineList.size() == 0) {
-            emptyCoffeeMachineView.setVisibility(View.VISIBLE);
-            emptyCoffeeMachineView.setOnClickListener(this);
-            return;
-        }
-
-        for (final CoffeeMachine coffeeMachineObj : coffeeMachineList) {
-            TableLayout cmfTableLayoutContainer = (TableLayout) coffeeMachineFragment
-                    .findViewById(R.id.coffeeMachineTableLayoutId);
-
-            if (itemInTableRowCounter == 0) {
-                tableRow = new TableRow(getActivity());
-                tableRow.setLayoutParams(new TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1.0f));
-                tableRow.setPadding(0, 40, 0, 40);
-            }
-
-            LayoutInflater inflaterLayout = (LayoutInflater) getActivity()
-                    .getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
-            final LinearLayout coffeeMachineTemplate = (LinearLayout) inflaterLayout
-                    .inflate(R.layout.coffe_machine_template, null);
-            coffeeMachineTemplate.setLayoutParams(new TableRow.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT, 1.0f)); // it make no sense :O
-            coffeeMachineTemplate.setGravity(Gravity.CENTER_HORIZONTAL);
-
-
-            Animation anim = AnimationUtils.loadAnimation(getActivity().getBaseContext(), R.anim.zoom_in);
-            anim.setDuration(Common.ANIMATION_GROW_TIME);
-            coffeeMachineTemplate.startAnimation(anim);
-            tableRow.addView(coffeeMachineTemplate);
-
-            if (itemInTableRowCounter != 0 || coffeeMachineList.
-                    indexOf(coffeeMachineObj) == (coffeeMachineList.size() - 1)) {
-                cmfTableLayoutContainer.addView(tableRow);
-            }
-
-            //reset counter
-            if (itemInTableRowCounter == 0) {
-                itemInTableRowCounter ++;
-            } else {
-                itemInTableRowCounter = 0;
-            }
-
-            //set data to template
-            setCustomFontByView(getActivity().getAssets(), coffeeMachineTemplate.findViewById(
-                    R.id.coffeeMachineNameTextId), false);
-            ((TextView) coffeeMachineTemplate.findViewById(R.id.coffeeMachineNameTextId))
-                    .setText(coffeeMachineObj.getName());
-            ((TextView) coffeeMachineTemplate.findViewById(R.id.coffeeMachineNameTextId))
-                    .setTextColor(getResources().getColor(R.color.light_black));
-
-            //set coffee picture
-            ImageView coffeeIconImageView = (ImageView) coffeeMachineTemplate.findViewById(R.id.coffeeIconId);
-            coffeeIconImageView.setImageResource(R.drawable.coffee_cup_icon);
-            coffeeAppLogic.getCoffeeMachineIcon((coffeeMachineObj.getIconPath()), coffeeIconImageView);
-
-//            (coffeeMachineTemplate.findViewById(R.id.coffeeIconId)).setOnClickListener(this);
-        }
-
-        //set action to settings view
-        settingsLayout.setOnClickListener(this);
-
-    }*/
-
     public void initView() {
         coffeeMachineGridLayout.setAdapter(new CoffeeMachineGridAdapter(this.getActivity(),
                 R.layout.coffe_machine_template, coffeeAppController.getCoffeeMachineList()));
         coffeeMachineGridLayout.setOnItemClickListener(this);
-    }
-
-    public boolean initDataApplication() {
-        SharedPreferences sharedPref = mainActivityRef.getSharedPreferences("SHARED_PREF_COFFEE_MACHINE", Context.MODE_PRIVATE);
-
-
-        //LOAD COFFEE MACHINE DATA
-        Bundle params = RestResponse.createBundleCoffeeMachine();
-        this.getLoaderManager().initLoader(RestLoader.HTTPVerb.GET, params, this).forceLoad();
-
-
-        if(sharedPref != null) {
-            String username = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USERNAME, null);
-            String profilePicPath = sharedPref.getString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, null);
-            String userId = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USER_ID,
-                    Common.EMPTY_VALUE);
-            if(userId.compareTo(Common.EMPTY_VALUE) != 0) {
-                Log.e(TAG, "this is my username: " + username);
-                coffeeAppController.setRegisteredUser(userId, profilePicPath, username); //TODO check empty value
-                return true;
-            } else {
-                Log.e(TAG, "no username set");
-                return false;
-            }
-        }
-        return false;
-    }
-
-    public void setLoggedUserView(View mainView) {
-        ((TextView) mainView.findViewById(R.id.loggedUserTextId)).setText(
-                coffeeAppController.getRegisteredUsername());
-        LinearLayout loggedUserButton = (LinearLayout) mainView.findViewById(R.id.loggedUserButtonId);
-        Bitmap defaultIcon = BitmapFactory.decodeResource(mainActivityRef.getResources(), R.drawable.user_icon);
-        Bitmap bitmap = BitmapCustomUtils.getRoundedBitmapByFile(coffeeAppController.getRegisteredProfilePicturePath(),
-                defaultIcon);
-        ((ImageView) mainView.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
-
-        loggedUserButton.setOnClickListener(this);
-    }
-
-    public void setNotLoggedUserView(View mainView) {
-        ((TextView) mainView.findViewById(R.id.loggedUserTextId)).setText("guest");
-        LinearLayout loggedUserButton = (LinearLayout) mainView.findViewById(R.id.loggedUserButtonId);
-
-        loggedUserButton.setOnClickListener(this);
     }
 
     @Override
@@ -308,6 +173,51 @@ public class CoffeeMachineFragment extends Fragment implements View.OnClickListe
     }
 
 
+    //LOGGED USER CLASS - please
+    public boolean initDataApplication() {
+        SharedPreferences sharedPref = mainActivityRef.getSharedPreferences("SHARED_PREF_COFFEE_MACHINE", Context.MODE_PRIVATE);
+
+
+        //LOAD COFFEE MACHINE DATA
+        Bundle params = RestResponse.createBundleCoffeeMachine();
+        this.getLoaderManager().initLoader(RestLoader.HTTPVerb.GET, params, this).forceLoad();
+
+
+        if(sharedPref != null) {
+            String username = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USERNAME, null);
+            String profilePicPath = sharedPref.getString(Common.SHAREDPREF_PROFILE_PIC_FILE_NAME, null);
+            String userId = sharedPref.getString(Common.SHAREDPREF_REGISTERED_USER_ID,
+                    Common.EMPTY_VALUE);
+            if(userId.compareTo(Common.EMPTY_VALUE) != 0) {
+                Log.e(TAG, "this is my username: " + username);
+                coffeeAppController.setRegisteredUser(userId, profilePicPath, username); //TODO check empty value
+                return true;
+            } else {
+                Log.e(TAG, "no username set");
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public void setLoggedUserView(View mainView) {
+        ((TextView) mainView.findViewById(R.id.loggedUserTextId)).setText(
+                coffeeAppController.getRegisteredUsername());
+        LinearLayout loggedUserButton = (LinearLayout) mainView.findViewById(R.id.loggedUserButtonId);
+        Bitmap defaultIcon = BitmapFactory.decodeResource(mainActivityRef.getResources(), R.drawable.user_icon);
+        Bitmap bitmap = BitmapCustomUtils.getRoundedBitmapByFile(coffeeAppController.getRegisteredProfilePicturePath(),
+                defaultIcon);
+        ((ImageView) mainView.findViewById(R.id.loggedUserImageViewId)).setImageBitmap(bitmap);
+
+        loggedUserButton.setOnClickListener(this);
+    }
+
+    public void setNotLoggedUserView(View mainView) {
+        ((TextView) mainView.findViewById(R.id.loggedUserTextId)).setText("guest");
+        LinearLayout loggedUserButton = (LinearLayout) mainView.findViewById(R.id.loggedUserButtonId);
+
+        loggedUserButton.setOnClickListener(this);
+    }
 
 
 

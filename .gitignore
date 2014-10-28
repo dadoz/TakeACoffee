@@ -32,3 +32,6 @@ local.properties
 .idea/
 *.iml
 *.iws
+
+#fonts
+assets/fonts/*
