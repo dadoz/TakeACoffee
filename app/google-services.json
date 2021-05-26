@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "482938343399",
+    "firebase_url": "https://torrid-heat-5131.firebaseio.com",
+    "project_id": "torrid-heat-5131",
+    "storage_bucket": "torrid-heat-5131.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482938343399:android:70b960a33ed5866cb97742",
+        "android_client_info": {
+          "package_name": "com.application.takeacoffee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "482938343399-81h0jfevd0snq360ta2tuirqsbmtvh7e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVX3vhAyuhg8s0e27UtWXXeGjSQv3NUJk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "482938343399-81h0jfevd0snq360ta2tuirqsbmtvh7e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

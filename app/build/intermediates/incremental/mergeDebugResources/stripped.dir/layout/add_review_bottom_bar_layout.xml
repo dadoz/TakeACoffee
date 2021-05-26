@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:orientation="vertical">
+
+    <RatingBar
+        android:id="@+id/setStatusRatingBarViewId"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/reviewStatusRatingBar"
+        android:padding="@dimen/small_padding" />
+
+    <RelativeLayout
+        android:id="@+id/addReviewCustomTextLayoutId"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/small_padding">
+        <EditText
+                android:id="@+id/reviewEditTextId"
+                android:background="@color/white"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:lines="2"
+                android:layout_alignParentLeft="true"
+                android:hint="Such a good coffee"
+                android:src="@drawable/add_icon"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/addReviewButtonId"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/button_height"
+        android:gravity="center"
+        android:background="@color/dark_black"
+        android:padding="@dimen/small_padding">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/light_grey"
+                android:textSize="@dimen/text_big_24"
+                android:text="add new review"
+                />
+    </RelativeLayout>
+</LinearLayout>

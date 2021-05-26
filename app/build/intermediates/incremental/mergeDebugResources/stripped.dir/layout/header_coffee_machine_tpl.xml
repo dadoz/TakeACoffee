@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/coffeeMachineSettingsMapHeaderLayoutId"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+            android:id="@+id/coffeeMachineStatusContainerId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/border_left_light_grey"
+            android:layout_alignParentLeft="true">
+        <ImageView
+                android:id="@+id/coffeeMachineStatusButtonId"
+                android:layout_width="@dimen/medium_icon_size"
+                android:layout_height="@dimen/medium_icon_size"
+                android:padding="@dimen/small_padding_5"
+                android:src="@drawable/barometer_icon"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/coffeeMachineNameContainerTemplateId"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/small_padding"
+            android:layout_toRightOf="@+id/coffeeMachineStatusContainerId">
+        <TextView
+                android:id="@+id/coffeeMachineNameReviewTextTemplateId"
+                android:textSize="@dimen/text_big_38"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/small_padding"
+                android:text="name" />
+        <!--<TextView-->
+                <!--android:textSize="@dimen/text_small"-->
+
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textColor="@color/dark_grey"-->
+                <!--android:text="at: Politecnico di Torino" />-->
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.application.takeacoffee"
+    android:versionCode="1"
+    android:versionName="1.0" >
+    <!-- PREV minSdk 13-->
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="17" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature
+            android:glEsVersion="0x00020000"
+            android:required="true"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- The following two permissions are not required to use
+         Google Maps Android API v2, but are recommended. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- GOOGLE + api -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+
+    <application
+            android:name="com.application.datastorage.DataStorageApplication"
+            android:allowBackup="true"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
+
+        <!-- SPLASH SCREEN activity -->
+        <activity
+                android:name="com.application.takeacoffee.SplashScreenActivity"
+                android:label="@string/app_name"
+                android:screenOrientation="portrait"
+                android:theme="@android:style/Theme.Holo.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--MAIN activity-->
+        <activity
+            android:name="com.application.takeacoffee.CoffeeMachineActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity android:name="com.application.takeacoffee.AddReviewActivity"
+                  android:screenOrientation="portrait"
+                  android:label="@string/app_name" />
+
+
+<!--        <activity android:name="com.facebook.LoginActivity"-->
+<!--                  android:theme="@android:style/Theme.Translucent.NoTitleBar"-->
+<!--                  android:label="@string/app_name" />-->
+
+        <meta-data
+                android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version" />
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/app_id" />
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAN2FjTl5Hb3kARRyxGkcFR0rc_fKxFga8" />
+    </application>
+
+</manifest>

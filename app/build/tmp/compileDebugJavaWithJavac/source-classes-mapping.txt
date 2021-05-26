@@ -1,0 +1,130 @@
+com/application/listener/SwipePageAction.java
+ com.application.listener.SwipePageAction
+com/application/datastorage/DataStorageApplication.java
+ com.application.datastorage.DataStorageApplication
+com/application/takeacoffee/fragments/EditReviewFragment.java
+ com.application.takeacoffee.fragments.EditReviewFragment
+ com.application.takeacoffee.fragments.EditReviewFragment$1
+com/application/datastorage/DataHandlerSingleton.java
+ com.application.datastorage.DataHandlerSingleton
+com/application/models/User.java
+ com.application.models.User
+com/application/commons/Common.java
+ com.application.commons.Common
+ com.application.commons.Common$ReviewStatusEnum
+com/application/takeacoffee/fragments/CoffeeMachineFragment.java
+ com.application.takeacoffee.fragments.CoffeeMachineFragment
+ com.application.takeacoffee.fragments.CoffeeMachineFragment$ViewHolder
+androidx/databinding/DataBinderMapperImpl.java
+ androidx.databinding.DataBinderMapperImpl
+androidx/databinding/library/baseAdapters/BR.java
+ androidx.databinding.library.baseAdapters.BR
+com/application/takeacoffee/DataBindingTriggerClass.java
+ com.application.takeacoffee.DataBindingTriggerClass
+com/application/takeacoffee/BR.java
+ com.application.takeacoffee.BR
+com/application/drawable/TextDrawable.java
+ com.application.drawable.TextDrawable
+com/application/dataRequest/CoffeeAppController.java
+ com.application.dataRequest.CoffeeAppController
+com/application/takeacoffee/SplashScreenActivity.java
+ com.application.takeacoffee.SplashScreenActivity
+ com.application.takeacoffee.SplashScreenActivity$1
+com/application/queries/ParseQueries.java
+ com.application.queries.ParseQueries
+com/application/models/ReviewCounter.java
+ com.application.models.ReviewCounter
+ com.application.models.ReviewCounter$1
+ com.application.models.ReviewCounter$ReviewCounterTimestamp
+ com.application.models.ReviewCounter$StatusCounter
+com/application/adapters/SettingListAdapter.java
+ com.application.adapters.SettingListAdapter
+ com.application.adapters.SettingListAdapter$1
+com/application/dataRequest/RestResponse.java
+ com.application.dataRequest.RestResponse
+com/application/takeacoffee/fragments/ReviewListFragment.java
+ com.application.takeacoffee.fragments.ReviewListFragment
+ com.application.takeacoffee.fragments.ReviewListFragment$1
+com/application/adapters/ReviewListAdapter.java
+ com.application.adapters.ReviewListAdapter
+ com.application.adapters.ReviewListAdapter$ViewHolder
+com/application/dataRequest/RetrofitServiceInterface.java
+ com.application.dataRequest.RetrofitServiceInterface
+com/application/dataRequest/RestLoaderRetrofit.java
+ com.application.dataRequest.RestLoaderRetrofit
+ com.application.dataRequest.RestLoaderRetrofit$HTTPAction
+ com.application.dataRequest.RestLoaderRetrofit$HTTPVerb
+com/application/models/Review.java
+ com.application.models.Review
+com/application/dataRequest/ParseDataRequest.java
+ com.application.dataRequest.ParseDataRequest
+com/application/models/Setting.java
+ com.application.models.Setting
+com/application/takeacoffee/AddReviewActivity.java
+ com.application.takeacoffee.AddReviewActivity
+com/application/dataRequest/DataRequestVolleyService.java
+ com.application.dataRequest.DataRequestVolleyService
+com/application/adapters/ChoiceReviewPagerAdapter.java
+ com.application.adapters.ChoiceReviewPagerAdapter
+com/application/takeacoffee/fragments/DashboardReviewFragment.java
+ com.application.takeacoffee.fragments.DashboardReviewFragment
+ com.application.takeacoffee.fragments.DashboardReviewFragment$1
+com/application/commons/ReviewListTimestamp.java
+ com.application.commons.ReviewListTimestamp
+com/application/takeacoffee/CoffeeMachineActivity.java
+ com.application.takeacoffee.CoffeeMachineActivity
+com/application/models/ReviewStatus.java
+ com.application.models.ReviewStatus
+com/application/drawable/TextIconCustom.java
+ com.application.drawable.TextIconCustom
+com/application/commons/BitmapCustomUtils.java
+ com.application.commons.BitmapCustomUtils
+com/application/commons/HeaderUtils.java
+ com.application.commons.HeaderUtils
+ com.application.commons.HeaderUtils$1
+ com.application.commons.HeaderUtils$2
+ com.application.commons.HeaderUtils$3
+com/application/takeacoffee/experimental/PieChart.java
+ com.application.takeacoffee.experimental.PieChart
+com/application/models/CoffeeMachine.java
+ com.application.models.CoffeeMachine
+com/application/takeacoffee/fragments/SettingsFragment.java
+ com.application.takeacoffee.fragments.SettingsFragment
+com/application/datastorage/HttpRequestData.java
+ com.application.datastorage.HttpRequestData
+com/application/datastorage/CoffeeAppInterface.java
+ com.application.datastorage.CoffeeAppInterface
+com/application/adapters/CoffeeMachineGridAdapter.java
+ com.application.adapters.CoffeeMachineGridAdapter
+com/application/takeacoffee/BuildConfig.java
+ com.application.takeacoffee.BuildConfig
+com/application/takeacoffee/fragments/LoginFragment.java
+ com.application.takeacoffee.fragments.LoginFragment
+com/application/takeacoffee/fragments/AddReviewFragment.java
+ com.application.takeacoffee.fragments.AddReviewFragment
+ com.application.takeacoffee.fragments.AddReviewFragment$1
+ com.application.takeacoffee.fragments.AddReviewFragment$2
+ com.application.takeacoffee.fragments.AddReviewFragment$AddMoreTextAction
+com/application/commons/TimestampHandler.java
+ com.application.commons.TimestampHandler
+com/application/volleyExtension/GsonRequest.java
+ com.application.volleyExtension.GsonRequest
+com/application/takeacoffee/DataBinderMapperImpl.java
+ com.application.takeacoffee.DataBinderMapperImpl
+ com.application.takeacoffee.DataBinderMapperImpl$InnerBrLookup
+ com.application.takeacoffee.DataBinderMapperImpl$InnerLayoutIdLookup
+com/application/takeacoffee/fragments/MapFragment.java
+ com.application.takeacoffee.fragments.MapFragment
+com/application/extraMenu/ExtraMenuController.java
+ com.application.extraMenu.ExtraMenuController
+ com.application.extraMenu.ExtraMenuController$1
+ com.application.extraMenu.ExtraMenuController$2
+com/application/dataRequest/RestLoader.java
+ com.application.dataRequest.RestLoader
+ com.application.dataRequest.RestLoader$HTTPVerb
+com/application/gestureDetector/SwipeDetector.java
+ com.application.gestureDetector.SwipeDetector
+ com.application.gestureDetector.SwipeDetector$1
+ com.application.gestureDetector.SwipeDetector$Action
+androidx/databinding/DataBindingComponent.java
+ androidx.databinding.DataBindingComponent

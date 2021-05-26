@@ -17,7 +17,7 @@
 package com.facebook.samples.sessionlogin;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import androidx.fragment.app.FragmentActivity;
 
 public class LoginUsingCustomFragmentActivity extends FragmentActivity {
 

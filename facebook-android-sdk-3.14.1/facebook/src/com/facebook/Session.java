@@ -20,7 +20,7 @@ import android.app.Activity;
 import android.content.*;
 import android.content.pm.ResolveInfo;
 import android.os.*;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
