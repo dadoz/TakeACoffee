@@ -68,25 +68,25 @@ public class Common {
         WORST
     }
 
-    public static void setCustomFontByView(AssetManager assets, View view, boolean boldSet) {
-//        Typeface boldFont = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAir.ttf");
-        Typeface boldFont = Typeface.createFromAsset(assets, "fonts/AmaticSC-Regular.ttf");
-        if(boldSet) {
-            boldFont = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAirBold.ttf");
-        }
-
-        if(view instanceof TextView || view instanceof Button) {
-            ((TextView) view).setTypeface(boldFont);
-        }
-    }
+//    public static void setCustomFontByView(AssetManager assets, View view, boolean boldSet) {
+////        Typeface boldFont = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAir.ttf");
+//        Typeface boldFont = Typeface.createFromAsset(assets, "fonts/AmaticSC-Regular.ttf");
+//        if(boldSet) {
+//            boldFont = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAirBold.ttf");
+//        }
+//
+//        if(view instanceof TextView || view instanceof Button) {
+//            ((TextView) view).setTypeface(boldFont);
+//        }
+//    }
 
     public static void setCustomFontByTextView(View v, AssetManager assets) {
         //set custom font style
 //        Typeface font = Typeface.createFromAsset(assets, "fonts/Qiber.otf");
 //        Typeface font = Typeface.createFromAsset(assets, "fonts/rabiohead.ttf");
 //        Typeface font = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAir.ttf");
-        Typeface font = Typeface.createFromAsset(assets, "fonts/AmaticSC-Regular.ttf");
-        ((TextView) v).setTypeface(font);
+//        Typeface font = Typeface.createFromAsset(assets, "fonts/AmaticSC-Regular.ttf");
+//        ((TextView) v).setTypeface(font);
     }
 
     public static void setCustomFont(View fragmentView, AssetManager assets) {
@@ -94,10 +94,10 @@ public class Common {
 //        Typeface font = Typeface.createFromAsset(assets, "fonts/Qiber.otf");
 //        Typeface font = Typeface.createFromAsset(assets, "fonts/rabiohead.ttf");
 //        Typeface font = Typeface.createFromAsset(assets, "fonts/ThrowMyHandsUpintheAir.ttf");
-        Typeface font = Typeface.createFromAsset(assets, "fonts/AmaticSC-Regular.ttf");
+//        Typeface font = Typeface.createFromAsset(assets, "fonts/AmaticSC-Regular.ttf");
 
-        ViewGroup root = (ViewGroup)fragmentView.getRootView();
-        setFont(root, font);
+//        ViewGroup root = (ViewGroup)fragmentView.getRootView();
+//        setFont(root, font);
     }
 
     public static void setFont(ViewGroup root, Typeface font) {
